@@ -33,4 +33,4 @@ def home(request: Request):
 def search_results(request: Request, search: str = Query(..., title="Search")):
     search_values = search
     results = search_books(search_values)
-    return templates.TemplateResponse("results.html", {"request": request, "books": results})
+    return results
