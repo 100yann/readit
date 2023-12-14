@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+</head>
+<body>
+    {% if books %}
+        {% for book in books %}
+            <div>
+                {% if "imageLinks" in book.volumeInfo.keys() %}
+                    <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="">
+                    <div>
+                        <p>{{ book.volumeInfo.title }}</p>
+                        <p>{{ book.volumeInfo.authors }}</p>   
+                        <p>{{ book.volumeInfo.description }}</p>          
+                        <p>{{ book.volumeInfo.pageCount}} </p>                   
+                    </div>
+                    <br>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

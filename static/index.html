@@ -6,19 +6,11 @@
     <title>Document</title>
 </head>
 <body>
-    {% for book in books %}
-        <div>
-            {% if "imageLinks" in book.volumeInfo.keys() %}
-                <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="">
-                <div>
-                    {{ book.volumeInfo.title }}
-                    {{ book.volumeInfo.authors }}      
-                    {{ book.volumeInfo.description }}            
-                    {{ book.volumeInfo.pageCount}}                    
-                </div>
-                <br>
-            {% endif %}
-        </div>
-    {% endfor %}
+    <h1>ReadIt</h1>
+    <form action="" id="search-form">
+        <input type="text" class="form-control" name="search" id="search">
+        <input type="submit" name="" id="" value="Search">
+    </form>
+    <script src="/static/search_form.js"></script>
 </body>
 </html>

@@ -1,8 +1,9 @@
 import requests
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+
 
 def search_books(title):
     base_url = "https://www.googleapis.com/books/v1/volumes"
@@ -26,5 +27,10 @@ templates = Jinja2Templates(directory="static")
 
 @app.get("/")
 def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "books": search_books('East of Eden')})
+    return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/find")
+def search_results(request: Request, search: str = Query(..., title="Search")):
+    search_values = search
+    results = search_books(search_values)
+    return templates.TemplateResponse("results.html", {"request": request, "books": results})
