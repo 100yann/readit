@@ -8,7 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
         // Check if there is any search input
         if (searchValue){
             // Display the results on the page
-            await displaySearchResults(searchValue)
+            const results = await displaySearchResults(searchValue)
 
             const resultEntries = document.getElementsByClassName('displayEntry')
             const resultArray = Array.from(resultEntries)
@@ -32,8 +32,18 @@ window.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             })
+
+            const authorLinks = document.querySelectorAll('#author-link')
+            console.log(authorLinks)
+            authorLinks.forEach((element) => {
+                element.onclick = (event) => {
+                    event.preventDefault()
+                    const response = fetch(`/author?author=${element.textContent}`)
+                }
+            })
         }
     }
+
 })
 
 // Display books returned by the Google API
@@ -59,7 +69,7 @@ async function displaySearchResults(searchValue){
                     </div>
                     <div id='entryDetails'>
                         <h2>${element.volumeInfo.title}</h2>
-                        <h3>${element.volumeInfo.authors}</h3>
+                        <h4>by <a href='' id='author-link'>${element.volumeInfo.authors}</a></h4>
                         <p>${element.volumeInfo.description}</p>
                         <p>${element.volumeInfo.pageCount}</p>
                     </div
@@ -67,5 +77,6 @@ async function displaySearchResults(searchValue){
                 resultsTab.append(div)                        
             }
         });
+        return data
     }   
 }

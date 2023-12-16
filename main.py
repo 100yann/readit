@@ -4,11 +4,22 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-
+def search_authors(author=str):
+    formatted_author = author.strip().replace(' ', '+')
+    base_url = f'https://www.googleapis.com/books/v1/volumes'
+    params = {
+        'q': f'inauthor:{formatted_author}'
+    }
+    response = requests.get(base_url, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        return data
+    else:
+        return None
 def search_books(title):
     base_url = "https://www.googleapis.com/books/v1/volumes"
     params = {
-        'q': title 
+        'q': title
     }
     response = requests.get(base_url, params=params)
 
@@ -34,3 +45,7 @@ def search_results(request: Request, search: str = Query(..., title="Search")):
     search_values = search
     results = search_books(search_values)
     return results
+
+@app.get("/author")
+def author(author: str = Query(..., title="Author")):
+    print(search_authors(author))
