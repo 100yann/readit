@@ -94,6 +94,20 @@ async function displayAuthor(author){
         const div = document.createElement('div')
         console.log(data)
         div.innerHTML = `<h2>${author}</h2>`
+        for (const key in data){
+            element = data[key]
+            console.log(key)
+            console.log(element)
+            div.innerHTML += 
+            `
+            <div>
+                <p>${element.volumeInfo.title}</p>
+                <p>${element.volumeInfo.publishedDate}</p>
+            </div>
+            `        
+        }
+
+        
         authorTab.append(div)
         hideTabsExcept('author-tab')
     }

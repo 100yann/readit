@@ -13,7 +13,7 @@ def search_authors(author=str):
     response = requests.get(base_url, params=params)
     if response.status_code == 200:
         data = response.json()
-        return data
+        return data.get("items", [])
     else:
         return None
 def search_books(title):
