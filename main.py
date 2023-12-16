@@ -48,4 +48,4 @@ def search_results(request: Request, search: str = Query(..., title="Search")):
 
 @app.get("/author")
 def author(author: str = Query(..., title="Author")):
-    print(search_authors(author))
+    return search_authors(author)
