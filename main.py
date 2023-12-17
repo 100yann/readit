@@ -49,3 +49,8 @@ def search_results(request: Request, search: str = Query(..., title="Search")):
 @app.get("/author")
 def author(author: str = Query(..., title="Author")):
     return search_authors(author)
+
+@app.get("/post")
+def new_post(request: Request, post: str = Query(..., title="Post")):
+    print('post')
+    return 'success'

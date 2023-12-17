@@ -1,4 +1,14 @@
 window.addEventListener('DOMContentLoaded', () => {
+
+    const post = document.getElementById('post-form')
+    post.onsubmit = async (event) => {
+        event.preventDefault()
+        const postValue = document.getElementById('post-value')
+
+        if (postValue.value){
+            newPost(postValue.value)
+        }
+    }    
     const form = document.getElementById('search-form')
     
     form.onsubmit = async (event) => {
@@ -123,4 +133,26 @@ function hideTabsExcept(tab){
         }
     })
     document.getElementById(tab).style.display = 'block'
+}
+
+// Save and display new post
+async function newPost(post){
+    const response = await fetch(`post/?post=${post}`)
+    console.log(response)
+    if (response.status === 200){
+        const divContainer = document.getElementById('display-posts')
+        const newPost = document.createElement('div')
+        const time = Date.now();
+        const date = new Date(time);
+        const currentDate = date.toString();
+
+        newPost.innerHTML = 
+            `
+                <h3>Book Title</h3>
+                <p>${post}</p>
+                <p><em>Stoyan Kolev</em> ${currentDate}</p>
+            `
+        divContainer.append(newPost)
+    }
+
 }
