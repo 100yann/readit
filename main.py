@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from database import start_db
+from database import insert_into_db, get_posts
 
 def search_authors(author=str):
     formatted_author = author.strip().replace(' ', '+')
@@ -39,7 +39,12 @@ templates = Jinja2Templates(directory="static")
 
 @app.get("/")
 def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    posts = get_posts()
+    return templates.TemplateResponse("index.html", 
+    {
+        "request": request, 
+        "posts": posts
+        })
 
 @app.get("/find")
 def search_results(request: Request, search: str = Query(..., title="Search")):
@@ -57,5 +62,5 @@ def new_post(request: Request, post: str = Query(..., title="Post")):
     INSERT INTO posts (post_content)
     VALUES (%s)
     """
-    start_db(insert_query, post)
+    insert_into_db(insert_query, *post)
     return 'success'
