@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from database import start_db
 
 def search_authors(author=str):
     formatted_author = author.strip().replace(' ', '+')
@@ -52,5 +53,9 @@ def author(author: str = Query(..., title="Author")):
 
 @app.get("/post")
 def new_post(request: Request, post: str = Query(..., title="Post")):
-    print('post')
+    insert_query = """
+    INSERT INTO posts (post_content)
+    VALUES (%s)
+    """
+    start_db(insert_query, post)
     return 'success'
