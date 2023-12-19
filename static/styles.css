@@ -7,6 +7,6 @@
     cursor: pointer;
 }
 
-#add-review, #add-date-read, #display-results{
+#review-form, #display-results{
     display: none;
 }
