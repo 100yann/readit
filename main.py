@@ -56,8 +56,15 @@ def search_results(request: Request, search: str = Query(..., title="Search")):
 def author(author: str = Query(..., title="Author")):
     return search_authors(author)
 
+
+@app.get("/new_review")
+def new_review(request: Request):
+    return templates.TemplateResponse("add_review.html", {
+        'request': request
+    })
+
 @app.get("/post")
-def new_post(request: Request, post: str = Query(..., title="Post")):
+def save_post(request: Request, post: str = Query(..., title="Post")):
     insert_query = """
     INSERT INTO posts (post_content)
     VALUES (%s)

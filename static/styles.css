@@ -6,3 +6,7 @@
     background-color: #e5e5e5;
     cursor: pointer;
 }
+
+#add-review, #add-date-read, #display-results{
+    display: none;
+}
