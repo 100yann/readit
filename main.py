@@ -90,10 +90,8 @@ def save_post(
     date_read: str = Query(..., title="Date"),
     isbn: str = Query(..., title="ISBN")
 ):  
-    print(type(date_read))
-    print(review_content, date_read, isbn)
-    # columns = ['review_content', 'date_read', 'isbn']
-    # data = [review_content, date_read, isbn]
+    columns = ['review_content', 'date_read', 'isbn']
+    data = [review_content, date_read, isbn]
 
-    # insert_into_db(columns, data, 'reviews')
+    insert_into_db(columns, data, 'reviews')
     return 'success'

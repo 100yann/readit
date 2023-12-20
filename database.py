@@ -1,4 +1,6 @@
 import psycopg2
+from psycopg2.sql import Identifier
+
 import os
 
 
@@ -9,21 +11,27 @@ db_config = {
     'port': os.environ.get('aws_port')
 }
 
-def insert_into_db(query, *args):
+def insert_into_db(columns, values, table):
     connection = psycopg2.connect(**db_config)
     connection.autocommit = True
+    cur = connection.cursor()
 
-    db_query = query
+    query = "INSERT INTO {} ({}) VALUES ({});"
+    
+    column_str = ', '.join(map(str, columns))
+    value_str = ', '.join(['%s' for col in columns])
+    
+    formatted_query = query.format(table, column_str, value_str)
 
-    cursor = connection.cursor()
-    cursor.execute(db_query, args)
+    cur.execute(formatted_query, values)
+    
     connection.close()
 
 
-def get_posts():
+def get_reviews():
     connection = psycopg2.connect(**db_config)
     db_query = """
-    SELECT * FROM posts
+    SELECT * FROM reviews
     """
     cursor = connection.cursor()
     cursor.execute(db_query)
