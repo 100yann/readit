@@ -55,20 +55,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedBook = document.getElementsByClassName('picked')
         const bookDetails = selectedBook[0].lastChild
         const bookTitle = bookDetails.childNodes[1]
+        const bookIsbn = bookTitle.dataset.isbn
 
         bookForm.style.display = 'none'
         document.getElementById('display-results').style.display = 'none'
         buttonNext.style.display = 'none'
 
         reviewForm.style.display = 'block'
-        reviewForm.prepend(bookTitle)
+        let reviewHeading = document.createElement('h4')
+        reviewHeading.innerHTML = `Review of ${bookTitle.textContent}`
+        reviewForm.prepend(reviewHeading)
 
         reviewForm.onsubmit = (event) => {
             event.preventDefault()
-            const date = document.getElementById('date-field')
-            const review = document.getElementById('review-field')
+            const date = document.getElementById('date-field').value
+            const review = document.getElementById('review-field').value
             if (date && review){
-                console.log(bookTitle.textContent, date.value, review.value)
+                saveReview(review, date, bookIsbn)
             }
         }
     }
@@ -87,24 +90,31 @@ async function displaySearchResults(searchValue){
         resultsTab.style.display = 'block'
 
         data.forEach(element => {
-            // display only results that have cover photos
-            if ('imageLinks' in element.volumeInfo){
-                let div = document.createElement('div')
-                div.className = 'displayEntry'
-                div.innerHTML = `
-                    <div id='entryThumbnail'>
-                        <img src=${element.volumeInfo.imageLinks.thumbnail}>
-                    </div>
-                    <div id='entryDetails'>
-                        <h2 id='book-title' data-isbn='{element.volumeInfo.}>${element.volumeInfo.title}</h2>
-                        <h4>by <a href='' id='author-link'>${element.volumeInfo.authors}</a></h4>
-                        <p>${element.volumeInfo.description}</p>
-                        <p>${element.volumeInfo.pageCount}</p>
-                    </div
-                    `
-                resultsTab.append(div)                        
+            resultsTab.append(createEntry(element))                        
             }
-        });
+        );
         return data
     }   
+}
+
+
+function createEntry(element){
+    let div = document.createElement('div')
+    div.className = 'displayEntry'
+    div.innerHTML = `
+        <div id='entryThumbnail'>
+            <img src=${element.thumbnail}>
+        </div>
+        <div id='entryDetails'>
+            <h2 id='book-title' data-isbn='${element.isbn}'>${element.title}</h2>
+            <h4>by <a href='' id='author-link'>${element.author}</a></h4>
+            <p>${element.description}</p>
+            <p>${element.pageCount}</p>
+        </div
+        `
+    return div
+}
+
+function saveReview(review, dateRead, isbn){
+    fetch(`/save_review?review_content=${review}&date_read=${dateRead}&isbn=${isbn}`)
 }

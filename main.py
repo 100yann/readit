@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from database import insert_into_db, get_posts
+from database import insert_into_db, get_reviews
 
 def search_authors(author=str):
     formatted_author = author.strip().replace(' ', '+')
@@ -17,6 +17,7 @@ def search_authors(author=str):
         return data.get("items", [])
     else:
         return None
+
 def search_books(title):
     base_url = "https://www.googleapis.com/books/v1/volumes"
     params = {
@@ -32,6 +33,23 @@ def search_books(title):
     return None
 
 
+def format_results(results):
+    formatted_results = []
+    for result in results:
+        if 'volumeInfo' in result and 'imageLinks' in result['volumeInfo']:
+            formatted_results.append({
+                'title': result['volumeInfo']['title'],
+                'author': result['volumeInfo']['authors'],
+                'thumbnail': result['volumeInfo']['imageLinks']['thumbnail'],
+                'publisher': result['volumeInfo']['publisher'],
+                'description': result['volumeInfo']['description'],
+                'pageCount': result['volumeInfo']['pageCount'],
+                'categories': result['volumeInfo']['categories'],
+                'isbn': result['volumeInfo']['industryIdentifiers'][0]['identifier']
+            })
+    return formatted_results
+
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -39,18 +57,20 @@ templates = Jinja2Templates(directory="static")
 
 @app.get("/")
 def home(request: Request):
-    posts = get_posts()
+    posts = get_reviews()
     return templates.TemplateResponse("index.html", 
     {
         "request": request, 
         "posts": posts
         })
 
+
 @app.get("/find")
 def search_results(request: Request, search: str = Query(..., title="Search")):
     search_values = search
     results = search_books(search_values)
-    return results
+    return format_results(results)
+
 
 @app.get("/author")
 def author(author: str = Query(..., title="Author")):
@@ -63,11 +83,17 @@ def new_review(request: Request):
         'request': request
     })
 
-@app.get("/post")
-def save_post(request: Request, post: str = Query(..., title="Post")):
-    insert_query = """
-    INSERT INTO posts (post_content)
-    VALUES (%s)
-    """
-    insert_into_db(insert_query, *post)
+@app.get("/save_review")
+def save_post(
+    request: Request, 
+    review_content: str = Query(..., title="Review"),
+    date_read: str = Query(..., title="Date"),
+    isbn: str = Query(..., title="ISBN")
+):  
+    print(type(date_read))
+    print(review_content, date_read, isbn)
+    # columns = ['review_content', 'date_read', 'isbn']
+    # data = [review_content, date_read, isbn]
+
+    # insert_into_db(columns, data, 'reviews')
     return 'success'
