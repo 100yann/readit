@@ -38,13 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     // If currently only one entry is displayed and it's
                     // clicked again - show all entries again
                     if (element1.style.display === 'block') {
-                        element1.classList = ''
+                        element1.id = ''
                         resultArray.forEach((element2) => {
                             element2.style.display = 'flex';
                         });
                     } else {
                         element1.style.display = 'block';
-                        element1.classList = 'picked'
+                        element1.id = 'picked'
                     }
                 }
             })
@@ -52,26 +52,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     buttonNext.onclick = () => {
-        const selectedBook = document.getElementsByClassName('picked')
-        const bookDetails = selectedBook[0].lastChild
-        const bookTitle = bookDetails.childNodes[1]
-        const bookIsbn = bookTitle.dataset.isbn
-
         bookForm.style.display = 'none'
         document.getElementById('display-results').style.display = 'none'
         buttonNext.style.display = 'none'
-
         reviewForm.style.display = 'block'
-        let reviewHeading = document.createElement('h4')
-        reviewHeading.innerHTML = `Review of ${bookTitle.textContent}`
-        reviewForm.prepend(reviewHeading)
+
 
         reviewForm.onsubmit = (event) => {
             event.preventDefault()
             const date = document.getElementById('date-field').value
             const review = document.getElementById('review-field').value
             if (date && review){
-                saveReview(review, date, bookIsbn)
+                data = getBookInfo()
+                data.review = review
+                data.date_read = dateRead
+
+                saveReview(data)
             }
         }
     }
@@ -108,16 +104,30 @@ function createEntry(element){
         <div id='entryDetails'>
             <h2 id='book-title' data-isbn='${element.isbn}'>${element.title}</h2>
             <h4>by <a href='' id='author-link'>${element.author}</a></h4>
-            <p>${element.description}</p>
+            <p id='book-description'>${element.description}</p>
             <p>${element.pageCount}</p>
         </div
         `
     return div
 }
 
-function saveReview(review, dateRead, isbn){
-    fetch(`/save_review?review_content=${review}&date_read=${dateRead}&isbn=${isbn}`)
-    .then(data => {
-        window.location = '/index.html'
+
+function getBookInfo(){
+    const selectedBook = document.getElementById('picked')
+    
+    bookData = {
+        'bookTitle': selectedBook.querySelector('#book-title').textContent,
+        'bookAuthor': selectedBook.querySelector('#author-link').textContent,
+        'bookDescription': selectedBook.querySelector('#book-description').textContent,
+        'bookIsbn': selectedBook.querySelector('#book-title').dataset.isbn,
+    }
+
+    return bookData
+
+}
+function saveReview(data){
+    fetch(`/save_review`, {
+        method: 'POST',
+        body: JSON.stringify(data)
     })
 }
