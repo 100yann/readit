@@ -1,6 +1,6 @@
 import requests
 from fastapi import FastAPI, Request, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from database import insert_into_db, get_reviews
@@ -57,11 +57,9 @@ templates = Jinja2Templates(directory="static")
 
 @app.get("/")
 def home(request: Request):
-    posts = get_reviews()
     return templates.TemplateResponse("index.html", 
     {
         "request": request, 
-        "posts": posts
         })
 
 
@@ -76,6 +74,10 @@ def search_results(request: Request, search: str = Query(..., title="Search")):
 def author(author: str = Query(..., title="Author")):
     return search_authors(author)
 
+
+@app.get("/get_reviews")
+def get_existing_reviews():
+    return get_reviews()
 
 @app.get("/new_review")
 def new_review(request: Request):
@@ -94,4 +96,4 @@ def save_post(
     data = [review_content, date_read, isbn]
 
     insert_into_db(columns, data, 'reviews')
-    return 'success'
+    return JSONResponse(content={"status": "success", "message": "Review saved successfully"})

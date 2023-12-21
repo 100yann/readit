@@ -117,4 +117,7 @@ function createEntry(element){
 
 function saveReview(review, dateRead, isbn){
     fetch(`/save_review?review_content=${review}&date_read=${dateRead}&isbn=${isbn}`)
+    .then(data => {
+        window.location = '/index.html'
+    })
 }

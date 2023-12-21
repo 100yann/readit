@@ -1,14 +1,5 @@
 window.addEventListener('DOMContentLoaded', () => {
-
-    const post = document.getElementById('post-form')
-    post.onsubmit = async (event) => {
-        event.preventDefault()
-        const postValue = document.getElementById('post-value')
-
-        if (postValue.value){
-            newPost(postValue.value)
-        }
-    }    
+    displayPosts()
 })
 
 
@@ -53,23 +44,20 @@ function hideTabsExcept(tab){
 }
 
 // Save and display new post
-async function newPost(post){
-    const response = await fetch(`post/?post=${post}`)
-    console.log(response)
-    if (response.status === 200){
-        const divContainer = document.getElementById('display-posts')
-        const newPost = document.createElement('div')
-        const time = Date.now();
-        const date = new Date(time);
-        const currentDate = date.toString();
-
-        newPost.innerHTML = 
+async function displayPosts(){
+    const response = await fetch(`/get_reviews`)
+    const data = await response.json()
+    const divContainer = document.getElementById('display-posts')
+    data.forEach((element) => {
+        const newReview = document.createElement('div')
+        newReview.innerHTML = 
             `
-                <h3>Book Title</h3>
-                <p>${post}</p>
-                <p><em>Stoyan Kolev</em> ${currentDate}</p>
+                <h5>Review</h5> 
+                <p>${element[1]}</p>
+                <p><em>Stoyan Kolev</em> ${element[3]}</p>
             `
-        divContainer.append(newPost)
-    }
+        divContainer.append(newReview)            
+    })
 
 }
+
