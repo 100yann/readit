@@ -42,13 +42,18 @@ def insert_into_db(columns, values, table):
 def get_reviews():
     connection = psycopg2.connect(**db_config)
     db_query = """
-    SELECT * FROM reviews
+    SELECT reviews.*, book_details.title, book_details.author, book_details.thumbnail
+    FROM reviews
+    INNER JOIN book_details ON reviews.book_reviewed = book_details.book_id
     """
     cursor = connection.cursor()
     cursor.execute(db_query)
+    results = cursor.fetchall()
+
     cursor.close()
     connection.close()
-    return cursor.fetchall()
+
+    return results
 
 
 def check_existing(amount, table, column, value):

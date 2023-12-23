@@ -49,10 +49,14 @@ async function displayPosts(){
     const data = await response.json()
     const divContainer = document.getElementById('display-posts')
     data.forEach((element) => {
+        console.log(element)
         const newReview = document.createElement('div')
         newReview.innerHTML = 
             `
-                <h5>Review</h5> 
+                <img src=${element[7]}>
+                <h5>Review of ${element[5]}</h5> 
+                <p>by ${element[6]}<p>
+
                 <p>${element[1]}</p>
                 <p><em>Stoyan Kolev</em> ${element[3]}</p>
             `

@@ -100,7 +100,6 @@ def new_review(request: Request):
 @app.post("/save_review")
 def save_review(request: Request, data: ReviewData):  
     book_isbn = data.bookIsbn
-    print(book_isbn)
 
     # Save book to DB if it's not already saved
     if not check_existing(1, 'book_details', 'isbn', book_isbn):
