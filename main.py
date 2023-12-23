@@ -3,7 +3,19 @@ from fastapi import FastAPI, Request, Query
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from database import insert_into_db, get_reviews
+from database import *
+from pydantic import BaseModel
+
+
+class ReviewData(BaseModel):
+    bookIsbn: str
+    bookTitle: str
+    bookAuthor: str
+    bookDescription: str
+    bookThumbnail: str
+    review: str
+    date_read: str
+
 
 def search_authors(author=str):
     formatted_author = author.strip().replace(' ', '+')
@@ -85,15 +97,31 @@ def new_review(request: Request):
         'request': request
     })
 
-@app.get("/save_review")
-def save_post(
-    request: Request, 
-    review_content: str = Query(..., title="Review"),
-    date_read: str = Query(..., title="Date"),
-    isbn: str = Query(..., title="ISBN")
-):  
-    columns = ['review_content', 'date_read', 'isbn']
-    data = [review_content, date_read, isbn]
+@app.post("/save_review")
+def save_review(request: Request, data: ReviewData):  
+    book_isbn = data.bookIsbn
+    print(book_isbn)
 
+    # Save book to DB if it's not already saved
+    if not check_existing(1, 'book_details', 'isbn', book_isbn):
+        columns = ['title', 'author', 'description', 'isbn', 'thumbnail']
+        data = [
+            data.bookTitle, 
+            data.bookAuthor, 
+            data.bookDescription,
+            book_isbn,
+            data.bookThumbnail,
+            ]
+        insert_into_db(columns, data, 'book_details')
+    else:
+        ...
+
+    # Get the id of the book reviewed
+    book_id = get_book_id_by_isbn(book_isbn)[0]
+
+    # save review
+    columns = ['review_content', 'date_read', 'book_reviewed']
+    data = [data.review, data.date_read, book_id]
     insert_into_db(columns, data, 'reviews')
+
     return JSONResponse(content={"status": "success", "message": "Review saved successfully"})

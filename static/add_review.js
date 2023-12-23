@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const date = document.getElementById('date-field').value
             const review = document.getElementById('review-field').value
             if (date && review){
-                data = getBookInfo()
+                var data = getBookInfo()
                 data.review = review
-                data.date_read = dateRead
+                data.date_read = date
 
                 saveReview(data)
             }
@@ -99,7 +99,7 @@ function createEntry(element){
     div.className = 'displayEntry'
     div.innerHTML = `
         <div id='entryThumbnail'>
-            <img src=${element.thumbnail}>
+            <img id='book-thumbnail' src=${element.thumbnail}>
         </div>
         <div id='entryDetails'>
             <h2 id='book-title' data-isbn='${element.isbn}'>${element.title}</h2>
@@ -114,20 +114,23 @@ function createEntry(element){
 
 function getBookInfo(){
     const selectedBook = document.getElementById('picked')
-    
     bookData = {
         'bookTitle': selectedBook.querySelector('#book-title').textContent,
         'bookAuthor': selectedBook.querySelector('#author-link').textContent,
         'bookDescription': selectedBook.querySelector('#book-description').textContent,
         'bookIsbn': selectedBook.querySelector('#book-title').dataset.isbn,
+        'bookThumbnail': selectedBook.querySelector('#book-thumbnail').src
     }
-
+    
     return bookData
 
 }
 function saveReview(data){
     fetch(`/save_review`, {
         method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(data)
     })
 }

@@ -11,6 +11,17 @@ db_config = {
     'port': os.environ.get('aws_port')
 }
 
+
+def establish_connection():
+    connection = psycopg2.connect(**db_config)
+    return connection
+
+
+def close_connection(connection):
+    connection.close()
+    return
+
+
 def insert_into_db(columns, values, table):
     connection = psycopg2.connect(**db_config)
     connection.autocommit = True
@@ -35,4 +46,31 @@ def get_reviews():
     """
     cursor = connection.cursor()
     cursor.execute(db_query)
+    cursor.close()
+    connection.close()
     return cursor.fetchall()
+
+
+def check_existing(amount, table, column, value):
+    connection = psycopg2.connect(**db_config)
+    cursor = connection.cursor()
+
+    db_query = "SELECT {} FROM {} WHERE {} = %s;"
+    formatted_query = db_query.format(amount, table, column)
+    
+    result = cursor.execute(formatted_query, (value,))
+    cursor.close()
+    connection.close()
+    return result is None
+
+
+def get_book_id_by_isbn(isbn):
+    connection = establish_connection()
+    cursor = connection.cursor()
+
+    db_query = "SELECT book_id FROM book_details WHERE isbn = %s;"
+    cursor.execute(db_query, (isbn,))
+    result = cursor.fetchone()
+
+    close_connection(connection)
+    return result
