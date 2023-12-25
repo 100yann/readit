@@ -92,9 +92,16 @@ def post_sign_up(
     email: str = Body(..., title="email"), 
     password: str = Body(..., title="password")
     ):
+    # Get user email and hashed password
     email = email
-    password = hash_password(password)
-    print(email, password)
+    hashed_password = hash_password(password)
+    print(len(hashed_password))
+
+    # Save to db
+    columns = ['email', 'password']
+    data = [email, hashed_password]
+    insert_into_db(columns, data, 'users')
+
     return JSONResponse(content={"status": "success", "message": "Review saved successfully"})
 
 
