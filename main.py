@@ -1,10 +1,12 @@
 import requests
-from fastapi import FastAPI, Request, Query
+from fastapi import FastAPI, Request, Query, Body
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from database import *
+from users import *
 from pydantic import BaseModel
+
 
 
 class ReviewData(BaseModel):
@@ -29,6 +31,7 @@ def search_authors(author=str):
         return data.get("items", [])
     else:
         return None
+
 
 def search_books(title):
     base_url = "https://www.googleapis.com/books/v1/volumes"
@@ -73,6 +76,26 @@ def home(request: Request):
     {
         "request": request, 
         })
+
+
+@app.get("/sign_up")
+def sign_up(request: Request):
+    return templates.TemplateResponse("/users/sign_up.html",
+    {
+        "request": request,
+    })
+
+
+@app.post("/sign_up")
+def post_sign_up(
+    request: Request, 
+    email: str = Body(..., title="email"), 
+    password: str = Body(..., title="password")
+    ):
+    email = email
+    password = hash_password(password)
+    print(email, password)
+    return JSONResponse(content={"status": "success", "message": "Review saved successfully"})
 
 
 @app.get("/find")

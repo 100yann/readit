@@ -1,6 +1,5 @@
 import psycopg2
 from psycopg2.sql import Identifier
-
 import os
 
 
