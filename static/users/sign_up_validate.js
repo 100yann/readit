@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     form.onsubmit = async (event) => {
         event.preventDefault()
 
-        const userEmail = document.getElementById('email-input').value
-        const userPassword = document.getElementById('password-input').value
+        const userEmail = document.getElementById('email-input')
+        const userPassword = document.getElementById('password-input')
 
         const response = await fetch('/sign_up', {
             method: 'POST',
@@ -12,14 +12,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                email: userEmail,
-                password: userPassword,
+                email: userEmail.value,
+                password: userPassword.value,
             }),
         })
 
 
         // Handle the response, e.g., show a success message or handle errors
         const data = await response.json()
-        console.log(data)
+        if (data.status === 'error'){
+            // Highlight the email field
+            userEmail.style.borderColor = 'red'
+
+            // Display error message under email field
+            const emailField = document.getElementById('email-field')
+            const errorMessage = document.createElement('h6')
+            errorMessage.className = 'error'
+            errorMessage.textContent = data.message
+            emailField.append(errorMessage)
+        }
     }
 })

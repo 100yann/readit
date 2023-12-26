@@ -10,3 +10,8 @@
 #review-form, #display-results{
     display: none;
 }
+
+/* Sign Up */
+.error{
+    color: red;
+}

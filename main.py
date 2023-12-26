@@ -95,12 +95,9 @@ def post_sign_up(
     # Get user email and hashed password
     email = email
     hashed_password = hash_password(password)
-    print(len(hashed_password))
-
-    # Save to db
-    columns = ['email', 'password']
-    data = [email, hashed_password]
-    insert_into_db(columns, data, 'users')
+    # Save user
+    if not save_user(email, hashed_password):
+        return JSONResponse(content={"status": "error", "message": "Email already exists!"})
 
     return JSONResponse(content={"status": "success", "message": "Review saved successfully"})
 
