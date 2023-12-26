@@ -19,7 +19,9 @@
             <a class="nav-item nav-link" href="{{ url_for('new_review' )}}">Add Review</a>
             {% if 'user' in request.session %}
               <a class="nav-item nav-link" href="">{{ request.session['user'] }}</a>
+              <a class="nav-item nav-link" href="{{ url_for('sign_out' )}}">Sign Out</a>
             {% else %}
+              <a class="nav-item nav-link" href="{{ url_for('sign_up' )}}">Sign In</a>
               <a class="nav-item nav-link" href="{{ url_for('sign_up' )}}">Sign Up</a>
             {% endif %}
 

@@ -1,6 +1,6 @@
 import requests
 from fastapi import FastAPI, Request, Query, Body, Form
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from database import *
@@ -129,6 +129,13 @@ def sign_in(
     else: 
         print('incorrect email')
     return templates.TemplateResponse('/users/sign_in.html', {"request": request })
+
+
+@app.get('/sign_out')
+def sign_out(request: Request):
+    request.session.clear()
+    return RedirectResponse(url="/")
+
 
 @app.get("/find")
 def search_results(request: Request, search: str = Query(..., title="Search")):
