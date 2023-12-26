@@ -17,7 +17,12 @@
           <div class="navbar-nav">
             <a class="nav-item nav-link" href="{{ url_for('home') }}">Home </a>
             <a class="nav-item nav-link" href="{{ url_for('new_review' )}}">Add Review</a>
-            <a class="nav-item nav-link" href="{{ url_for('sign_up' )}}">Sign Up</a>
+            {% if 'user' in request.session %}
+              <a class="nav-item nav-link" href="">{{ request.session['user'] }}</a>
+            {% else %}
+              <a class="nav-item nav-link" href="{{ url_for('sign_up' )}}">Sign Up</a>
+            {% endif %}
+
           </div>
         </div>
     </nav>

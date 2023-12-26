@@ -61,11 +61,12 @@ def check_existing(amount, table, column, value):
 
     db_query = "SELECT {} FROM {} WHERE {} = %s;"
     formatted_query = db_query.format(amount, table, column)
-    
-    result = cursor.execute(formatted_query, (value,))
+    cursor.execute(formatted_query, (value,))
+    result = cursor.fetchone()
     cursor.close()
     connection.close()
-    return result is None
+    
+    return result
 
 
 def get_book_id_by_isbn(isbn):

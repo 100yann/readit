@@ -1,11 +1,13 @@
 import requests
-from fastapi import FastAPI, Request, Query, Body
+from fastapi import FastAPI, Request, Query, Body, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from database import *
 from users import *
 from pydantic import BaseModel
+from starlette.middleware.sessions import SessionMiddleware
+
 
 
 
@@ -65,6 +67,9 @@ def format_results(results):
     return formatted_results
 
 
+def create_session(request: Request, email):
+    request.session['user'] = email
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -101,6 +106,29 @@ def post_sign_up(
 
     return JSONResponse(content={"status": "success", "message": "Review saved successfully"})
 
+
+@app.get('/sign_in')
+def sign_in(request: Request):
+    return templates.TemplateResponse('/users/sign_in.html', {"request": request})
+
+@app.post('/sign_in')
+def sign_in(
+    request: Request, 
+    email: str = Form(..., title="email"), 
+    password: str = Form(..., title="password")
+    ):
+
+    # check if email exists in db
+    if check_existing('password', 'users', 'email', email):
+        # check if password is valid
+        if verify_password(password, email):
+            create_session(request, email)
+            print(request.session)
+        else:
+            print('incorrect pass')
+    else: 
+        print('incorrect email')
+    return templates.TemplateResponse('/users/sign_in.html', {"request": request })
 
 @app.get("/find")
 def search_results(request: Request, search: str = Query(..., title="Search")):
@@ -151,3 +179,5 @@ def save_review(request: Request, data: ReviewData):
     insert_into_db(columns, data, 'reviews')
 
     return JSONResponse(content={"status": "success", "message": "Review saved successfully"})
+
+app.add_middleware(SessionMiddleware, secret_key="some-random-string")
