@@ -129,9 +129,9 @@ def sign_in(
             create_session(request, email)
             print(request.session)
         else:
-            print('incorrect pass')
+            ...
     else: 
-        print('incorrect email')
+        ...
     return templates.TemplateResponse('/users/sign_in.html', {"request": request })
 
 
@@ -140,6 +140,12 @@ def sign_out(request: Request):
     request.session.clear()
     return RedirectResponse(url="/")
 
+
+@app.get("/get_user_id")
+def get_user_id(request: Request):
+    user_email = get_current_user(request)
+    user_id = check_existing('id', 'users', 'email', user_email)[0]
+    return user_id
 
 @app.get("/find")
 def search_results(request: Request, search: str = Query(..., title="Search")):
@@ -164,6 +170,7 @@ def new_review(request: Request, current_user: str = Depends(get_current_user)):
     else:
         return RedirectResponse(url='/sign_in')
 
+
 @app.post("/save_review")
 def save_review(request: Request, data: ReviewData, current_user: str = Depends(get_current_user)):  
     if not current_user:
@@ -178,7 +185,7 @@ def save_review(request: Request, data: ReviewData, current_user: str = Depends(
 
     # Save book to DB if it's not already saved
     if not check_existing(1, 'book_details', 'isbn', book_isbn):
-        columns = ['title', 'author', 'description', 'isbn', 'thumbnail',]
+        columns = ['title', 'author', 'description', 'isbn', 'thumbnail']
         values = [
             data.bookTitle, 
             data.bookAuthor, 
@@ -200,4 +207,14 @@ def save_review(request: Request, data: ReviewData, current_user: str = Depends(
 
     return JSONResponse(content={"status": "success", "message": "Review saved successfully"})
 
+
+@app.delete("/delete_review/{review_id}")
+def delete_review(request: Request, review_id):
+    delete_row(
+        table='reviews',
+        column='review_id',
+        value=int(review_id))
+    
+    return JSONResponse(content={"status": "success", "message": "Review deleted successfully"})
+ 
 app.add_middleware(SessionMiddleware, secret_key="some-random-string")

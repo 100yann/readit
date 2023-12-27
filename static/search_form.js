@@ -1,5 +1,17 @@
-window.addEventListener('DOMContentLoaded', () => {
-    displayPosts()
+window.addEventListener('DOMContentLoaded', async () => {
+    await displayReview()
+
+    const btnDeleteReview = document.querySelectorAll('#delete-review')
+    btnDeleteReview.forEach(button => {
+        button.addEventListener('click', function() {
+            // Get the id of the review
+            const reviewId = this.getAttribute('data-review-id');
+            deleteReview(reviewId);
+
+            // Hide the deleted review
+            button.parentElement.style.display = 'none'
+        });
+    });
 })
 
 
@@ -14,8 +26,6 @@ async function displayAuthor(author){
         div.innerHTML = `<h2>${author}</h2>`
         for (const key in data){
             element = data[key]
-            console.log(key)
-            console.log(element)
             div.innerHTML += 
             `
             <div>
@@ -44,24 +54,36 @@ function hideTabsExcept(tab){
 }
 
 // Save and display new post
-async function displayPosts(){
+async function displayReview(){
     const response = await fetch(`/get_reviews`)
     const data = await response.json()
+    
+    // Get the current user id
+    const userIdResponse = await fetch('/get_user_id')
+    const userId = await userIdResponse.json()
+
     const divContainer = document.getElementById('display-posts')
     data.forEach((element) => {
-        console.log(element)
         const newReview = document.createElement('div')
         newReview.innerHTML = 
             `
-                <img src=${element[7]}>
-                <h5>Review of ${element[5]}</h5> 
-                <p>by ${element[6]}<p>
+                <img src=${element[8]}>
+                <h5>Review of ${element[6]}</h5> 
+                <p>by ${element[7]}<p>
 
                 <p>${element[1]}</p>
                 <p><em>Stoyan Kolev</em> ${element[3]}</p>
             `
-        divContainer.append(newReview)            
+        if (userId === element[5]){
+            newReview.innerHTML += `<button id=delete-review data-review-id=${element[0]}>Delete</button>`
+        }
+        divContainer.append(newReview)          
     })
-
 }
 
+// Delete a review
+function deleteReview(id){
+    fetch(`delete_review/${id}`, {
+        method: 'DELETE'
+    })
+}

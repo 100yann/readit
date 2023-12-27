@@ -79,3 +79,16 @@ def get_book_id_by_isbn(isbn):
 
     close_connection(connection)
     return result
+
+
+def delete_row(table, column, value):
+    connection = establish_connection()
+    cursor = connection.cursor()
+
+    db_query = "DELETE FROM {} WHERE {} = %s;"
+    formatted_query = db_query.format(table, column)
+    cursor.execute(formatted_query, (value,))
+    connection.commit()
+    
+    close_connection(connection)
+    return

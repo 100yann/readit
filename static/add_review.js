@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const bookForm = document.getElementById('book-form')
     const reviewForm = document.getElementById('review-form')
-    console.log(reviewForm)
+
     const bookSearchField = document.getElementById('review-book-field')
     const buttonNext = document.getElementById('next-button')
     buttonNext.style.display = 'none'
