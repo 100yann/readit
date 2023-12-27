@@ -52,18 +52,22 @@ def search_books(title):
 
 def format_results(results):
     formatted_results = []
+    fields = ['title', 'authors', 'thumbnail', 'publisher', 'description', 'pageCount', 'categories', 'isbn']
     for result in results:
         if 'volumeInfo' in result and 'imageLinks' in result['volumeInfo']:
-            formatted_results.append({
-                'title': result['volumeInfo']['title'],
-                'author': result['volumeInfo']['authors'],
-                'thumbnail': result['volumeInfo']['imageLinks']['thumbnail'],
-                'publisher': result['volumeInfo']['publisher'],
-                'description': result['volumeInfo']['description'],
-                'pageCount': result['volumeInfo']['pageCount'],
-                'categories': result['volumeInfo']['categories'],
-                'isbn': result['volumeInfo']['industryIdentifiers'][0]['identifier']
-            })
+            curr = {}
+            for field in fields:
+                try:
+                    if field == 'thumbnail':
+                        curr[field] = result['volumeInfo']['imageLinks']['thumbnail']
+                    elif field == 'isbn':
+                        curr[field] = result['volumeInfo']['industryIdentifiers'][0]['identifier']
+                    else:
+                        curr[field] = result['volumeInfo'][field]
+                except KeyError:
+                    pass
+
+            formatted_results.append(curr)
     return formatted_results
 
 

@@ -103,7 +103,7 @@ function createEntry(element){
         </div>
         <div id='entryDetails'>
             <h2 id='book-title' data-isbn='${element.isbn}'>${element.title}</h2>
-            <h4>by <a href='' id='author-link'>${element.author}</a></h4>
+            <h4>by <a href='' id='author-link'>${element.authors}</a></h4>
             <p id='book-description'>${element.description}</p>
             <p>${element.pageCount}</p>
         </div
