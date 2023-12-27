@@ -1,5 +1,5 @@
 import requests
-from fastapi import FastAPI, Request, Query, Body, Form
+from fastapi import FastAPI, Request, Query, Body, Form, Depends
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -70,6 +70,9 @@ def format_results(results):
 def create_session(request: Request, email):
     request.session['user'] = email
 
+def get_current_user(request: Request):
+    return request.session.get("user")
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -110,6 +113,7 @@ def post_sign_up(
 @app.get('/sign_in')
 def sign_in(request: Request):
     return templates.TemplateResponse('/users/sign_in.html', {"request": request})
+
 
 @app.post('/sign_in')
 def sign_in(
@@ -154,26 +158,35 @@ def get_existing_reviews():
     return get_reviews()
 
 @app.get("/new_review")
-def new_review(request: Request):
-    return templates.TemplateResponse("add_review.html", {
-        'request': request
-    })
+def new_review(request: Request, current_user: str = Depends(get_current_user)):
+    if current_user:
+        return templates.TemplateResponse("add_review.html", {'request': request})
+    else:
+        return RedirectResponse(url='/sign_in')
 
 @app.post("/save_review")
-def save_review(request: Request, data: ReviewData):  
+def save_review(request: Request, data: ReviewData, current_user: str = Depends(get_current_user)):  
+    if not current_user:
+        return RedirectResponse(url='/sign_in')
+
+    # Get user id to store in db
+    user = get_current_user(request)
+    reviewed_by = int(check_existing('id', 'users', 'email', user)[0])
+    
+
     book_isbn = data.bookIsbn
 
     # Save book to DB if it's not already saved
     if not check_existing(1, 'book_details', 'isbn', book_isbn):
-        columns = ['title', 'author', 'description', 'isbn', 'thumbnail']
-        data = [
+        columns = ['title', 'author', 'description', 'isbn', 'thumbnail',]
+        values = [
             data.bookTitle, 
             data.bookAuthor, 
             data.bookDescription,
             book_isbn,
             data.bookThumbnail,
             ]
-        insert_into_db(columns, data, 'book_details')
+        insert_into_db(columns, values, 'book_details')
     else:
         ...
 
@@ -181,9 +194,9 @@ def save_review(request: Request, data: ReviewData):
     book_id = get_book_id_by_isbn(book_isbn)[0]
 
     # save review
-    columns = ['review_content', 'date_read', 'book_reviewed']
-    data = [data.review, data.date_read, book_id]
-    insert_into_db(columns, data, 'reviews')
+    columns = ['review_content', 'date_read', 'book_reviewed', 'reviewed_by']
+    values = [data.review, data.date_read, book_id, reviewed_by]
+    insert_into_db(columns, values, 'reviews')
 
     return JSONResponse(content={"status": "success", "message": "Review saved successfully"})
 
