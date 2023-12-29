@@ -104,7 +104,6 @@ function editReviewText(element){
     // Get the id of the review
     const reviewId = element.getAttribute('data-review-id');
 
-    // Get 
     const reviewBody = document.getElementById('review-body')
     const currentText = document.getElementById('review-text').textContent
     reviewBody.innerHTML = `<textarea id='edit-review-body'>${currentText}</textarea>`
@@ -130,6 +129,14 @@ function editReviewText(element){
                 body: JSON.stringify(data),
             } 
             fetch(apiUrl, requestOptions)
+            .then(response => {
+                if (response.ok){
+                    return response.json()
+                }
+            })
+            .then(data => {
+                console.log(data)
+            })
             
             reviewBody.innerHTML = `<p id='review-text'>${newText}</p>`
             reviewControls.removeChild(reviewControls.lastChild);

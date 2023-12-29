@@ -220,5 +220,19 @@ def delete_review(request: Request, review_id):
         value=int(review_id))
     
     return JSONResponse(content={"status": "success", "message": "Review deleted successfully"})
- 
+
+
+# Save editted review
+@app.put("/edit_review/{review_id}")
+def edit_review(review_id, data: dict = Body(...)):
+    update_data(
+        table='reviews',
+        column='review_content',
+        value=data['text'],
+        condition='review_id',
+        condition_value = int(review_id)
+    )
+    return JSONResponse(content={"status": "success", "message": "Review editted successfully"})
+
+
 app.add_middleware(SessionMiddleware, secret_key="some-random-string")

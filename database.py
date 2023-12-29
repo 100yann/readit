@@ -92,3 +92,16 @@ def delete_row(table, column, value):
     
     close_connection(connection)
     return
+
+
+def update_data(table, column, value, condition, condition_value):
+    connection = establish_connection()
+    cursor = connection.cursor()
+
+    db_query = "UPDATE {} SET {} = %s WHERE {} = %s;"
+    formatted_query = db_query.format(table, column, condition)
+    
+    cursor.execute(formatted_query, (value, condition_value, ))
+    connection.commit()
+    close_connection(connection)
+    return
