@@ -12,6 +12,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             button.parentElement.style.display = 'none'
         });
     });
+    const btnEditReview = document.querySelectorAll('#edit-review')
+    btnEditReview.forEach(button => {
+        button.addEventListener('click', function() {
+            editReviewText(this)
+        })
+    })
 })
 
 
@@ -70,12 +76,16 @@ async function displayReview(){
                 <img src=${element[8]}>
                 <h5>Review of ${element[6]}</h5> 
                 <p>by ${element[7]}<p>
-
-                <p>${element[1]}</p>
+                <div id='review-body'>
+                    <p id='review-text'>${element[1]}</p>
+                </div>
                 <p><em>Stoyan Kolev</em> ${element[3]}</p>
             `
         if (userId === element[5]){
-            newReview.innerHTML += `<button id=delete-review data-review-id=${element[0]}>Delete</button>`
+            const reviewControls = document.createElement('div')
+            reviewControls.innerHTML += `<button id=delete-review data-review-id=${element[0]}>Delete</button>`
+            reviewControls.innerHTML += `<button id=edit-review data-review-id=${element[0]}>Edit</button>`
+            newReview.appendChild(reviewControls)
         }
         divContainer.append(newReview)          
     })
@@ -86,4 +96,47 @@ function deleteReview(id){
     fetch(`delete_review/${id}`, {
         method: 'DELETE'
     })
+}
+
+
+// Edit an existing review's text
+function editReviewText(element){
+    // Get the id of the review
+    const reviewId = element.getAttribute('data-review-id');
+
+    // Get 
+    const reviewBody = document.getElementById('review-body')
+    const currentText = document.getElementById('review-text').textContent
+    reviewBody.innerHTML = `<textarea id='edit-review-body'>${currentText}</textarea>`
+    
+    element.style.display = 'none'
+    const saveButton = document.createElement('button')
+    saveButton.textContent = 'Save'
+    let reviewControls = element.parentElement
+    reviewControls.appendChild(saveButton)
+    
+    saveButton.addEventListener('click', function() {
+        const newText = document.getElementById(`edit-review-body`).value;
+        if (newText){
+            const apiUrl = `edit_review/${reviewId}`
+            const data = {
+                'text': newText
+            }
+            const requestOptions = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            } 
+            fetch(apiUrl, requestOptions)
+            
+            reviewBody.innerHTML = `<p id='review-text'>${newText}</p>`
+            reviewControls.removeChild(reviewControls.lastChild);
+            element.style.display = 'inline-block'
+        }
+
+    })
+
+
 }
