@@ -112,7 +112,7 @@ def update_data(table, column, value, condition, condition_value):
 
 
 def verify_password(password, email):
-    hashed_password = bytes(check_existing('password', 'users', 'email', email)[0])
+    hashed_password = bytes(check_if_exists('password', 'users', 'email', email)[0])
     return bcrypt.checkpw(password.encode('utf-8'), hashed_password)
 
 

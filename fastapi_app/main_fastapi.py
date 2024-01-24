@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Form
 from database import *
 
 app = FastAPI()
@@ -11,7 +11,7 @@ def root():
 
 
 @app.post('/authenticate_user/')
-def authenticate_user(email:str, password:str):
+def authenticate_user(email: str = Form(...), password: str = Form(...)):
     # check if email exists in db
     if not check_if_exists(
         columns='email', 
@@ -31,7 +31,7 @@ def authenticate_user(email:str, password:str):
 
 
 @app.post('/save_user/')
-def save_user_route(email: str, password: str):
+def save_user_route(email: str = Form(...), password: str = Form(...)):
     # check if user exists
     if check_if_exists(
         columns='email', 
