@@ -3,6 +3,7 @@ from database import *
 
 app = FastAPI()
 
+
 @app.get("/get_all_posts")
 def root():
     all_reviews = get_reviews()
@@ -41,8 +42,10 @@ def save_user_route(email: str, password: str):
         raise HTTPException(status_code=400, detail='User already exists')
 
     hashed_password = hash_password(password)
-    
+
     # Save user
     save_user(email, hashed_password)
 
     return {"status": "success", "message": "User saved successfully"}
+
+
