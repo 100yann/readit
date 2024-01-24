@@ -1,6 +1,7 @@
 import psycopg2
 from psycopg2.sql import Identifier
 import os
+import bcrypt
 
 
 db_config = {
@@ -55,12 +56,12 @@ def get_reviews():
     return results
 
 
-def check_existing(amount, table, column, value):
+def check_existing(columns, table, column, value):
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
 
     db_query = "SELECT {} FROM {} WHERE {} = %s;"
-    formatted_query = db_query.format(amount, table, column)
+    formatted_query = db_query.format(columns, table, column)
     cursor.execute(formatted_query, (value,))
     result = cursor.fetchone()
     cursor.close()
@@ -105,3 +106,27 @@ def update_data(table, column, value, condition, condition_value):
     connection.commit()
     close_connection(connection)
     return
+
+
+def hash_password(password):
+    password_bytes = password.encode('utf-8')
+    hashed_pw = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    return hashed_pw
+
+
+def verify_password(password, email):
+    hashed_password = bytes(check_existing('password', 'users', 'email', email)[0])
+    return bcrypt.checkpw(password.encode('utf-8'), hashed_password)
+
+
+def save_user(email, password):
+    # Save to db
+    columns = ['email', 'password']
+    data = [email, password]
+    # Catch if email exists in db
+    try:
+        insert_into_db(columns, data, 'users')
+    except psycopg2.errors.UniqueViolation:
+        return False
+    return True
+
