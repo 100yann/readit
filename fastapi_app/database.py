@@ -23,19 +23,21 @@ def close_connection(connection):
 
 
 def insert_into_db(columns, values, table):
+    print('starting')
     connection = psycopg2.connect(**db_config)
     connection.autocommit = True
     cur = connection.cursor()
 
+    print('query')
     query = "INSERT INTO {} ({}) VALUES ({});"
     
     column_str = ', '.join(map(str, columns))
     value_str = ', '.join(['%s' for col in columns])
     
     formatted_query = query.format(table, column_str, value_str)
-
+    print('executing')
     cur.execute(formatted_query, values)
-    
+    print('executed')
     connection.close()
 
 
@@ -56,7 +58,7 @@ def get_reviews():
     return results
 
 
-def check_existing(columns, table, column, value):
+def check_if_exists(columns, table, column, value):
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
 
@@ -108,15 +110,16 @@ def update_data(table, column, value, condition, condition_value):
     return
 
 
-def hash_password(password):
-    password_bytes = password.encode('utf-8')
-    hashed_pw = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
-    return hashed_pw
-
 
 def verify_password(password, email):
     hashed_password = bytes(check_existing('password', 'users', 'email', email)[0])
     return bcrypt.checkpw(password.encode('utf-8'), hashed_password)
+
+
+def hash_password(password):
+    password_bytes = password.encode('utf-8')
+    hashed_password = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    return hashed_password
 
 
 def save_user(email, password):
@@ -124,9 +127,7 @@ def save_user(email, password):
     columns = ['email', 'password']
     data = [email, password]
     # Catch if email exists in db
-    try:
-        insert_into_db(columns, data, 'users')
-    except psycopg2.errors.UniqueViolation:
-        return False
+    insert_into_db(columns, data, 'users')
+
     return True
 

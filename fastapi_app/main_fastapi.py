@@ -12,7 +12,7 @@ def root():
 @app.post('/authenticate_user/')
 def authenticate_user(email:str, password:str):
     # check if email exists in db
-    if not check_existing(
+    if not check_if_exists(
         columns='email', 
         table= 'users', 
         column= 'email', 
@@ -30,11 +30,19 @@ def authenticate_user(email:str, password:str):
 
 
 @app.post('/save_user/')
-def save_user(email:str, password:str):
-    hashed_password = hash_password(password)
-
-    # Save user
-    if not save_user(email, hashed_password):
+def save_user_route(email: str, password: str):
+    # check if user exists
+    if check_if_exists(
+        columns='email', 
+        table='users', 
+        column='email', 
+        value=email
+    ):
         raise HTTPException(status_code=400, detail='User already exists')
+
+    hashed_password = hash_password(password)
+    
+    # Save user
+    save_user(email, hashed_password)
 
     return {"status": "success", "message": "User saved successfully"}
