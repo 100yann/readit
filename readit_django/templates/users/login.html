@@ -1,9 +1,10 @@
-{% extends 'template.html' %}
-{% block title %}Sign In{% endblock %}
+{% extends '../template.html' %}
+{% block title %}Login{% endblock %}
 {% block body %}
 <div class="container">
     <form id="sign-in-form" method="POST">
         <div class="form-group" id="email-field">
+            {% csrf_token %}
             <label for="email-input">Email address</label>
             <input name="email" type="email" class="form-control" id="email-input">
         </div>
