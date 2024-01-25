@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('aaaa')
     const bookForm = document.getElementById('book-form')
     const reviewForm = document.getElementById('review-form')
 

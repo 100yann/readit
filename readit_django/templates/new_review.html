@@ -1,4 +1,6 @@
 {% extends 'template.html' %}
+{% load static %}
+
 {% block title %}Add Review{%endblock%}
 
 {% block body %}
@@ -31,5 +33,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="/static/add_review.js"></script>
+    <script src="{% static 'new_review.js' %}"></script>
 {% endblock %}
