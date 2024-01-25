@@ -33,7 +33,14 @@ def login_user(request, method=['GET', 'POST']):
 
             request.session['user'] = user_id
             request.session['user_email'] = user_email
-            
+
             return render(request, "users/login.html")
 
     return render(request, "users/login.html")
+
+
+def logout_user(request):
+    request.session['user'] = ''
+    request.session['user_email'] = ''
+    return render(request, "users/login.html")
+
