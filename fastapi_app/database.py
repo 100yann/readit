@@ -131,3 +131,15 @@ def save_user(email, password):
 
     return True
 
+
+def get_user_id(email):
+    connection = establish_connection()
+    cursor = connection.cursor()
+
+    db_query = "SELECT id FROM users WHERE email= %s"
+    cursor.execute(db_query, (email,))
+    # returns tuple so access first element
+    user_id = cursor.fetchone()[0]
+
+    close_connection(connection)
+    return user_id
