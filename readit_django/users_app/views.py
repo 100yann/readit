@@ -1,7 +1,9 @@
 from django.shortcuts import render
+from django.contrib.auth import login, authenticate
 import requests
 
-def register(request, method=['GET', 'POST']):
+
+def register_user(request, method=['GET', 'POST']):
     if request.method == 'POST':
         user_email = request.POST.get('email')
         user_password = request.POST.get('password')
@@ -16,7 +18,7 @@ def register(request, method=['GET', 'POST']):
     return render(request, "users/register.html")
 
 
-def login(request, method=['GET', 'POST']):
+def login_user(request, method=['GET', 'POST']):
     if request.method == 'POST':
         user_email = request.POST.get('email')
         user_password = request.POST.get('password')  
@@ -25,7 +27,13 @@ def login(request, method=['GET', 'POST']):
             'email': user_email,
             'password': user_password
         })
+        if response.status_code == 200:
+            response_data = response.json()
+            user_id = response_data['data']['user_id']
 
-        print(response.status_code)
-        print(response.json())
+            request.session['user'] = user_id
+            request.session['user_email'] = user_email
+            
+            return render(request, "users/login.html")
+
     return render(request, "users/login.html")

@@ -17,10 +17,14 @@
           <div class="navbar-nav">
             <a class="nav-item nav-link" href="">Home </a>
             <a class="nav-item nav-link" href="">Add Review</a>
-              <a class="nav-item nav-link" href="">Sign Out</a>
-              <a class="nav-item nav-link" href="">Sign In</a>
+        
+            {% if request.session.user %}
+              <a class="nav-item nav-link" href="">{{ request.session.user_email }}</a>
+              <a class="nav-item nav-link" href="">Log Out</a>
+            {% else %}
+              <a class="nav-item nav-link" href="">Log In</a>
               <a class="nav-item nav-link" href="">Sign Up</a>
-
+            {% endif %}
           </div>
         </div>
     </nav>
