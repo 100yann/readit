@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Form
 from database import *
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -51,3 +52,29 @@ def save_user_route(email: str = Form(...), password: str = Form(...)):
     return {"status": "success", "message": "User saved successfully"}
 
 
+@app.post("/save_review")
+def save_review(request: Request, data: ReviewData):  
+
+    book_isbn = data.bookIsbn
+    # Check if book isn't saved to DB
+    if not check_if_exists('id', 'book_details', 'isbn', book_isbn):
+        # Save book to DB
+        columns = ['title', 'author', 'description', 'isbn', 'thumbnail']
+        values = [
+            data.bookTitle, 
+            data.bookAuthor, 
+            data.bookDescription,
+            book_isbn,
+            data.bookThumbnail,
+            ]
+        insert_into_db(columns, values, 'book_details')
+
+    # Get the id of the book reviewed
+    book_id = get_book_id_by_isbn(book_isbn)[0]
+
+    # save review
+    columns = ['review_content', 'date_read', 'book_reviewed', 'reviewed_by']
+    values = [data.review, data.date_read, book_id, reviewed_by]
+    insert_into_db(columns, values, 'reviews')
+
+    return {'status': 'success', 'message': 'Review saved successfully'}

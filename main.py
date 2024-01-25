@@ -175,41 +175,7 @@ def new_review(request: Request, current_user: str = Depends(get_current_user)):
         return RedirectResponse(url='/sign_in')
 
 
-@app.post("/save_review")
-def save_review(request: Request, data: ReviewData, current_user: str = Depends(get_current_user)):  
-    if not current_user:
-        return RedirectResponse(url='/sign_in')
 
-    # Get user id to store in db
-    user = get_current_user(request)
-    reviewed_by = int(check_existing('id', 'users', 'email', user)[0])
-    
-
-    book_isbn = data.bookIsbn
-
-    # Save book to DB if it's not already saved
-    if not check_existing(1, 'book_details', 'isbn', book_isbn):
-        columns = ['title', 'author', 'description', 'isbn', 'thumbnail']
-        values = [
-            data.bookTitle, 
-            data.bookAuthor, 
-            data.bookDescription,
-            book_isbn,
-            data.bookThumbnail,
-            ]
-        insert_into_db(columns, values, 'book_details')
-    else:
-        ...
-
-    # Get the id of the book reviewed
-    book_id = get_book_id_by_isbn(book_isbn)[0]
-
-    # save review
-    columns = ['review_content', 'date_read', 'book_reviewed', 'reviewed_by']
-    values = [data.review, data.date_read, book_id, reviewed_by]
-    insert_into_db(columns, values, 'reviews')
-
-    return JSONResponse(content={"status": "success", "message": "Review saved successfully"})
 
 
 @app.delete("/delete_review/{review_id}")
