@@ -15,8 +15,8 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
-            <a class="nav-item nav-link" href="">Home </a>
-            <a class="nav-item nav-link" href="">Add Review</a>
+            <a class="nav-item nav-link" href="{% url 'home_page' %}">Home </a>
+            <a class="nav-item nav-link" href="{% url 'new_review' %}">Add Review</a>
         
             {% if request.session.user %}
               <a class="nav-item nav-link" href="">{{ request.session.user_email }}</a>
