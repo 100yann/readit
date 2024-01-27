@@ -7,13 +7,13 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 
-@app.get("/get_all_posts")
-def root():
+@app.get("/get_reviews")
+def get_all_reviews():
     all_reviews = get_reviews()
     return {'reviews': all_reviews}
 
 
-@app.post('/authenticate_user/')
+@app.post('/authenticate_user')
 def authenticate_user(email: str = Form(...), password: str = Form(...)):
     # check if email exists in db
     if not check_if_exists(
@@ -35,7 +35,7 @@ def authenticate_user(email: str = Form(...), password: str = Form(...)):
         raise HTTPException(status_code=401, detail='Incorrect password')
 
 
-@app.post('/save_user/')
+@app.post('/save_user')
 def save_user_route(email: str = Form(...), password: str = Form(...)):
     # check if user exists
     if check_if_exists(

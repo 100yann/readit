@@ -46,7 +46,7 @@ def get_reviews():
     db_query = """
     SELECT reviews.*, book_details.title, book_details.author, book_details.thumbnail
     FROM reviews
-    INNER JOIN book_details ON reviews.book_reviewed = book_details.book_id
+    INNER JOIN book_details ON reviews.book_reviewed = book_details.id
     """
     cursor = connection.cursor()
     cursor.execute(db_query)
