@@ -1,104 +1,98 @@
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('aaaa')
-    const bookForm = document.getElementById('book-form')
-    const reviewForm = document.getElementById('review-form')
+document.addEventListener("DOMContentLoaded", () => {
 
-    const bookSearchField = document.getElementById('review-book-field')
-    const buttonNext = document.getElementById('next-button')
-    buttonNext.style.display = 'none'
+  const bookForm = document.getElementById("book-form");
+  const reviewForm = document.getElementById("review-form");
 
-    bookForm.onsubmit = async (event) => {
-        event.preventDefault()
-        const searchValue = bookSearchField.value
+  const bookSearchField = document.getElementById("review-book-field");
+  const buttonNext = document.getElementById("next-button");
+  buttonNext.style.display = "none";
 
-        // Check if there is any search input
-        if (searchValue){
-            // Display the results on the page
-            const results = await displaySearchResults(searchValue)
+  bookForm.onsubmit = async (event) => {
+    event.preventDefault();
+    const searchValue = bookSearchField.value;
+    // Check if there is any search input
+    if (searchValue) {
+      // Display the results on the page
+      const results = await displaySearchResults(searchValue);
 
-            const resultEntries = document.querySelectorAll('.displayEntry')
-            const resultArray = Array.from(resultEntries)
+      const resultEntries = document.querySelectorAll(".displayEntry");
+      const resultArray = Array.from(resultEntries);
 
-            resultEntries.forEach((element1) => {
-                
-                // On click of a book entry hide all the other entries
-                // and display only the clicked entry
-                element1.onclick = () => {
-
-                    if (buttonNext.style.display === 'none'){
-                        buttonNext.style.display = 'block'
-                    } else {
-                        buttonNext.style.display = 'none'
-                    }
-                    resultEntries.forEach((element2) => {
-                        // Hide other entries
-                        if (element1 != element2){
-                            element2.style.display = 'none'
-                        }
-                    })
-                    // If currently only one entry is displayed and it's
-                    // clicked again - show all entries again
-                    if (element1.style.display === 'block') {
-                        element1.id = ''
-                        resultArray.forEach((element2) => {
-                            element2.style.display = 'flex';
-                        });
-                    } else {
-                        element1.style.display = 'block';
-                        element1.id = 'picked'
-                    }
-                }
-            })
-        }
-    }
-
-    buttonNext.onclick = () => {
-        bookForm.style.display = 'none'
-        document.getElementById('display-results').style.display = 'none'
-        buttonNext.style.display = 'none'
-        reviewForm.style.display = 'block'
-
-
-        reviewForm.onsubmit = (event) => {
-            event.preventDefault()
-            const date = document.getElementById('date-field').value
-            const review = document.getElementById('review-field').value
-            if (date && review){
-                var data = getBookInfo()
-                data.review = review
-                data.date_read = date
-
-                saveReview(data)
+      resultEntries.forEach((element1) => {
+        // On click of a book entry hide all the other entries
+        // and display only the clicked entry
+        element1.onclick = () => {
+          if (buttonNext.style.display === "none") {
+            buttonNext.style.display = "block";
+          } else {
+            buttonNext.style.display = "none";
+          }
+          resultEntries.forEach((element2) => {
+            // Hide other entries
+            if (element1 != element2) {
+              element2.style.display = "none";
             }
-        }
+          });
+          // If currently only one entry is displayed and it's
+          // clicked again - show all entries again
+          if (element1.style.display === "block") {
+            element1.id = "";
+            resultArray.forEach((element2) => {
+              element2.style.display = "flex";
+            });
+          } else {
+            element1.style.display = "block";
+            element1.id = "picked";
+          }
+        };
+      });
     }
-})
+  };
+
+  buttonNext.onclick = () => {
+    bookForm.style.display = "none";
+    document.getElementById("display-results").style.display = "none";
+    buttonNext.style.display = "none";
+    reviewForm.style.display = "block";
+
+    reviewForm.onsubmit = (event) => {
+      event.preventDefault();
+      const date = document.getElementById("date-field").value;
+      const review = document.getElementById("review-field").value;
+      if (date && review) {
+        var data = getBookInfo();
+        data.review = review;
+        data.date_read = date;
+
+        saveReview(data);
+      }
+    };
+  };
+});
 
 // Display books returned by the Google API
-async function displaySearchResults(searchValue){
-    // fetch the results
-    const response = await fetch(`/find?search=${searchValue}`)
-    const data = await response.json()
+async function displaySearchResults(searchValue) {
+  // fetch the results
+  const response = await fetch(`/find/${searchValue}`);
+  const data = await response.json();
 
-    if (data){
-        // display the results tab where all results will be displayed
-        const resultsTab = document.getElementById('display-results')
-        resultsTab.innerHTML = ''                
-        resultsTab.style.display = 'block'
+  if (data) {
+    // display the results tab where all results will be displayed
+    const resultsTab = document.getElementById("display-results");
+    resultsTab.innerHTML = "";
+    resultsTab.style.display = "block";
 
-        data.forEach(element => {
-            resultsTab.append(createEntry(element))                        
-            }
-        );
-        return data
-    }   
+    data.forEach((element) => {
+      resultsTab.append(createEntry(element));
+    });
+    return data;
+  }
 }
 
-
-function createEntry(element){
-    let div = document.createElement('div')
-    div.className = 'displayEntry'
-    div.innerHTML = `
+function createEntry(element) {
+  let div = document.createElement("div");
+  div.className = "displayEntry";
+  div.innerHTML = `
         <div id='entryThumbnail'>
             <img id='book-thumbnail' src=${element.thumbnail}>
         </div>
@@ -108,30 +102,29 @@ function createEntry(element){
             <p id='book-description'>${element.description}</p>
             <p>${element.pageCount}</p>
         </div
-        `
-    return div
+        `;
+  return div;
 }
 
+function getBookInfo() {
+  const selectedBook = document.getElementById("picked");
+  bookData = {
+    bookTitle: selectedBook.querySelector("#book-title").textContent,
+    bookAuthor: selectedBook.querySelector("#author-link").textContent,
+    bookDescription:
+      selectedBook.querySelector("#book-description").textContent,
+    bookIsbn: selectedBook.querySelector("#book-title").dataset.isbn,
+    bookThumbnail: selectedBook.querySelector("#book-thumbnail").src,
+  };
 
-function getBookInfo(){
-    const selectedBook = document.getElementById('picked')
-    bookData = {
-        'bookTitle': selectedBook.querySelector('#book-title').textContent,
-        'bookAuthor': selectedBook.querySelector('#author-link').textContent,
-        'bookDescription': selectedBook.querySelector('#book-description').textContent,
-        'bookIsbn': selectedBook.querySelector('#book-title').dataset.isbn,
-        'bookThumbnail': selectedBook.querySelector('#book-thumbnail').src
-    }
-    
-    return bookData
-
+  return bookData;
 }
-function saveReview(data){
-    fetch(`/save_review`, {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    })
+function saveReview(data) {
+  fetch(`/save_review`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 }
