@@ -76,7 +76,7 @@ def get_book_id_by_isbn(isbn):
     connection = establish_connection()
     cursor = connection.cursor()
 
-    db_query = "SELECT book_id FROM book_details WHERE isbn = %s;"
+    db_query = "SELECT id FROM book_details WHERE isbn = %s;"
     cursor.execute(db_query, (isbn,))
     result = cursor.fetchone()
 

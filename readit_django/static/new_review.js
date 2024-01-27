@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
         var data = getBookInfo();
         data.review = review;
         data.date_read = date;
-
+        
         saveReview(data);
       }
     };
@@ -119,11 +119,15 @@ function getBookInfo() {
 
   return bookData;
 }
+
+
 function saveReview(data) {
-  fetch(`/save_review`, {
+  const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+  fetch(`/new`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken,
     },
     body: JSON.stringify(data),
   });

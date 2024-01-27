@@ -6,6 +6,7 @@
 {% block body %}
     <div class="container">
         <form action="" id="book-form">
+            {% csrf_token %}
             <h1>Add a Review</h1>
             <div id="add-book">
                 <h4>Book</h4>

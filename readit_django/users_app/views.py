@@ -12,8 +12,6 @@ def register_user(request, method=['GET', 'POST']):
             'password': user_password
         })
 
-        print(response.status_code)
-        print(response.json())
     return render(request, "users/register.html")
 
 
