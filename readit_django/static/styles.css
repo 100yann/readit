@@ -45,6 +45,24 @@ body {
     max-width: 200px;
 }
 
+
+@media (max-width: 1000px) {
+    #review {
+        
+        margin: 0 2rem;
+    }
+    #review-container {
+        flex-direction: column;
+        justify-content: center;
+    }
+    #book-cover {
+        margin: auto;
+    }
+    #review-date {
+        display: none;
+    }
+}
+
 .displayEntry{
     display: flex;
 }
