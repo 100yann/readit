@@ -8,9 +8,10 @@ FASTAPI_URL = 'http://127.0.0.1:3000'
 
 # Create your views here.
 def home_page(request):
-    response = requests.get(f'{FASTAPI_URL}/get_reviews')
-    data = response.json()
-    reviews = data.get('reviews', [])    
+    # response = requests.get(f'{FASTAPI_URL}/get_reviews')
+    # data = response.json()
+    # reviews = data.get('reviews', [])    
+    return render(request, 'index.html')
     return render(request, 'index.html', context = {'reviews': reviews})
 
 
