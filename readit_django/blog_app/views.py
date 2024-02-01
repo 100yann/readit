@@ -11,8 +11,9 @@ def home_page(request):
     # response = requests.get(f'{FASTAPI_URL}/get_reviews')
     # data = response.json()
     # reviews = data.get('reviews', [])    
-    return render(request, 'index.html')
-    return render(request, 'index.html', context = {'reviews': reviews})
+    # print(reviews)
+    dummy_data = [[20, 'asdasd', '2024-01-27T15:50:28.657327', '2024-01-09', 6, 8, 'All Quiet on the Western Front', 'Erich Maria Remarque', 'http://books.google.com/books/content?id=EDkU_EbrbmgC&printsec=frontcover&img=1&zoom=1&source=gbs_api', 's.kolev@jellysmack.com'], [19, 'awdasdsadasd', '2024-01-24T15:25:32.586629', '2024-01-15', 5, 8, 'Animal Farm', 'George Orwell', 'http://books.google.com/books/content?id=nkalO3OsoeMC&printsec=frontcover&img=1&zoom=1&source=gbs_api', 's.kolev@jellysmack.com'], [18, 'This is a review', '2023-12-29T12:10:51.411983', '2023-12-28', 1, 8, 'Slaughterhouse-Five', 'Kurt Vonnegut', 'http://books.google.com/books/content?id=FM4y7N1kM9AC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api', 's.kolev@jellysmack.com']]
+    return render(request, 'index.html', context = {'reviews': dummy_data})
 
 
 def new_review(request, method=['GET', 'POST']):
