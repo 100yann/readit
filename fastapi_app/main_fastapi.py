@@ -36,7 +36,11 @@ def authenticate_user(email: str = Form(...), password: str = Form(...)):
 
 
 @app.post('/save_user')
-def save_user_route(email: str = Form(...), password: str = Form(...)):
+def save_user_route(email: str = Form(...), 
+                    password: str = Form(...),
+                    first_name: str = Form(...),
+                    last_name: str = Form(...),
+                    ):
     # check if user exists
     if check_if_exists(
         columns='email', 
@@ -49,7 +53,7 @@ def save_user_route(email: str = Form(...), password: str = Form(...)):
     hashed_password = hash_password(password)
 
     # Save user
-    save_user(email, hashed_password)
+    save_user(email, hashed_password, first_name, last_name)
 
     return {"status": "success", "message": "User saved successfully"}
 

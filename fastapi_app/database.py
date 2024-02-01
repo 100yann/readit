@@ -23,21 +23,17 @@ def close_connection(connection):
 
 
 def insert_into_db(columns, values, table):
-    print('starting')
     connection = psycopg2.connect(**db_config)
     connection.autocommit = True
     cur = connection.cursor()
 
-    print('query')
     query = "INSERT INTO {} ({}) VALUES ({});"
     
     column_str = ', '.join(map(str, columns))
     value_str = ', '.join(['%s' for col in columns])
     
     formatted_query = query.format(table, column_str, value_str)
-    print('executing')
     cur.execute(formatted_query, values)
-    print('executed')
     connection.close()
 
 
@@ -123,10 +119,10 @@ def hash_password(password):
     return hashed_password
 
 
-def save_user(email, password):
+def save_user(email, password, first_name, last_name):
     # Save to db
-    columns = ['email', 'password']
-    data = [email, password]
+    columns = ['email', 'password', 'first_name', 'last_name']
+    data = [email, password, first_name, last_name]
     # Catch if email exists in db
     insert_into_db(columns, data, 'users')
 
