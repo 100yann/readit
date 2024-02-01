@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const userEmail = document.getElementById('email-input')
         const userPassword = document.getElementById('password-input')
+        const firstName = document.getElementById('first-name')
+        const lastName = document.getElementById('last-name')
 
         const response = await fetch('/sign_up', {
             method: 'POST',
@@ -14,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify({
                 email: userEmail.value,
                 password: userPassword.value,
+                firstName: firstName.value,
+                lastName: lastName.value
             }),
         })
 

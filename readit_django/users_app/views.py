@@ -6,10 +6,14 @@ def register_user(request, method=['GET', 'POST']):
     if request.method == 'POST':
         user_email = request.POST.get('email')
         user_password = request.POST.get('password')
+        first_name = request.POST.get('first-name')
+        last_name = request.POST.get('last-name')
 
-        response = requests.post('http://127.0.0.1:3000/save_user/', data = {
+        response = requests.post('http://127.0.0.1:3000/save_user', data = {
             'email': user_email,
-            'password': user_password
+            'password': user_password,
+            'first_name': first_name,
+            'last_name': last_name
         })
 
     return render(request, "users/register.html")
