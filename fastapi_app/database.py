@@ -40,7 +40,8 @@ def insert_into_db(columns, values, table):
 def get_reviews():
     connection = psycopg2.connect(**db_config)
     db_query = """
-    SELECT reviews.*, book_details.title, book_details.author, book_details.thumbnail, users.email
+    SELECT reviews.*, book_details.title, book_details.author, 
+    book_details.thumbnail, users.id, users.first_name, users.last_name
     FROM reviews
     INNER JOIN book_details ON reviews.book_reviewed = book_details.id
     INNER JOIN users on reviews.reviewed_by = users.id
