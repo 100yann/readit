@@ -5,10 +5,11 @@ import bcrypt
 
 
 db_config = {
-    'user': os.environ.get('aws_user'),
-    'password': os.environ.get('aws_password'),
-    'host': os.environ.get('aws_host'),
-    'port': os.environ.get('aws_port')
+    'dbname': 'readit',
+    'user': 'postgres',
+    'password': os.environ.get('db_password'),
+    'host': os.environ.get('host'),
+    'port': os.environ.get('port')
 }
 
 
