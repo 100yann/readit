@@ -10,17 +10,17 @@
             <div id="review-container">
                 <div id="book-cover">
                     <a href="">
-                        <img src='{{ review.8 }}' alt="">
+                        <img src='{{ review.thumbnail }}' alt="">
                     </a>
                 </div>
                 <div>
                     <div id="review-heading-container">
                         <div id="review-heading">
-                            <span><a href="">{{ review.10 }} {{ review.11 }}</a></span> reviewed <span><a href="">{{ review.6 }}</a></span>
+                            <span><a href="">{{ review.first_name }} {{ review.last_name }}</a></span> reviewed <span><a href="">{{ review.title }}</a></span>
                         </div>
-                        <span id="review-date">{{ review.2 }}</span>
+                        <span id="review-date">{{ review.created_on }}</span>
                     </div>
-                    <p>{{ review.1 }}</p>
+                    <p>{{ review.review }}</p>
                 </div>
             </div>
         </div>

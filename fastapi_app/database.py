@@ -47,12 +47,13 @@ def get_reviews():
     """
     cursor = connection.cursor()
     cursor.execute(db_query)
+    colnames = [desc[0] for desc in cursor.description]
     results = cursor.fetchall()
 
     cursor.close()
     connection.close()
-
-    return results
+    combined_data = [dict(zip(colnames, row)) for row in results]
+    return combined_data
 
 
 def check_if_exists(columns, table, column, value):
@@ -140,3 +141,5 @@ def get_user_id(email):
 
     close_connection(connection)
     return user_id
+
+
