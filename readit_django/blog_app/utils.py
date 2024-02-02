@@ -35,3 +35,17 @@ def format_results(results):
 
             formatted_results.append(curr)
     return formatted_results
+
+
+def get_book_by_isbn(isbn):
+    base_url = "https://www.googleapis.com/books/v1/volumes"
+    params = {
+        'q': f'isbn:{isbn}'
+    }
+    response = requests.get(base_url, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        return data.get("items", [])
+    else:
+        return JsonResponse({'error': 'Failed to fetch books'}, status=response.status_code)
