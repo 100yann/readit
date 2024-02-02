@@ -60,11 +60,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const date = document.getElementById("date-field").value;
       const review = document.getElementById("review-field").value;
       if (date && review) {
-        var data = getBookInfo();
-        data.review = review;
-        data.date_read = date;
-        
-        saveReview(data);
+        var bookData = getBookIsbn();
+        bookData.review = review;
+        bookData.date_read = date;
+        console.log(bookData)
+        saveReview(bookData);
       }
     };
   };
@@ -106,17 +106,12 @@ function createEntry(element) {
   return div;
 }
 
-function getBookInfo() {
+function getBookIsbn() {
   const selectedBook = document.getElementById("picked");
-  bookData = {
-    bookTitle: selectedBook.querySelector("#book-title").textContent,
-    bookAuthor: selectedBook.querySelector("#author-link").textContent,
-    bookDescription:
-      selectedBook.querySelector("#book-description").textContent,
-    bookIsbn: selectedBook.querySelector("#book-title").dataset.isbn,
-    bookThumbnail: selectedBook.querySelector("#book-thumbnail").src,
-  };
-
+  const bookIsbn = selectedBook.querySelector("#book-title").dataset.isbn;
+  const bookData = {
+    bookIsbn
+  }
   return bookData;
 }
 
