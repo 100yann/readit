@@ -15,6 +15,13 @@
             <p>{{ details.categories }}</p>
         </div>
     </div>
+    <div id="reviews">
+        {% for review in reviews %}
+            <h5>{{ review.first_name }} {{ review.last_name }}</h5>
+            <p>{{ review.date_read }}</p>
+            <p>{{ review.review }}</p>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}
