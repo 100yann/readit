@@ -16,7 +16,7 @@
                 <div>
                     <div id="review-heading-container">
                         <div id="review-heading">
-                            <span><a href="">{{ review.first_name }} {{ review.last_name }}</a></span> reviewed <span><a href="">{{ review.title }}</a></span>
+                            <span><a href="">{{ review.first_name }} {{ review.last_name }}</a></span> reviewed <span><a href="{% url 'display_book' isbn=review.book_reviewed %}">{{ review.title }}</a></span>
                         </div>
                         <span id="review-date">{{ review.created_on }}</span>
                     </div>

@@ -3,7 +3,9 @@ body {
     background-color: rgba(244,241,234,0.5);
 }
 
-
+#page-border {
+    margin: 0 200px;
+}
 #review {
     padding: 30px 50px;
     margin: 0 5rem;
@@ -76,7 +78,15 @@ body {
     display: none;
 }
 
+
 /* Sign Up */
 .error{
     color: red;
+}
+
+
+/* View book */
+.book-view {
+    display: flex;
+    gap: 50px;
 }

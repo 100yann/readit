@@ -1,0 +1,20 @@
+{% extends 'template.html' %}
+{% block title %}Book{% endblock %}
+
+{% block body %}
+<div id="page-border">
+    <div class="book-view">
+        <div id="book-cover">
+            <img src="{{ details.thumbnail }}" alt="book-cover">
+        </div>
+        <div id="book-details">
+            <h1>{{ details.title }}</h1>
+            <h3>by {{ details.author }}</h3>
+            <p>{{ details.description }}</p>
+            <p>{{ details.pageCount }}</p>
+            <p>{{ details.categories }}</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
