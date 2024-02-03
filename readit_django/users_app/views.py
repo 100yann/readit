@@ -35,13 +35,24 @@ def login_user(request, method=['GET', 'POST']):
             request.session['user'] = user_id
             request.session['user_email'] = user_email
 
-            return render(request, "users/login.html")
+            return render(request, 'users/login.html')
 
-    return render(request, "users/login.html")
+    return render(request, 'users/login.html')
 
 
 def logout_user(request):
     request.session['user'] = ''
     request.session['user_email'] = ''
-    return render(request, "users/login.html")
+    return render(request, 'users/login.html')
 
+
+def display_user_profile(request, user_id):
+    print(user_id)
+    response = requests.get('http://127.0.0.1:3000/get_user', data = {
+        'id': user_id
+    })
+
+    if response.status_code == 200:
+        response_data = response.json()
+        user_data = response_data['data']['user_data']
+    return render(request, 'users/user_profile.html', context={'user_data': user_data})

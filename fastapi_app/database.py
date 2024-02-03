@@ -150,3 +150,13 @@ def get_user_id(email):
     return user_id
 
 
+def get_user_data(id):
+    connection = establish_connection()
+    cursor = connection.cursor()
+
+    db_query = 'SELECT first_name, last_name, email FROM users WHERE id = %s'
+    cursor.execute(db_query, (id,))
+    user_data = cursor.fetchone()
+
+    close_connection(connection)
+    return user_data

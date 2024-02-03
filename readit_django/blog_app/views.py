@@ -11,13 +11,13 @@ def home_page(request):
     response = requests.get(f'{FASTAPI_URL}/get_reviews')
     data = response.json()
     reviews = data.get('reviews', [])
-
+    
     for review in reviews:
         book_isbn = review['book_reviewed']
         book_info = get_book_by_isbn(book_isbn, preview=True)
         for key in book_info.keys():
             review[key] = book_info[key]
-    
+            
     return render(request, 'index.html', context={
         'reviews': reviews
     })
@@ -47,3 +47,4 @@ def display_book(request, isbn):
     reviews = data.get('reviews', [])
 
     return render(request, 'display_book.html', context={'details': book_details, 'reviews': reviews})
+

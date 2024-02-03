@@ -67,10 +67,16 @@ class ReviewData(BaseModel):
 
 
 @app.post("/save_review")
-def save_review(request: Request, data: ReviewData):  
+def save_review(data: ReviewData):  
     # save review
     columns = ['review', 'date_read', 'book_reviewed', 'user_id']
     values = [data.review, data.date_read, data.bookIsbn, data.reviewed_by]
     insert_into_db(columns, values, 'reviews')
 
     return {'status': 'success', 'message': 'Review saved successfully'}
+
+
+@app.get('/get_user')
+def get_user(id: str = Form(...)):
+    user_data = get_user_data(id)
+    return {'detail':'Login successful', 'data': {'user_data': user_data}}
