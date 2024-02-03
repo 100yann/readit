@@ -8,8 +8,9 @@ app = FastAPI()
 
 
 @app.get("/get_reviews")
-def get_all_reviews():
-    all_reviews = get_reviews()
+def get_all_reviews(isbn: str | None = None):
+    print(isbn)
+    all_reviews = get_reviews(isbn)
     return {'reviews': all_reviews}
 
 

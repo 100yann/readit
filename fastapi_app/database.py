@@ -38,15 +38,22 @@ def insert_into_db(columns, values, table):
     connection.close()
 
 
-def get_reviews():
+def get_reviews(isbn=None):
     connection = psycopg2.connect(**db_config)
     db_query = """
     SELECT reviews.*, users.id, users.first_name, users.last_name
     FROM reviews
     INNER JOIN users on reviews.user_id = users.id
     """
+
     cursor = connection.cursor()
-    cursor.execute(db_query)
+
+    if isbn:
+        db_query += 'WHERE book_reviewed = %s'
+        cursor.execute(db_query, (isbn,))
+    else:
+        cursor.execute(db_query)
+        
     colnames = [desc[0] for desc in cursor.description]
     results = cursor.fetchall()
 
