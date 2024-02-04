@@ -5,6 +5,13 @@ document.addEventListener('DOMContentLoaded', () => {
             editReview(button)
         }
     })
+
+    const deleteButtons = document.querySelectorAll('#delete-button')
+    deleteButtons.forEach((button) => {
+        button.onclick = () => {
+            deleteReview(button)
+        }
+    })
 })
 
 
@@ -50,5 +57,22 @@ function saveReview(reviewId, reviewText) {
             "X-CSRFToken": csrfToken,
         },
         body: JSON.stringify(reviewText)
+    })
+}
+
+
+function deleteReview(button) {
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    const reviewContainer = button.closest('#review');
+    const reviewId = reviewContainer.getAttribute('data-review-id')
+
+    reviewContainer.hidden = true;
+
+    response = fetch(`delete/${reviewId}`, {
+        method: 'DELETE',
+        headers: {
+            "X-CSRFToken": csrfToken,
+        }
     })
 }

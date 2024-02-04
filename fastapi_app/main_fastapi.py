@@ -89,6 +89,14 @@ def edit_review(review_id: str = Body(...),
     return {'status': 'success', 'message': 'Review edited successfully'}
 
 
+@app.delete('/delete_review')
+def delete_review(review_id: str):
+    delete_row(table='reviews',
+               column='review_id',
+               value=review_id)
+    return {'status': 'success', 'message': 'Review deleted successfully'}
+
+
 @app.get('/get_user')
 def get_user(id: str = Form(...)):
     user_data = get_user_data(id)

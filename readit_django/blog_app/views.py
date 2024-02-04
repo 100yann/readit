@@ -41,6 +41,9 @@ def edit_review(request, review_id, method=['PUT']):
     return HttpResponse()
 
 
+def delete_review(request, review_id, method=['DELETE']):
+    response = requests.delete(f'{FASTAPI_URL}/delete_review', params={'review_id': review_id})
+    return HttpResponse()
 
 def find_book(request, book_title):
     results = get_books_by_title(title = book_title)
