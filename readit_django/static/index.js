@@ -1,0 +1,38 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const editButtons = document.querySelectorAll('#edit-button')
+    editButtons.forEach((button) => {
+        button.onclick = () => {
+            editReview(button)
+        }
+    })
+})
+
+
+function editReview(editButton) {
+    editButton.hidden = true;
+    
+    const saveButton = editButton.parentElement.querySelector('#save-button')
+    saveButton.hidden = false;
+
+    const reviewContainer = editButton.closest('#review').querySelector('#review-container');
+
+    const reviewText = reviewContainer.querySelector('#review-text');
+    reviewText.hidden = true;
+
+    const newReview = reviewContainer.querySelector('#edit-review-area')
+    newReview.textContent = reviewText.textContent
+    newReview.hidden = false;
+    newReview.focus()
+    newReview.setSelectionRange(newReview.textContent.length, newReview.textContent.length)
+
+    saveButton.onclick = () => {
+        if (newReview.value != reviewText.textContent && newReview.value.trim().length > 0) {
+            reviewText.textContent = newReview.value
+        }
+        newReview.hidden = true;
+        reviewText.hidden = false;
+        
+        saveButton.hidden = true;
+        editButton.hidden = false;
+    }
+}

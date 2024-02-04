@@ -1,4 +1,5 @@
 {% extends 'template.html' %}
+{% load static %}
 {% block title %}Home{% endblock%}
 
 {% block body %}
@@ -13,18 +14,31 @@
                         <img src='{{ review.thumbnail }}' alt="">
                     </a>
                 </div>
-                <div>
+                <div id="review-contents">
                     <div id="review-heading-container">
                         <div id="review-heading">
                             <span><a href="{% url 'user_profile' user_id=review.user_id %}">{{ review.first_name }} {{ review.last_name }}</a></span> reviewed <span><a href="{% url 'display_book' isbn=review.book_reviewed %}">{{ review.title }}</a></span>
                         </div>
                         <span id="review-date">{{ review.created_on }}</span>
                     </div>
-                    <p>{{ review.review }}</p>
+                    <p id="review-text">{{ review.review }}</p>
+                    <textarea name="" id="edit-review-area" hidden></textarea>
                 </div>
+            </div>
+            <div class="review-interactions">
+                {% if request.session.user == review.user_id %}
+                <div>
+                    <button id="edit-button">Edit</button>
+                    <button id="save-button" hidden>Save</button>
+                </div>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'index.js' %}"></script>
 {% endblock %}
