@@ -125,5 +125,11 @@ function saveReview(data) {
       "X-CSRFToken": csrfToken,
     },
     body: JSON.stringify(data),
-  });
-}
+  })  
+  .then(response => {
+    if (response.ok) {
+      window.location.href = '/home';
+    }
+  })
+};
+
