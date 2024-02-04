@@ -5,9 +5,10 @@
 {% block body %}
 <div class="container">
     <div id="display-posts">
+    {% csrf_token %}
         <h1>Home</h1>
         {% for review in reviews %}
-        <div id="review">
+        <div id="review" data-review-id='{{ review.review_id }}'>
             <div id="review-container">
                 <div id="book-cover">
                     <a href="">

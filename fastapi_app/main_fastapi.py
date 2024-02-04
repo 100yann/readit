@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Form, Request
+from fastapi import FastAPI, HTTPException, Form, Request, Body
 from database import *
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,7 +9,6 @@ app = FastAPI()
 
 @app.get("/get_reviews")
 def get_all_reviews(isbn: str | None = None):
-    print(isbn)
     all_reviews = get_reviews(isbn)
     return {'reviews': all_reviews}
 
@@ -74,6 +73,20 @@ def save_review(data: ReviewData):
     insert_into_db(columns, values, 'reviews')
 
     return {'status': 'success', 'message': 'Review saved successfully'}
+
+
+@app.put('/edit_review')
+def edit_review(review_id: str = Body(...),
+                review_text: str = Body(...)):
+    
+    update_data(table = 'reviews',
+                column = 'review',
+                value = review_text,
+                condition = 'review_id',
+                condition_value = review_id
+                )
+    
+    return {'status': 'success', 'message': 'Review edited successfully'}
 
 
 @app.get('/get_user')

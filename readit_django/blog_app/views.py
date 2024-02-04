@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .utils import *
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 import requests
 
@@ -30,7 +30,17 @@ def new_review(request, method=['GET', 'POST']):
 
         response = requests.post(f'{FASTAPI_URL}/save_review', json=data)
 
-    return render(request, 'new_review.html')
+    return redirect('home_page')
+
+
+def edit_review(request, review_id, method=['PUT']):
+    review_text = json.loads(request.body)
+    response = requests.put(f'{FASTAPI_URL}/edit_review', 
+                            json={'review_id': review_id, 'review_text': review_text})
+
+
+    return HttpResponse()
+
 
 
 def find_book(request, book_title):
@@ -46,5 +56,5 @@ def display_book(request, isbn):
     data = response.json()
     reviews = data.get('reviews', [])
 
-    return render(request, 'display_book.html', context={'details': book_details, 'reviews': reviews})
 
+    return render(request, 'display_book.html', context={'details': book_details, 'reviews': reviews})

@@ -28,6 +28,8 @@ function editReview(editButton) {
     saveButton.onclick = () => {
         if (newReview.value != reviewText.textContent && newReview.value.trim().length > 0) {
             reviewText.textContent = newReview.value
+            const reviewId = reviewContainer.closest('#review').getAttribute('data-review-id')
+            saveReview(reviewId, reviewText.textContent)
         }
         newReview.hidden = true;
         reviewText.hidden = false;
@@ -35,4 +37,18 @@ function editReview(editButton) {
         saveButton.hidden = true;
         editButton.hidden = false;
     }
+}
+
+
+function saveReview(reviewId, reviewText) {
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    response = fetch(`edit/${reviewId}`, {
+        method: 'PUT',
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify(reviewText)
+    })
 }
