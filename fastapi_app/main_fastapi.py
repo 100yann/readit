@@ -60,16 +60,32 @@ def save_user_route(email: str = Form(...),
 
 class ReviewData(BaseModel):
     bookIsbn: str
+    bookTitle: str
+    bookAuthor: str
+    bookThumbnail: str
     review: str
     date_read: str
     reviewed_by: int
 
-
 @app.post("/save_review")
 def save_review(data: ReviewData):  
+    book_isbn = data.bookIsbn
+    # Check if book isn't saved to DB
+    if not check_if_exists('book_id', 'books', 'isbn', book_isbn):
+        # Save book to DB
+        columns = ['title', 'author', 'isbn', 'thumbnail']
+        values = [
+            data.bookTitle, 
+            data.bookAuthor, 
+            book_isbn,
+            data.bookThumbnail,
+            ]
+        insert_into_db(columns, values, 'books')
+
+    book_id = get_book_id_by_isbn(book_isbn)[0]
     # save review
     columns = ['review', 'date_read', 'book_reviewed', 'user_id']
-    values = [data.review, data.date_read, data.bookIsbn, data.reviewed_by]
+    values = [data.review, data.date_read, book_id, data.reviewed_by]
     insert_into_db(columns, values, 'reviews')
 
     return {'status': 'success', 'message': 'Review saved successfully'}

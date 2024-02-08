@@ -41,9 +41,10 @@ def insert_into_db(columns, values, table):
 def get_reviews(isbn=None):
     connection = psycopg2.connect(**db_config)
     db_query = """
-    SELECT reviews.*, users.id, users.first_name, users.last_name
+    SELECT reviews.*, users.id, users.first_name, users.last_name, books.*
     FROM reviews
     INNER JOIN users on reviews.user_id = users.id
+    INNER JOIN books on reviews.book_reviewed = books.book_id
     """
 
     cursor = connection.cursor()
@@ -81,7 +82,7 @@ def get_book_id_by_isbn(isbn):
     connection = establish_connection()
     cursor = connection.cursor()
 
-    db_query = "SELECT id FROM book_details WHERE isbn = %s;"
+    db_query = "SELECT book_id FROM books WHERE isbn = %s;"
     cursor.execute(db_query, (isbn,))
     result = cursor.fetchone()
 
