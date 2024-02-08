@@ -60,15 +60,15 @@ document.addEventListener("DOMContentLoaded", () => {
       const date = document.getElementById("date-field").value;
       const review = document.getElementById("review-field").value;
       if (date && review) {
-        var bookData = getBookIsbn();
-        bookData.review = review;
-        bookData.date_read = date;
-        console.log(bookData)
-        saveReview(bookData);
+        var data = getBookInfo();
+        data.review = review;
+        data.date_read = date;
+
+        saveReview(data);
       }
     };
   };
-});
+})
 
 // Display books returned by the Google API
 async function displaySearchResults(searchValue) {
@@ -106,15 +106,17 @@ function createEntry(element) {
   return div;
 }
 
-function getBookIsbn() {
+function getBookInfo() {
   const selectedBook = document.getElementById("picked");
-  const bookIsbn = selectedBook.querySelector("#book-title").dataset.isbn;
-  const bookData = {
-    bookIsbn
-  }
-  return bookData;
-}
+  bookData = {
+    bookTitle: selectedBook.querySelector("#book-title").textContent,
+    bookAuthor: selectedBook.querySelector("#author-link").textContent,
+    bookIsbn: selectedBook.querySelector("#book-title").dataset.isbn,
+    bookThumbnail: selectedBook.querySelector("#book-thumbnail").src,
+  };
 
+  return bookData;
+};
 
 function saveReview(data) {
   const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
