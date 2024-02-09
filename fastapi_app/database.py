@@ -79,7 +79,7 @@ def check_if_exists(columns, table, condition1, value1, condition2=None, value2=
     db_query = "SELECT {} FROM {} WHERE {} = %s"
 
     if condition2:
-        db_query += 'AND {} = %s'
+        db_query += ' AND {} = %s'
         formatted_query = db_query.format(columns, table, condition1, condition2)
         cursor.execute(formatted_query, (value1, value2, ))
     else:
@@ -181,13 +181,14 @@ def get_user_data(id):
 def save_like_to_db(user_id, review_id, liked=False):
     connection = establish_connection()
     cursor = connection.cursor()
-    print(liked)
+
     if liked:
         db_query = 'DELETE FROM review_likes WHERE user_id = %s AND review_id = %s'
         response = 'unliked'
     else:
         db_query = 'INSERT INTO review_likes (user_id, review_id) VALUES (%s, %s)'
         response = 'liked'
+        
     cursor.execute(db_query, (user_id, review_id, ))
     connection.commit()
     close_connection(connection)

@@ -9,7 +9,11 @@ FASTAPI_URL = 'http://127.0.0.1:3000'
 
 
 def home_page(request):
-    response = requests.get(f'{FASTAPI_URL}/get_reviews')
+    user_id = request.session['user']
+    params = None
+    if user_id:
+        params = {'user_id': user_id}
+    response = requests.get(f'{FASTAPI_URL}/get_reviews', params=params)
     data = response.json()
     reviews = data.get('reviews', [])
 

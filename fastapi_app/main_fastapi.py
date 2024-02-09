@@ -8,9 +8,20 @@ app = FastAPI()
 
 
 @app.get("/get_reviews")
-def get_all_reviews(isbn: str | None = None):
+def get_all_reviews(isbn: str | None = None, user_id: str | None = None):
     all_reviews = get_reviews(isbn)
-    print(all_reviews)
+    if user_id:
+        for index, review in enumerate(all_reviews):
+            has_user_liked = check_if_exists(
+                columns = 'like_id',
+                table = 'review_likes',
+                condition1= 'review_id',
+                value1= review['review_id'],
+                condition2= 'user_id',
+                value2= user_id
+                ) 
+            if has_user_liked:
+                all_reviews[index]['has_liked'] = True
     return {'reviews': all_reviews}
 
 

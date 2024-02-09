@@ -89,6 +89,8 @@ function likeReview(button) {
     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
     const reviewId = button.closest('#review').getAttribute('data-review-id')
+    const totalLikes = button.parentElement.querySelector('#review-likes')
+
     const response = fetch(`like/${reviewId}`, {
         method: 'PUT',
         headers: {
@@ -100,8 +102,10 @@ function likeReview(button) {
         const isLiked = data.status
         if (isLiked === 'unliked'){
             button.textContent = 'Like'
+            totalLikes.textContent = parseInt(totalLikes.textContent) - 1
         } else {
-            button.textContent = 'Unlike'
+            button.textContent = 'Liked'
+            totalLikes.textContent = parseInt(totalLikes.textContent) + 1
         }
     });
 }

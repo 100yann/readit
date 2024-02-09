@@ -35,10 +35,15 @@
                 </div>
                 {% endif %}
                 <div>
-                    <span>{{ review.total_likes }}</span>
-                    <button id="like-button">Like</button>
-                    <button id="comment-button">Comment</button>
-
+                    <span id="review-likes">{{ review.total_likes }}</span>
+                    {% if request.session.user %}
+                        {% if review.has_liked %}
+                            <button id="like-button">Liked</button>
+                        {% else %}
+                            <button id="like-button">Like</button>
+                        {% endif %}
+                        <button id="comment-button">Comment</button>
+                    {% endif %}
                 </div>
             </div>
         </div>
