@@ -64,13 +64,20 @@ def get_reviews(isbn=None):
     return combined_data
 
 
-def check_if_exists(columns, table, column, value):
+def check_if_exists(columns, table, condition1, value1, condition2=None, value2=None):
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
 
-    db_query = "SELECT {} FROM {} WHERE {} = %s;"
-    formatted_query = db_query.format(columns, table, column)
-    cursor.execute(formatted_query, (value,))
+    db_query = "SELECT {} FROM {} WHERE {} = %s"
+
+    if condition2:
+        db_query += 'AND {} = %s'
+        formatted_query = db_query.format(columns, table, condition1, condition2)
+        cursor.execute(formatted_query, (value1, value2, ))
+    else:
+        formatted_query = db_query.format(columns, table, condition1)
+        cursor.execute(formatted_query, (value1, ))   
+
     result = cursor.fetchone()
     cursor.close()
     connection.close()
@@ -161,3 +168,18 @@ def get_user_data(id):
 
     close_connection(connection)
     return user_data
+
+
+def save_like_to_db(user_id, review_id, liked=False):
+    connection = establish_connection()
+    cursor = connection.cursor()
+
+    if liked:
+        db_query = 'DELETE FROM review_likes WHERE user_id = %s AND review_id = %s'
+    else:
+        db_query = 'INSERT INTO review_likes (user_id, review_id) VALUES (%s, %s)'
+
+    cursor.execute(db_query, (user_id, review_id, ))
+    close_connection(connection)
+
+    return
