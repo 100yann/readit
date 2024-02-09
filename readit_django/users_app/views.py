@@ -47,7 +47,6 @@ def logout_user(request):
 
 
 def display_user_profile(request, user_id):
-    print(user_id)
     response = requests.get('http://127.0.0.1:3000/get_user', data = {
         'id': user_id
     })

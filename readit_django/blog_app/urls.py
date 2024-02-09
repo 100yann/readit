@@ -10,5 +10,6 @@ urlpatterns = [
     path('book/<str:isbn>', views.display_book, name='display_book'),
     path('edit/<str:review_id>', views.edit_review, name='edit_review'),
     path('delete/<str:review_id>', views.delete_review, name='delete_review'),
+    path('like/<str:review_id>', views.like_review, name='like_review'),
     re_path(r'^.*$', RedirectView.as_view(url='home', permanent=False), name='index')
 ] 

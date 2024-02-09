@@ -19,8 +19,8 @@ def authenticate_user(email: str = Form(...), password: str = Form(...)):
     if not check_if_exists(
         columns='email', 
         table= 'users', 
-        column= 'email', 
-        value= email
+        condition1= 'email', 
+        value1= email
         ):
         # email is invalid
         raise HTTPException(status_code=401, detail='Incorrect email')
@@ -45,8 +45,8 @@ def save_user_route(email: str = Form(...),
     if check_if_exists(
         columns='email', 
         table='users', 
-        column='email', 
-        value=email
+        condition1='email', 
+        value1=email
     ):
         raise HTTPException(status_code=400, detail='User already exists')
 
@@ -117,3 +117,18 @@ def delete_review(review_id: str):
 def get_user(id: str = Form(...)):
     user_data = get_user_data(id)
     return {'detail':'Login successful', 'data': {'user_data': user_data}}
+
+
+@app.put('/like')
+def like_review(user_id: str, review_id: str):
+    is_liked = check_if_exists(
+        columns= 'like_id',
+        table= 'review_likes',
+        condition1= 'user_id',
+        value1= user_id,
+        condition2= 'review_id',
+        value2= review_id
+    ) != None
+
+    response = save_like_to_db(user_id, review_id, is_liked)
+    return {'status': 'success', 'message': response}

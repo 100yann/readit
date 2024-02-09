@@ -12,6 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
             deleteReview(button)
         }
     })
+
+    const likeButtons = document.querySelectorAll('#like-button')
+    likeButtons.forEach((button) => {
+        button.onclick = () => {
+            likeReview(button)
+        }
+    })
 })
 
 
@@ -75,4 +82,26 @@ function deleteReview(button) {
             "X-CSRFToken": csrfToken,
         }
     })
+}
+
+
+function likeReview(button) {
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    const reviewId = button.closest('#review').getAttribute('data-review-id')
+    const response = fetch(`like/${reviewId}`, {
+        method: 'PUT',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
+    response.then((response) => response.json())
+    .then((data) => {
+        const isLiked = data.status
+        if (isLiked === 'unliked'){
+            button.textContent = 'Like'
+        } else {
+            button.textContent = 'Unlike'
+        }
+    });
 }

@@ -40,6 +40,15 @@ def delete_review(request, review_id, method=['DELETE']):
     response = requests.delete(f'{FASTAPI_URL}/delete_review', params={'review_id': review_id})
     return HttpResponse()
 
+
+def like_review(request, review_id, method=['PUT']):
+    user_id = request.session['user']
+    response = requests.put(f'{FASTAPI_URL}/like', params={'user_id': user_id, 
+                                                           'review_id': review_id})
+    review_status = response.json()['message']
+    return JsonResponse({'status': review_status})
+
+
 def find_book(request, book_title):
     results = get_books_by_title(title = book_title)
     formatted_results = format_results(results)
