@@ -66,8 +66,9 @@ def save_user_route(email: str = Form(...),
 
     # Save user
     save_user(email, hashed_password, first_name, last_name)
+    user_id = get_user_id(email)
 
-    return {"status": "success", "message": "User saved successfully"}
+    return {'detail':'Register successful', 'data': {'user_id': user_id}}
 
 
 class ReviewData(BaseModel):

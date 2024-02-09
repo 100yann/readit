@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import requests
 
 
@@ -16,6 +16,15 @@ def register_user(request, method=['GET', 'POST']):
             'last_name': last_name
         })
 
+        if response.status_code == 200:
+            response_data = response.json()
+            user_id = response_data['data']['user_id']
+
+            request.session['user'] = user_id
+            request.session['user_email'] = user_email
+
+            return redirect('/home')
+        
     return render(request, "users/register.html")
 
 
@@ -35,7 +44,7 @@ def login_user(request, method=['GET', 'POST']):
             request.session['user'] = user_id
             request.session['user_email'] = user_email
 
-            return render(request, 'users/login.html')
+            return redirect('/home')
 
     return render(request, 'users/login.html')
 
@@ -43,7 +52,8 @@ def login_user(request, method=['GET', 'POST']):
 def logout_user(request):
     request.session['user'] = ''
     request.session['user_email'] = ''
-    return render(request, 'users/login.html')
+    return redirect('/home')
+
 
 
 def display_user_profile(request, user_id):
