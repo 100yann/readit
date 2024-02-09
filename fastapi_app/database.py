@@ -41,10 +41,18 @@ def insert_into_db(columns, values, table):
 def get_reviews(isbn=None):
     connection = psycopg2.connect(**db_config)
     db_query = """
-    SELECT reviews.*, users.id, users.first_name, users.last_name, books.*
+    SELECT 
+        reviews.*, 
+        users.id, 
+        users.first_name, 
+        users.last_name, 
+        books.*, 
+        COALESCE(COUNT(review_likes.like_id), 0) AS total_likes
     FROM reviews
     INNER JOIN users on reviews.user_id = users.id
     INNER JOIN books on reviews.book_reviewed = books.book_id
+    LEFT JOIN review_likes ON reviews.review_id = review_likes.review_id
+    GROUP BY reviews.review_id, users.id, books.book_id;
     """
 
     cursor = connection.cursor()
