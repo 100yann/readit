@@ -21,6 +21,7 @@ def home_page(request):
         'reviews': reviews
     })
 
+
 def new_review(request, method=['GET', 'POST']):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -60,11 +61,12 @@ def find_book(request, book_title):
 
 
 def display_book(request, isbn):
+    # get more data for the opened book through Google API using ISBN as book identfier
     book_details = get_book_by_isbn(isbn)
 
+    # get all reviews for this book
     response = requests.get(f'{FASTAPI_URL}/get_reviews', params={'isbn': isbn})
     data = response.json()
     reviews = data.get('reviews', [])
-
 
     return render(request, 'display_book.html', context={'details': book_details, 'reviews': reviews})
