@@ -38,44 +38,39 @@ def insert_into_db(columns, values, table):
     connection.close()
 
 
-def get_reviews(isbn=None):
+def get_reviews(isbn=None, limit=None, order=None):
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()
+    db_query = """
+        SELECT 
+            reviews.*, 
+            users.id, 
+            users.first_name, 
+            users.last_name, 
+            books.*, 
+            COALESCE(COUNT(review_likes.like_id), 0) AS total_likes
+        FROM reviews
+        INNER JOIN users on reviews.user_id = users.id
+        INNER JOIN books on reviews.book_reviewed = books.book_id
+        LEFT JOIN review_likes ON reviews.review_id = review_likes.review_id
+        """
 
+    values = []
     if isbn:
-        db_query = """
-            SELECT 
-                reviews.*, 
-                users.id, 
-                users.first_name, 
-                users.last_name, 
-                books.*, 
-                COALESCE(COUNT(review_likes.like_id), 0) AS total_likes
-            FROM reviews
-            INNER JOIN users on reviews.user_id = users.id
-            INNER JOIN books on reviews.book_reviewed = books.book_id
-            LEFT JOIN review_likes ON reviews.review_id = review_likes.review_id
-            WHERE books.isbn = %s
-            GROUP BY reviews.review_id, users.id, books.book_id
-            """
-        cursor.execute(db_query, (isbn,))
-    else:
-        db_query = """
-            SELECT 
-                reviews.*, 
-                users.id, 
-                users.first_name, 
-                users.last_name, 
-                books.*, 
-                COALESCE(COUNT(review_likes.like_id), 0) AS total_likes
-            FROM reviews
-            INNER JOIN users on reviews.user_id = users.id
-            INNER JOIN books on reviews.book_reviewed = books.book_id
-            LEFT JOIN review_likes ON reviews.review_id = review_likes.review_id
-            GROUP BY reviews.review_id, users.id, books.book_id
-            """
-        cursor.execute(db_query)
-        
+        db_query += ' WHERE books.isbn = %s'
+        values.append(isbn)
+    
+    db_query += ' GROUP BY reviews.review_id, users.id, books.book_id'
+
+    if order:
+        db_query += f' ORDER BY {order}'
+
+    if limit:
+        db_query += ' LIMIT %s'
+        values.append(limit)
+
+    cursor.execute(db_query, (*values,))
+    
     colnames = [desc[0] for desc in cursor.description]
     results = cursor.fetchall()
 
@@ -84,6 +79,32 @@ def get_reviews(isbn=None):
     combined_data = [dict(zip(colnames, row)) for row in results]
     return combined_data
 
+
+def get_recent_reviews():
+    connection = establish_connection()
+    cursor = connection.cursor()
+
+    db_query = """
+        SELECT 
+            reviews.*, 
+            users.id, 
+            users.first_name, 
+            users.last_name, 
+            books.*, 
+            COALESCE(COUNT(review_likes.like_id), 0) AS total_likes
+        FROM reviews
+        INNER JOIN users on reviews.user_id = users.id
+        INNER JOIN books on reviews.book_reviewed = books.book_id
+        LEFT JOIN review_likes ON reviews.review_id = review_likes.review_id
+        GROUP BY reviews.review_id, users.id, books.book_id
+        ORDER BY reviews.created_on DESC
+        LIMIT 5
+        """
+    cursor.execute(db_query)
+    results = cursor.fetchall()
+    cursor.close()
+    connection.close()
+    return results
 
 def check_if_exists(columns, table, condition1, value1, condition2=None, value2=None):
     connection = psycopg2.connect(**db_config)
