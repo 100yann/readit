@@ -9,10 +9,8 @@ FASTAPI_URL = 'http://127.0.0.1:3000'
 
 
 def home_page(request):
-    user_id = request.session['user']
-    params = None
-    if user_id:
-        params = {'user_id': user_id}
+    params = {'page': 'home'}
+
     response = requests.get(f'{FASTAPI_URL}/get_reviews', params=params)
     data = response.json()
     reviews = data.get('reviews', [])
@@ -68,8 +66,8 @@ def display_book(request, isbn):
     book_details = get_book_by_isbn(isbn)
 
     # get all reviews for this book
-    response = requests.get(f'{FASTAPI_URL}/get_reviews', params={'isbn': isbn})
+    response = requests.get(f'{FASTAPI_URL}/get_reviews', params={'isbn': isbn, 'page': 'book'})
     data = response.json()
     reviews = data.get('reviews', [])
-
+    print(reviews)
     return render(request, 'display_book.html', context={'details': book_details, 'reviews': reviews})
