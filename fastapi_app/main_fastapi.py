@@ -22,7 +22,7 @@ def get_all_reviews(isbn: str | None = None, user_id: str | None = None):
     #             ) 
     #         if has_user_liked:
     #             all_reviews[index]['has_liked'] = True
-    recent_reviews = get_reviews(order='created_on desc', limit=1)
+    recent_reviews = get_reviews(order='created_on desc', limit=5)
     return {'reviews': recent_reviews}
 
 

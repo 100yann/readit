@@ -4,19 +4,36 @@
 
 {% block body %}
 <div id="header">
-    <div class="header-container">
+    <div class="container header-container">
         <div id="logo-container">
-            <img src="{% static 'readit_logo_freepik.jpg' %}" alt="">
+            <img src="{% static 'readit_logo_freepik.jpg' %}" alt="readit-logo">
         </div>
         <div>
             <h1 id="header-title">ReadIt</h1>
-            <p id="header-description">Review, share, and discover your new favorite books</p>
+            <p id="header-description">Discover, review, and share your new favorite books</p>
         </div>
     </div>
 </div>
-    <div id="recent-reviews"></div>
+    <div id="recent-reviews">
+    {% csrf_token %}
         <h3 id="section-title">Recent Reviews</h3>
-    <div id="display-posts">
+        <div id='recent-reviews-container'>
+            {% for review in reviews %}
+            <div class="review-preview">
+                <div id="book-cover">
+                    <img src='{{ review.thumbnail }}' alt="">
+                </div>
+                <div>
+                    <div id="review-heading">
+                        <a href="{% url 'user_profile' user_id=review.user_id %}" id="userlink">{{ review.first_name }} {{ review.last_name }}</a><span> reviewed</span>
+                        <a href="{% url 'display_book' isbn=review.isbn %}" id="reviewlink">{{ review.title }}</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- <div id="display-posts">
     {% csrf_token %}
         <h1>Home</h1>
         {% for review in reviews %}
@@ -60,7 +77,7 @@
             </div>
         </div>
         {% endfor %}
-    </div>
+    </div> -->
 <div id="footer">
     Image by <a href="https://www.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_24307396.htm#query=book&position=2&from_view=search&track=sph&uuid=016f054d-b2d7-4f0b-b956-3842119e72b5">Freepik</a>
 </div>

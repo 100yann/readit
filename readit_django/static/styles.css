@@ -27,10 +27,11 @@ body {
 }
 
 #header-title {
-    font-size: 90px;
-    font-weight: 700;
+    font-size: 80px;
+    line-height: 50px;
     margin: 0;
     padding: 0;
+    font-family: 'League Spartan', sans-serif;
 }
 
 #header-description {
@@ -39,13 +40,67 @@ body {
     opacity: 75%;
     margin: 0;
     padding: 0;
+    font-family: 'Libre Baskerville', serif;
 }
 
-#page-border {
-    margin: 0 200px;
+#recent-reviews {
+    padding: 30px 10%;
 }
 
-#review {
+#recent-reviews h3 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-family: 'League Spartan', sans-serif;
+
+}
+
+#recent-reviews-container {
+    display: flex;
+    gap: 15px;
+}
+
+#book-cover img {
+    height: 200px;
+    width: auto;
+    margin-bottom: 12px;
+}
+
+.review-preview {
+    width: 25%;
+    height: auto;
+    padding: 15px;
+    background-color: #fff4f2;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.review-preview:hover {
+    scale: 1.05;
+}
+
+#review-heading {
+    font-size: 18px;
+    font-family: 'Libre Baskerville', serif;
+
+}
+
+#review-heading span {
+    opacity: 75%;
+}
+
+#reviewlink {
+    display: block;
+}
+
+#userlink, #reviewlink:any-link {
+    color: black;
+    text-decoration: none;
+}
+
+#userlink:hover, #reviewlink:hover {
+    text-decoration: underline;
+}
+/* #review {
     padding: 30px 50px;
     margin: 0 5rem;
     border-radius: 15px;
@@ -66,13 +121,7 @@ body {
     margin-bottom: 15px;
 }
 
-#review-heading {
-    font-size: 28px;
-    line-height: 34px;
-}
-#review-heading span {
-    font-weight: 700;
-}
+
 #review-heading span a:any-link {
     color: black;
     text-decoration: none;
@@ -85,7 +134,7 @@ body {
 #book-cover img {
     max-width: 200px;
 }
-
+ */
 
 @media (max-width: 1000px) {
     #review {
