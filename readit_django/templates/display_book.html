@@ -1,8 +1,8 @@
 {% extends 'template.html' %}
-{% block title %}Book{% endblock %}
+{% block title %}{{ details.title }}{% endblock %}
 
 {% block body %}
-<div id="page-border">
+<div id="page">
     <div class="book-view">
         <div id="book-cover">
             <img src="{{ details.thumbnail }}" alt="book-cover">
@@ -11,11 +11,12 @@
             <h1>{{ details.title }}</h1>
             <h3>by {{ details.author }}</h3>
             <p>{{ details.description }}</p>
-            <p>{{ details.pageCount }}</p>
-            <p>{{ details.categories }}</p>
+            <p>Genres: {{ details.categories }}</p>
+            <p>{{ details.pageCount }} pages</p>
         </div>
     </div>
-    <div id="reviews">
+    <div id="book-reviews">
+        <h3 class="subheading">Reviews and Ratings</h3>
         {% for review in reviews %}
             <h5>{{ review.first_name }} {{ review.last_name }}</h5>
             <p>{{ review.date_read }}</p>

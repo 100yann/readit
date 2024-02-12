@@ -174,7 +174,45 @@ body {
 
 
 /* View book */
+#page {
+    background-color: #effafc;
+    max-height: 100%;
+    padding: 50px 250px;
+
+}
+
 .book-view {
     display: flex;
     gap: 50px;
+}
+
+#book-cover {
+    width: 70%;
+}
+
+#book-cover img {
+    width: 100%;
+    height: 100%;
+}
+
+#book-details h1, #book-details h3{
+    font-family: 'League Spartan', sans-serif;
+}
+
+#book-details h1 {
+    font-size: 50px;
+}
+
+#book-details p {
+    font-family: 'Libre Baskerville', serif;
+}
+
+#book-reviews {
+    margin-top: 50px;
+}
+
+.subheading {
+    font-family: 'League Spartan', sans-serif;
+    text-align: center;
+    font-size: 35px;
 }
