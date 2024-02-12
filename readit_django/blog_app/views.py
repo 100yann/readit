@@ -23,6 +23,9 @@ def home_page(request):
 
 
 def new_review(request, method=['GET', 'POST']):
+    if not request.session['user']:
+        return redirect('login')
+    
     if request.method == 'POST':
         data = json.loads(request.body)
         data['reviewed_by'] = int(request.session['user'])
