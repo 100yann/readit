@@ -1,15 +1,16 @@
 {% extends 'template.html' %}
+{% load static %}
 {% block title %}{{ details.title }}{% endblock %}
 
 {% block body %}
 <div id="page">
     <div class="book-view">
         <div id="book-cover">
-            <img src="{{ details.thumbnail }}" alt="book-cover">
+            <img id='book-thumbnail' src="{{ details.thumbnail }}" alt="book-cover">
         </div>
         <div id="book-details">
-            <h1>{{ details.title }}</h1>
-            <h3>by {{ details.author }}</h3>
+            <h1 id="book-title" data-isbn="{{ isbn }}">{{ details.title }}</h1>
+            <h3>by <span id="author">{{ details.author }}</span></h3>
             <p>{{ details.description }}</p>
             <p>Genres: {{ details.categories }}</p>
             <p>{{ details.pageCount }} pages</p>
@@ -18,11 +19,31 @@
     <div id="book-reviews">
         <h3 class="subheading">Reviews and Ratings</h3>
         {% for review in reviews %}
+        <div>
             <h5>{{ review.first_name }} {{ review.last_name }}</h5>
             <p>{{ review.date_read }}</p>
             <p>{{ review.review }}</p>
+        </div>
         {% endfor %}
+        {% if request.session.user %}
+            <button id="write-new-review">Write a review</button>
+            <div>
+                <form id="review-form">
+                    {% csrf_token %}
+                    <div id="add-review">
+                        <h4>Review</h4>
+                        <textarea name="" id="review-field" cols="30" rows="10" class="form-control"></textarea>                
+                    </div>
+                    <div id="add-date-read">
+                        <h4>Date Read</h4>
+                        <input type="date" name="" id="date-field"> 
+                    </div>
+                    <input type="submit" class="btn btn-dark" value="Post Review" id="">
+                </form> 
+            </div>
+        {% endif %}
     </div>
 </div>
 
+<script src="{% static 'display_book.js' %}"></script>
 {% endblock %}

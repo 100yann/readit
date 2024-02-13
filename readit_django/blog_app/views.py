@@ -69,5 +69,10 @@ def display_book(request, isbn):
     response = requests.get(f'{FASTAPI_URL}/get_reviews', params={'isbn': isbn, 'page': 'book'})
     data = response.json()
     reviews = data.get('reviews', [])
-    print(reviews)
-    return render(request, 'display_book.html', context={'details': book_details, 'reviews': reviews})
+    
+    return render(request, 'display_book.html', 
+                  context={
+                      'details': book_details, 
+                      'reviews': reviews,
+                      'isbn': isbn,
+                      })
