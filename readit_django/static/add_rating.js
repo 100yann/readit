@@ -1,20 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
     const writeReview = document.getElementById('write-new-review')
-    writeReview.onclick = () => {
-        const form = document.getElementById('review-form')
-        form.style.display = 'block';
-        form.addEventListener('submit', (event) => {
-            event.preventDefault()
-            const date = document.getElementById("date-field").value;
-            const review = document.getElementById("review-field").value;
-            if (date && review) {
-              var data = getBookInfo();
-              data.review = review;
-              data.date_read = date;
-      
-              saveReview(data);
-            }
-        })
+    if (writeReview){
+      writeReview.onclick = () => {
+          const form = document.getElementById('review-form')
+          form.style.display = 'block';
+          form.addEventListener('submit', (event) => {
+              event.preventDefault()
+              const date = document.getElementById("date-field").value;
+              const review = document.getElementById("review-field").value;
+              if (date && review) {
+                var data = getBookInfo();
+                data.review = review;
+                data.date_read = date;
+        
+                saveReview(data);
+              }
+          })
+      }
     }
 })
 

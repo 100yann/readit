@@ -7,6 +7,7 @@
     <div class="book-view">
         <div id="book-cover">
             <img id='book-thumbnail' src="{{ details.thumbnail }}" alt="book-cover">
+
         </div>
         <div id="book-details">
             <h1 id="book-title" data-isbn="{{ isbn }}">{{ details.title }}</h1>
@@ -15,6 +16,13 @@
             <p>Genres: {{ details.categories }}</p>
             <p>{{ details.pageCount }} pages</p>
         </div>
+    </div>
+    <div>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
     </div>
     <div id="book-reviews">
         <h3 class="subheading">Reviews and Ratings</h3>
@@ -46,4 +54,6 @@
 </div>
 
 <script src="{% static 'display_book.js' %}"></script>
+<script src="{% static 'add_rating.js' %}"></script>
+<script src="https://kit.fontawesome.com/b1fbfefaf0.js" crossorigin="anonymous"></script>
 {% endblock %}
