@@ -76,3 +76,14 @@ def display_book(request, isbn):
                       'reviews': reviews,
                       'isbn': isbn,
                       })
+
+
+def rate_book(request, isbn, method=['POST']): 
+    user_id = request.session['user']
+    user_rating = json.loads(request.body)
+    print(type(user_id), type(user_rating), type(isbn))
+    response = requests.post(f'{FASTAPI_URL}/rate', json={'user_id': user_id,
+                                                        'isbn': isbn, 
+                                                        'rating': user_rating})
+    return HttpResponse()
+

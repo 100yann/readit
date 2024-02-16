@@ -151,3 +151,47 @@ def like_review(user_id: str, review_id: str):
 
     response = save_like_to_db(user_id, review_id, is_liked)
     return {'status': 'success', 'message': response}
+
+
+class RateRequest(BaseModel):
+    user_id: int
+    isbn: str
+    rating: int
+
+@app.post('/rate')
+def rate_book(rate_request: RateRequest):
+    # get the book_id by using its isbn
+    book_id = get_book_id_by_isbn(rate_request.isbn)[0]
+
+    # check if the book has already been rated by this user
+    is_rated = check_if_exists(
+        columns = 'rating_id',
+        table = 'ratings',
+        condition1 = 'user_id',
+        value1 = rate_request.user_id,
+        condition2 = 'book_id',
+        value2 = book_id
+    )
+
+    # if the book has been rated update the existing rating
+    if is_rated != None:
+        rating_id = is_rated[0] # since cursor.fetchone() returns a tuple
+        update_data(
+            table = 'ratings',
+            column = 'rating',
+            value = rate_request.rating,
+            condition = 'rating_id', 
+            condition_value = rating_id
+        )
+
+    # create an entry of the rating if it hasn't been rated by the user yet
+    else:
+        columns = ['book_id', 'user_id', 'rating']
+        values = [book_id, rate_request.user_id, rate_request.rating]
+        insert_into_db(
+            columns,
+            values,
+            table = 'ratings'
+        )
+
+    return {'status': 'success', 'message': 'Rating updated successfully'}

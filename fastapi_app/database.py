@@ -106,6 +106,7 @@ def get_recent_reviews():
     connection.close()
     return results
 
+
 def check_if_exists(columns, table, condition1, value1, condition2=None, value2=None):
     connection = psycopg2.connect(**db_config)
     cursor = connection.cursor()

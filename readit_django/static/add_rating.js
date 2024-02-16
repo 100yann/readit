@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         element.addEventListener('click', () => {
             rated = true
             rating = index + 1;
+            saveRating(rating)
             stars.forEach((element2, index2) => {
                 if (index2 <= index) {
                     element2.style.color = 'yellow'
@@ -80,4 +81,18 @@ function saveReview(data) {
       body: JSON.stringify(data),
     })  
 };
-  
+
+
+function saveRating(rating) {
+  const bookIsbn = document.querySelector("#book-title").dataset.isbn
+  const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+  respone = fetch(`/rate/${bookIsbn}`, {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrfToken,
+    },
+    body: JSON.stringify(rating)
+  })
+}
