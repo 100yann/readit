@@ -28,6 +28,12 @@ def get_all_reviews(isbn: str | None = None,
                     ) 
                 if has_user_liked:
                     reviews[index]['has_liked'] = True
+
+        if user_id and isbn:
+            book_id = get_book_id_by_isbn(isbn)[0]
+            rating = get_data('ratings', 'rating', **{'user_id': user_id, 'book_id': book_id})
+            return {'reviews': reviews, 'rating': rating}
+        
     return {'reviews': reviews}
 
 

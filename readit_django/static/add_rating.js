@@ -19,6 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     var stars = document.querySelectorAll('.fa-star');
+    var userRating = document.querySelector('#rating-section').dataset['rating']
+    console.log(userRating)
+    stars.forEach((element, index) => {
+        if (index <= userRating-1) {
+            element.style.color = 'yellow'
+        }
+    })
+
+
+
     var rated = false;
     var rating = 0;
 

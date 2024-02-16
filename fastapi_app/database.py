@@ -229,3 +229,32 @@ def save_like_to_db(user_id, review_id, liked=False):
     close_connection(connection)
 
     return response
+
+
+def get_data(table, *args, **kwargs):
+    connection = establish_connection()
+    cursor = connection.cursor()
+
+    columns = ', '.join(args) if args else '*'
+    db_query = f'SELECT {columns} FROM {table}'
+
+    if kwargs:
+        conditions = []
+        values = []
+        for key, value in kwargs.items():
+            conditions.append(f'{key} = %s')
+            values.append(value)
+        
+        if conditions:
+            db_query += ' WHERE ' + ' AND '.join(conditions)
+            
+        cursor.execute(db_query, (values))
+    else: 
+        cursor.execute()
+    
+    results = cursor.fetchall()
+    return results
+    
+
+if __name__ == '__main__':
+    print(get_data('ratings', **{'user_id': 1, 'book_id':2}))

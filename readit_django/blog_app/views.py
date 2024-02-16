@@ -65,23 +65,29 @@ def display_book(request, isbn):
     # get more data for the opened book through Google API using ISBN as book identfier
     book_details = get_book_by_isbn(isbn)
 
+    user_id = request.session['user']
     # get all reviews for this book
-    response = requests.get(f'{FASTAPI_URL}/get_reviews', params={'isbn': isbn, 'page': 'book'})
+    response = requests.get(f'{FASTAPI_URL}/get_reviews', params={
+        'isbn': isbn, 
+        'user_id': user_id,
+        })
+    
     data = response.json()
     reviews = data.get('reviews', [])
-    
+    rating = data.get('rating', '')[0][0] if data.get('rating') else ''
+
     return render(request, 'display_book.html', 
                   context={
                       'details': book_details, 
                       'reviews': reviews,
                       'isbn': isbn,
+                      'user_rating': rating
                       })
 
 
 def rate_book(request, isbn, method=['POST']): 
     user_id = request.session['user']
     user_rating = json.loads(request.body)
-    print(type(user_id), type(user_rating), type(isbn))
     response = requests.post(f'{FASTAPI_URL}/rate', json={'user_id': user_id,
                                                         'isbn': isbn, 
                                                         'rating': user_rating})
