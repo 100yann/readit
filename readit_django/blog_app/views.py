@@ -62,34 +62,48 @@ def find_book(request, book_title):
 
 
 def display_book(request, isbn):
-    # get more data for the opened book through Google API using ISBN as book identfier
-    book_details = get_book_by_isbn(isbn)
-
     user_id = request.session['user']
-    # get all reviews for this book
-    response = requests.get(f'{FASTAPI_URL}/get_reviews', params={
-        'isbn': isbn, 
-        'user_id': user_id,
-        })
     
-    data = response.json()
-    reviews = data.get('reviews', [])
-    rating = data.get('rating', '')[0][0] if data.get('rating') else ''
+    if request.method == 'GET':
+        # get more data for the opened book through Google API using ISBN as book identfier
+        book_details = get_book_by_isbn(isbn)
 
-    return render(request, 'display_book.html', 
-                  context={
-                      'details': book_details, 
-                      'reviews': reviews,
-                      'isbn': isbn,
-                      'user_rating': rating
-                      })
+        # get all reviews for this book
+        response = requests.get(f'{FASTAPI_URL}/get_reviews', params={
+            'isbn': isbn, 
+            'user_id': user_id,
+            })
+        
+        data = response.json()
+        reviews = data.get('reviews', [])
+        rating = data.get('rating', '')[0][0] if data.get('rating') else ''
+
+        return render(request, 'display_book.html', 
+                    context={
+                        'details': book_details, 
+                        'reviews': reviews,
+                        'isbn': isbn,
+                        'user_rating': rating
+                        })
+
+    # else the request is POST
+    data = json.loads(request.body)
+    action = data['action']
+
+    response_json = {
+        'user_id': user_id,
+        'isbn': isbn,
+        'action': action
+    }
+    
+    if action == 'addbook':
+        response = requests.post(f'{FASTAPI_URL}/', json=response_json)
+
+    elif action == 'rate':
+        response_json['rating'] = data['rating']
+
+        response = requests.post(f'{FASTAPI_URL}/rate', json=response_json)
+        return HttpResponse()
 
 
-def rate_book(request, isbn, method=['POST']): 
-    user_id = request.session['user']
-    user_rating = json.loads(request.body)
-    response = requests.post(f'{FASTAPI_URL}/rate', json={'user_id': user_id,
-                                                        'isbn': isbn, 
-                                                        'rating': user_rating})
     return HttpResponse()
-

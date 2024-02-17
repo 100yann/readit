@@ -162,6 +162,7 @@ def like_review(user_id: str, review_id: str):
 class RateRequest(BaseModel):
     user_id: int
     isbn: str
+    action: str
     rating: int
 
 @app.post('/rate')

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const writeReview = document.getElementById('write-new-review')
+
     if (writeReview){
       writeReview.onclick = () => {
           const form = document.getElementById('review-form')
@@ -18,16 +19,18 @@ document.addEventListener('DOMContentLoaded', () => {
           })
       }
     }
+    const bookStatus = document.getElementById('add-to-books-list')
+    bookStatus.onclick = () => {
+        saveReview({'action': 'addbook'})
+    }
+
     var stars = document.querySelectorAll('.fa-star');
     var userRating = document.querySelector('#rating-section').dataset['rating']
-    console.log(userRating)
     stars.forEach((element, index) => {
         if (index <= userRating-1) {
             element.style.color = 'yellow'
         }
     })
-
-
 
     var rated = false;
     var rating = 0;
@@ -81,8 +84,9 @@ function getBookInfo() {
   
 
 function saveReview(data) {
+    console.log(data)
     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-    fetch(`/new`, {
+    fetch(``, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -97,12 +101,12 @@ function saveRating(rating) {
   const bookIsbn = document.querySelector("#book-title").dataset.isbn
   const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
-  respone = fetch(`/rate/${bookIsbn}`, {
+  respone = fetch(``, {
     method: 'POST',
     headers: {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken,
     },
-    body: JSON.stringify(rating)
+    body: JSON.stringify({'rating': rating, 'action': 'rate'})
   })
 }

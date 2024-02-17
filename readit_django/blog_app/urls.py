@@ -11,6 +11,5 @@ urlpatterns = [
     path('edit/<str:review_id>', views.edit_review, name='edit_review'),
     path('delete/<str:review_id>', views.delete_review, name='delete_review'),
     path('like/<str:review_id>', views.like_review, name='like_review'),
-    path('rate/<str:isbn>', views.rate_book, name='rate_book'),
     re_path(r'^.*$', RedirectView.as_view(url='home', permanent=False), name='index')
 ] 
