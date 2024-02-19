@@ -20,8 +20,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     const bookStatus = document.getElementById('add-to-books-list')
+
+    if (bookStatus.dataset['status'] == '') {
+        bookStatus.textContent = 'Want to read'
+    } else {
+        bookStatus.style.backgroundColor = 'green'
+        bookStatus.textContent = bookStatus.dataset['status']
+
+    }
+
     bookStatus.onclick = () => {
-        saveReview({'action': 'save_book'})
+        if (bookStatus.dataset['status'] == '')
+        {
+            bookStatus.style.backgroundColor = 'green'
+            bookStatus.dataset['status'] = 'Want to read'
+            saveReview({'action': 'save_book'})
+        } else 
+        {
+            bookStatus.style.backgroundColor = 'gray'
+            bookStatus.dataset['status'] = ''
+            saveReview({'action': 'remove_book'})
+        }
     }
 
     var stars = document.querySelectorAll('.fa-star');

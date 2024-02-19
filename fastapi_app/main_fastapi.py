@@ -16,6 +16,7 @@ def get_all_reviews(isbn: str | None = None,
         reviews = get_reviews(order='created_on desc', limit=5)
     else:
         reviews = get_reviews(isbn)
+
         if user_id:
             for index, review in enumerate(reviews):
                 has_user_liked = check_if_exists(
@@ -26,13 +27,16 @@ def get_all_reviews(isbn: str | None = None,
                     condition2= 'user_id',
                     value2= user_id
                     ) 
+                    
                 if has_user_liked:
                     reviews[index]['has_liked'] = True
 
         if user_id and isbn:
             book_id = get_book_id_by_isbn(isbn)[0]
             rating = get_data('ratings', 'rating', **{'user_id': user_id, 'book_id': book_id})
-            return {'reviews': reviews, 'rating': rating}
+            bookshelf = get_data('bookshelves', 'shelf', **{'user_id': user_id, 'book_id': book_id})
+            
+            return {'reviews': reviews, 'rating': rating, 'bookshelf': bookshelf}
         
     return {'reviews': reviews}
 
@@ -209,17 +213,36 @@ class SaveRequest(BaseModel):
     isbn: str
     action: str
 
+
 @app.post('/save')
 def save_book(save_request: SaveRequest):
     book_id = get_book_id_by_isbn(save_request.isbn)[0]
 
-    columns = ['user_id', 'book_id']
-    values = [save_request.user_id, book_id]
+    if save_request.action == 'save_book':
 
-    insert_into_db(
-        columns,
-        values,
-        table = 'bookshelves'
-    )
+        columns = ['user_id', 'book_id']
+        values = [save_request.user_id, book_id]
 
-    return {'status': 'success', 'message': 'Book saved successfully'}
+        insert_into_db(
+            columns,
+            values,
+            table = 'bookshelves'
+        )
+
+        message = 'Book saved successfully' 
+
+    else:
+        shelved_book_id = get_data(
+            'bookshelves', 
+            'shelved_book_id',
+            **{'user_id': save_request.user_id, 'book_id': book_id},
+        )[0][0]
+
+        delete_row(
+            table = 'bookshelves',
+            column = 'shelved_book_id',
+            value = shelved_book_id
+        )
+        
+        message = 'Book removed successfully'
+    return {'status': 'success', 'message': message}

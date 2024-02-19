@@ -77,13 +77,15 @@ def display_book(request, isbn):
         data = response.json()
         reviews = data.get('reviews', [])
         rating = data.get('rating', '')[0][0] if data.get('rating') else ''
+        bookshelf = data.get('bookshelf', '')[0][0] if data.get('bookshelf') else ''
 
         return render(request, 'display_book.html', 
                     context={
                         'details': book_details, 
                         'reviews': reviews,
                         'isbn': isbn,
-                        'user_rating': rating
+                        'user_rating': rating,
+                        'bookshelf': bookshelf
                         })
 
     # else the request is POST
@@ -96,7 +98,7 @@ def display_book(request, isbn):
         'action': action
     }
     
-    if action == 'save_book':
+    if action in ['save_book', 'remove_book']:
         response = requests.post(f'{FASTAPI_URL}/save', json=response_json)
 
     elif action == 'rate':

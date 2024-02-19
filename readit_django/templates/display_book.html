@@ -25,7 +25,9 @@
         <i class="fa-solid fa-star"></i>
     </div>
     <div>
-        <button id="add-to-books-list">Want to read</button>
+        {% if request.session.user %}
+            <button id="add-to-books-list" data-status="{{ bookshelf }}"></button>
+        {% endif %}
     </div>
     <div id="book-reviews">
         <h3 class="subheading">Reviews and Ratings</h3>
