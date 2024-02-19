@@ -96,8 +96,8 @@ def display_book(request, isbn):
         'action': action
     }
     
-    if action == 'addbook':
-        response = requests.post(f'{FASTAPI_URL}/', json=response_json)
+    if action == 'save_book':
+        response = requests.post(f'{FASTAPI_URL}/save', json=response_json)
 
     elif action == 'rate':
         response_json['rating'] = data['rating']

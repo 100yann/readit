@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const bookStatus = document.getElementById('add-to-books-list')
     bookStatus.onclick = () => {
-        saveReview({'action': 'addbook'})
+        saveReview({'action': 'save_book'})
     }
 
     var stars = document.querySelectorAll('.fa-star');

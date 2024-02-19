@@ -202,3 +202,24 @@ def rate_book(rate_request: RateRequest):
         )
 
     return {'status': 'success', 'message': 'Rating updated successfully'}
+
+
+class SaveRequest(BaseModel):
+    user_id: int
+    isbn: str
+    action: str
+
+@app.post('/save')
+def save_book(save_request: SaveRequest):
+    book_id = get_book_id_by_isbn(save_request.isbn)[0]
+
+    columns = ['user_id', 'book_id']
+    values = [save_request.user_id, book_id]
+
+    insert_into_db(
+        columns,
+        values,
+        table = 'bookshelves'
+    )
+
+    return {'status': 'success', 'message': 'Book saved successfully'}
