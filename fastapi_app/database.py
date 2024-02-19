@@ -205,7 +205,7 @@ def get_user_data(id):
     connection = establish_connection()
     cursor = connection.cursor()
 
-    db_query = 'SELECT first_name, last_name, email FROM users WHERE id = %s'
+    db_query = 'SELECT first_name, last_name, email, id FROM users WHERE id = %s'
     cursor.execute(db_query, (id,))
     user_data = cursor.fetchone()
 

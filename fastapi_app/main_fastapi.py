@@ -56,8 +56,8 @@ def authenticate_user(email: str = Form(...), password: str = Form(...)):
     # check if password is valid
     if verify_password(password, email):
         user_id = get_user_id(email)
-  
-        return {'detail':'Login successful', 'data': {'user_id': user_id}}
+        user_data = get_user_data(user_id)
+        return {'detail':'Login successful', 'data': user_data}
     # password is invalid
     else:
         raise HTTPException(status_code=401, detail='Incorrect password')

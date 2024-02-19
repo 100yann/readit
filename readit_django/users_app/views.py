@@ -39,10 +39,11 @@ def login_user(request, method=['GET', 'POST']):
         })
         if response.status_code == 200:
             response_data = response.json()
-            user_id = response_data['data']['user_id']
+
+            user_id = response_data['data'][3]
 
             request.session['user'] = user_id
-            request.session['user_email'] = user_email
+            request.session['user_name'] = response_data['data'][0]
 
             return redirect('/home')
 
