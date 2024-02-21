@@ -22,23 +22,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const bookStatus = document.getElementById('add-to-books-list')
 
     if (bookStatus.dataset['status'] == '') {
-        bookStatus.textContent = 'Want to read'
+        bookStatus.innerHTML = '<i id="not-bookmarked" class="fa-regular fa-lg fa-bookmark fa-fw"></i>Want to read'
     } else {
-        bookStatus.style.backgroundColor = 'green'
-        bookStatus.textContent = bookStatus.dataset['status']
+        bookStatus.style.backgroundColor = '#BFEAAA'
+        bookStatus.innerHTML = `<i id="bookmarked" class="fa-solid fa-lg fa-bookmark fa-fw"></i>${bookStatus.dataset['status']}`
 
     }
 
     bookStatus.onclick = () => {
-        if (bookStatus.dataset['status'] == '')
-        {
-            bookStatus.style.backgroundColor = 'green'
-            bookStatus.dataset['status'] = 'Want to read'
+        // if the book hasn't been saved by the user
+        if (bookStatus.dataset['status'] == '') {
+            // animate button from grey to green
+            animateElement(bookStatus, 'change-button-color', '0.2s', 'forwards')
+            bookStatus.dataset['status'] = 'Want to read';
+
+            // animate the regular bookmark 
+            animateElement(document.querySelector('#not-bookmarked'), 'pop-up', '0.1s', 'forwards')
+
+            // replace the regular bookmark with a solid bookmark and animate it into place
+            bookStatus.innerHTML = `<i id="bookmarked" class="fa-solid fa-lg fa-bookmark fa-fw"></i>${bookStatus.dataset['status']}`;
+            animateElement(document.querySelector('#bookmarked'), 'pop-up', '0.1s', 'reverse')
             saveReview({'action': 'save_book'})
-        } else 
-        {
-            bookStatus.style.backgroundColor = 'gray'
-            bookStatus.dataset['status'] = ''
+        } else {
+            // if user has the book saved
+            // change the button color from green to grey
+            animateElement(bookStatus, 'change-button-color', '0.2s', 'reverse')
+            bookStatus.style.backgroundColor = ''
+            bookStatus.dataset['status'] = '';
+
+            animateElement(document.querySelector('#bookmarked'), 'pop-up', '0.1s', 'forwards')
+
+            bookStatus.innerHTML = `<i id="not-bookmarked" class="fa-regular fa-lg fa-bookmark fa-fw"></i>Want to read`;
+            
+            animateElement(document.querySelector('#not-bookmarked'), 'pop-up', '0.1s', 'reverse')
             saveReview({'action': 'remove_book'})
         }
     }
@@ -103,7 +119,6 @@ function getBookInfo() {
   
 
 function saveReview(data) {
-    console.log(data)
     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
     fetch(``, {
       method: "POST",
@@ -128,4 +143,10 @@ function saveRating(rating) {
     },
     body: JSON.stringify({'rating': rating, 'action': 'rate'})
   })
+}
+
+
+
+function animateElement(element, animationName, duration, direction){
+    element.style.animation = `${animationName} ${duration} ${direction}`
 }

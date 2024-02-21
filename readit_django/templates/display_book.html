@@ -7,7 +7,11 @@
     <div class="book-view">
         <div id="book-cover">
             <img id='book-thumbnail' src="{{ details.thumbnail }}" alt="book-cover">
-
+            {% if request.session.user %}
+            <div>
+                <button id="add-to-books-list" data-status="{{ bookshelf }}"></button>
+            </div>
+            {% endif %}
         </div>
         <div id="book-details">
             <h1 id="book-title" data-isbn="{{ isbn }}">{{ details.title }}</h1>
@@ -24,11 +28,7 @@
         <i class="fa-solid fa-star"></i>
         <i class="fa-solid fa-star"></i>
     </div>
-    <div>
-        {% if request.session.user %}
-            <button id="add-to-books-list" data-status="{{ bookshelf }}"></button>
-        {% endif %}
-    </div>
+
     <div id="book-reviews">
         <h3 class="subheading">Reviews and Ratings</h3>
         {% for review in reviews %}

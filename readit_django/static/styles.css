@@ -5,6 +5,8 @@ h1 {
 
 /* Home Page */
 body {
+    font-family: 'Libre Baskerville', serif;
+
 }
 
 #header {
@@ -177,7 +179,7 @@ body {
 #page {
     background-color: #effafc;
     max-height: 100%;
-    padding: 50px 250px;
+    padding: 50px 300px;
 
 }
 
@@ -197,8 +199,51 @@ body {
 }
 
 #book-details p {
+    padding-right: 100px;
     font-family: 'Libre Baskerville', serif;
 }
+
+#book-cover {
+    width: 60%;
+    height: auto;
+}
+
+#book-cover img {
+    width: 100%;
+    height: auto;
+}
+
+#add-to-books-list {
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+}
+
+@keyframes pop-up {
+    0% {
+        scale: 1;
+        rotate: 0;
+    }
+    100% {
+        scale: 1.5;
+        transform: rotate(2deg);
+
+    }
+}
+
+@keyframes change-button-color {
+    0% {
+        background-color: #E0E0E0;
+    }
+
+    100% {
+        background-color: #BFEAAA;
+    }
+}
+
+
+
 
 #book-reviews {
     margin-top: 50px;
