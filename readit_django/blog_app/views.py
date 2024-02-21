@@ -4,6 +4,8 @@ from .utils import *
 from django.http import JsonResponse, HttpResponse
 import json
 import requests
+from requests.exceptions import ConnectionError
+
 
 FASTAPI_URL = 'http://127.0.0.1:3000'
 
@@ -11,7 +13,11 @@ FASTAPI_URL = 'http://127.0.0.1:3000'
 def home_page(request):
     params = {'page': 'home'}
 
-    response = requests.get(f'{FASTAPI_URL}/get_reviews', params=params)
+    try:
+        response = requests.get(f'{FASTAPI_URL}/get_reviews', params=params)
+    except ConnectionError:
+        return render(request, 'error.html')
+    
     data = response.json()
     reviews = data.get('reviews', [])
 
