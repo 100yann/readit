@@ -22,10 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const bookStatus = document.getElementById('add-to-books-list')
 
     if (bookStatus.dataset['status'] == '') {
-        bookStatus.innerHTML = '<i id="not-bookmarked" class="fa-regular fa-lg fa-bookmark fa-fw"></i>Want to read'
+        bookStatus.innerHTML = '<i id="not-bookmarked" class="fa-regular fa-bookmark fa-fw"></i>Want to read'
     } else {
         bookStatus.style.backgroundColor = '#BFEAAA'
-        bookStatus.innerHTML = `<i id="bookmarked" class="fa-solid fa-lg fa-bookmark fa-fw"></i>${bookStatus.dataset['status']}`
+        bookStatus.innerHTML = `<i id="bookmarked" class="fa-solid fa-bookmark fa-fw"></i>${bookStatus.dataset['status']}`
 
     }
 
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             animateElement(document.querySelector('#not-bookmarked'), 'pop-up', '0.1s', 'forwards')
 
             // replace the regular bookmark with a solid bookmark and animate it into place
-            bookStatus.innerHTML = `<i id="bookmarked" class="fa-solid fa-lg fa-bookmark fa-fw"></i>${bookStatus.dataset['status']}`;
+            bookStatus.innerHTML = `<i id="bookmarked" class="fa-solid fa-bookmark fa-fw"></i>${bookStatus.dataset['status']}`;
             animateElement(document.querySelector('#bookmarked'), 'pop-up', '0.1s', 'reverse')
             saveReview({'action': 'save_book'})
         } else {
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             animateElement(document.querySelector('#bookmarked'), 'pop-up', '0.1s', 'forwards')
 
-            bookStatus.innerHTML = `<i id="not-bookmarked" class="fa-regular fa-lg fa-bookmark fa-fw"></i>Want to read`;
+            bookStatus.innerHTML = `<i id="not-bookmarked" class="fa-regular fa-bookmark fa-fw"></i>Want to read`;
             
             animateElement(document.querySelector('#not-bookmarked'), 'pop-up', '0.1s', 'reverse')
             saveReview({'action': 'remove_book'})
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var userRating = document.querySelector('#rating-section').dataset['rating']
     stars.forEach((element, index) => {
         if (index <= userRating-1) {
-            element.style.color = 'yellow'
+            element.style.color = '#ff764c'
         }
     })
 
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         element.addEventListener('mouseover', () => {
                 stars.forEach((element2, index2) => {
                     if (index2 <= index) {
-                        element2.style.color = 'yellow'
+                        element2.style.color = '#ff764c'
                     } else {
                         element2.style.color = ''
                     }
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             saveRating(rating)
             stars.forEach((element2, index2) => {
                 if (index2 <= index) {
-                    element2.style.color = 'yellow'
+                    element2.style.color = '#ff764c'
                 } else {
                     element2.style.color = ''
                 }
@@ -97,8 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         element.addEventListener('mouseleave', () => {
             if (!rated) {
-                stars.forEach((element2) => {
-                    element2.style.color = ''
+                stars.forEach((element2, index) => {
+                    if (!userRating || index > userRating - 1) {
+                        element2.style.color = ''
+                    }
                 })
             }
         })
