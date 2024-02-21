@@ -43,7 +43,6 @@ def get_book_by_isbn(isbn, preview=False):
         'q': f'isbn:{isbn}'
     }
     response = requests.get(base_url, params=params)
-    print(response)
     if response.status_code != 200:
         return JsonResponse({'error': 'Failed to fetch books'}, status=response.status_code)
     
@@ -53,7 +52,6 @@ def get_book_by_isbn(isbn, preview=False):
         return JsonResponse({'error': 'No book found'}, status=response.status_code)
     
     book_info = book[0]['volumeInfo']
-
     filtered_data = {
         'title': book_info['title'],
         'thumbnail': book_info['imageLinks']['thumbnail']

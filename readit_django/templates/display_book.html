@@ -10,25 +10,48 @@
             {% if request.session.user %}
             <div>
                 <button id="add-to-books-list" data-status="{{ bookshelf }}"></button>
+                <div id="rating-section" data-rating="{{ user_rating }}">
+                    <i class="fa-solid fa-star rating-stars"></i>
+                    <i class="fa-solid fa-star rating-stars"></i>
+                    <i class="fa-solid fa-star rating-stars"></i>
+                    <i class="fa-solid fa-star rating-stars"></i>
+                    <i class="fa-solid fa-star rating-stars"></i>
+                </div>
             </div>
             {% endif %}
         </div>
         <div id="book-details">
-            <h1 id="book-title" data-isbn="{{ isbn }}">{{ details.title }}</h1>
+            <div id="book-heading">
+                <div>
+                    <h1 id="book-title" data-isbn="{{ isbn }}">{{ details.title }}</h1>
+                </div>
+                <div id="book-interactions">
+                    <span id="book-rating">4.0 stars</span>
+                    <span class="book-total-reviews">100 Reviews</span>
+                    <span class="book-total-ratings">50 Ratings</span>
+                </div>
+            </div>
             <h3>by <span id="author">{{ details.author }}</span></h3>
-            <p>{{ details.description }}</p>
+
+            <p id="book-description">{{ details.description }}</p>
             <p>Genres: {{ details.categories }}</p>
-            <p>{{ details.pageCount }} pages</p>
+            <div id="book-additional-info">
+                <div>
+                    <p class="book-info-label">Pages</p>
+                    <p class="book-info-value">{{ details.pageCount }}</p>
+                </div>
+                <div>
+                    <p class="book-info-label">Publisher</p>
+                    <p class="book-info-value">{{ details.publisher }}</p>
+                </div>
+                <div>
+                    <p class="book-info-label">Published on</p>
+                    <p class="book-info-value">{{ details.publishedDate}}</p>
+                </div>
+            </div>
         </div>
     </div>
-    <div id="rating-section" data-rating="{{ user_rating }}">
-        <i class="fa-solid fa-star"></i>
-        <i class="fa-solid fa-star"></i>
-        <i class="fa-solid fa-star"></i>
-        <i class="fa-solid fa-star"></i>
-        <i class="fa-solid fa-star"></i>
-    </div>
-
+    <hr>
     <div id="book-reviews">
         <h3 class="subheading">Reviews and Ratings</h3>
         {% for review in reviews %}

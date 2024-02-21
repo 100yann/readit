@@ -1,13 +1,13 @@
+body {
+    font-family: 'Libre Baskerville', serif;
+}
+
 h1 {
     padding: 0;
     margin: 0;
 }
 
 /* Home Page */
-body {
-    font-family: 'Libre Baskerville', serif;
-
-}
 
 #header {
     background-color: #effafc;
@@ -177,10 +177,8 @@ body {
 
 /* View book */
 #page {
-    background-color: #effafc;
     max-height: 100%;
     padding: 50px 300px;
-
 }
 
 .book-view {
@@ -188,9 +186,14 @@ body {
     gap: 50px;
 }
 
+#book-heading {
+    display: flex;
+    gap: 100px;
+    align-items: center;
+}
 
-
-#book-details h1, #book-details h3{
+#book-details h1, 
+#book-details h3 {
     font-family: 'League Spartan', sans-serif;
 }
 
@@ -198,9 +201,33 @@ body {
     font-size: 50px;
 }
 
-#book-details p {
-    padding-right: 100px;
-    font-family: 'Libre Baskerville', serif;
+#book-details h3 {
+    line-height: 25px;
+}
+
+#book-interactions {
+    font-size: 18px;
+    opacity: 70%;
+    font-family: 'League Spartan', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+#book-rating {
+    color: #ff764c;
+    opacity: 100%;
+    font-weight: 900;
+    font-size: 25px;
+}
+
+#book-total-reviews,
+#book-total-ratings {
+    text-align: center;
+}
+
+#book-description {
+    margin: 25px 0;
 }
 
 #book-cover {
@@ -211,6 +238,7 @@ body {
 #book-cover img {
     width: 100%;
     height: auto;
+    border-radius: 8px;
 }
 
 #add-to-books-list {
@@ -218,6 +246,15 @@ body {
     padding: 10px 20px;
     border-radius: 8px;
     border: none;
+    font-family: 'League Spartan', sans-serif;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#add-to-books-list i {
+    font-size: 18px;
+    margin-right: 5px;
 }
 
 @keyframes pop-up {
@@ -242,9 +279,6 @@ body {
     }
 }
 
-
-
-
 #book-reviews {
     margin-top: 50px;
 }
@@ -253,4 +287,30 @@ body {
     font-family: 'League Spartan', sans-serif;
     text-align: center;
     font-size: 35px;
+}
+
+#book-additional-info {
+    display: flex;
+    gap: 100px;
+}
+
+.book-info-label {
+    opacity: 70%;
+    margin-bottom: 0;
+
+}
+
+.book-info-value {
+    font-family: 'League Spartan', sans-serif;
+    font-size: 20px;
+}
+
+#rating-section {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.rating-stars {
+    font-size: 28px;
 }
