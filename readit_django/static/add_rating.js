@@ -97,9 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         element.addEventListener('mouseleave', () => {
             if (!rated) {
-                stars.forEach((element2, index) => {
-                    if (!userRating || index > userRating - 1) {
+                stars.forEach((element2, index3) => {
+                    if (!userRating || index3 > userRating - 1) {
                         element2.style.color = ''
+                    } else {
+                        element2.style.color = '#ff764c'
                     }
                 })
             }

@@ -8,15 +8,18 @@
         <div id="book-cover">
             <img id='book-thumbnail' src="{{ details.thumbnail }}" alt="book-cover">
             {% if request.session.user %}
-            <div>
-                <button id="add-to-books-list" data-status="{{ bookshelf }}"></button>
+            <div id="book-interactions">
                 <div id="rating-section" data-rating="{{ user_rating }}">
-                    <i class="fa-solid fa-star rating-stars"></i>
-                    <i class="fa-solid fa-star rating-stars"></i>
-                    <i class="fa-solid fa-star rating-stars"></i>
-                    <i class="fa-solid fa-star rating-stars"></i>
-                    <i class="fa-solid fa-star rating-stars"></i>
+                    <span>Your rating</span>
+                    <div id="rating-container">
+                        <i class="fa-solid fa-star rating-stars"></i>
+                        <i class="fa-solid fa-star rating-stars"></i>
+                        <i class="fa-solid fa-star rating-stars"></i>
+                        <i class="fa-solid fa-star rating-stars"></i>
+                        <i class="fa-solid fa-star rating-stars"></i>
+                    </div>
                 </div>
+                <button id="add-to-books-list" data-status="{{ bookshelf }}"></button>
             </div>
             {% endif %}
         </div>
@@ -25,14 +28,19 @@
                 <div>
                     <h1 id="book-title" data-isbn="{{ isbn }}">{{ details.title }}</h1>
                 </div>
-                <div id="book-interactions">
-                    <span id="book-rating">4.0 stars</span>
-                    <span class="book-total-reviews">100 Reviews</span>
-                    <span class="book-total-ratings">50 Ratings</span>
+                <div id="rating-statistics">
+                    <div>
+                        <span id="book-rating">4.0</span><span>Stars</span>
+                    </div>
+                    <div>
+                        <span class="book-total-reviews">100</span><span>Reviews</span>
+                    </div>
+                    <div>
+                        <span class="book-total-ratings">50</span><span>Ratings</span>
+                    </div>
                 </div>
             </div>
             <h3>by <span id="author">{{ details.author }}</span></h3>
-
             <p id="book-description">{{ details.description }}</p>
             <p>Genres: {{ details.categories }}</p>
             <div id="book-additional-info">
@@ -54,11 +62,26 @@
     <hr>
     <div id="book-reviews">
         <h3 class="subheading">Reviews and Ratings</h3>
+
         {% for review in reviews %}
-        <div>
-            <h5>{{ review.first_name }} {{ review.last_name }}</h5>
-            <p>{{ review.date_read }}</p>
-            <p>{{ review.review }}</p>
+        <div id="review-container">
+            <div id="user-preview">
+                <div id="user-pfp-container">
+                    <img class="user-pfp-preview" src="https://wcchn.ca/wp-content/uploads/2022/09/Dr.-Michael-van-Manen.jpg" alt="">
+                </div>
+                <div id="user-name-container">
+                    <h5>{{ review.first_name }} {{ review.last_name }}</h5>
+                    <span>64 reviews</span>
+                    <span>50 followers</span>
+                </div>
+            </div>
+            <div id="review-content">
+                <div id="review-date-rating">
+                    <span>☆☆☆☆☆</span>
+                    <p>{{ review.date_read }}</p>
+                </div>
+                <p>{{ review.review }}</p>
+            </div>
         </div>
         {% endfor %}
         {% if request.session.user %}
@@ -81,7 +104,6 @@
     </div>
 </div>
 
-<script src="{% static 'display_book.js' %}"></script>
 <script src="{% static 'add_rating.js' %}"></script>
 <script src="https://kit.fontawesome.com/b1fbfefaf0.js" crossorigin="anonymous"></script>
 {% endblock %}

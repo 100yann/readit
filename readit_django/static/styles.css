@@ -51,7 +51,7 @@ h1 {
 
 #recent-reviews h3 {
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 35px;
     font-family: 'League Spartan', sans-serif;
 
 }
@@ -59,12 +59,6 @@ h1 {
 #recent-reviews-container {
     display: flex;
     gap: 15px;
-}
-
-#book-cover img {
-    height: 200px;
-    width: auto;
-    margin-bottom: 12px;
 }
 
 .review-preview {
@@ -110,11 +104,6 @@ h1 {
     background-color: white;
 }
 
-#review-container {
-    display: flex;
-    gap: 20px;
-    justify-content: space-between;
-}
 
 #review-heading-container {
     display: flex;
@@ -133,9 +122,7 @@ h1 {
     text-decoration: underline;
 }
 
-#book-cover img {
-    max-width: 200px;
-}
+
  */
 
 @media (max-width: 1000px) {
@@ -147,9 +134,7 @@ h1 {
         flex-direction: column;
         justify-content: center;
     }
-    #book-cover {
-        margin: auto;
-    }
+
     #review-date {
         display: none;
     }
@@ -176,20 +161,26 @@ h1 {
 
 
 /* View book */
+
 #page {
-    max-height: 100%;
-    padding: 50px 300px;
+    padding: 50px 250px;
 }
 
 .book-view {
     display: flex;
-    gap: 50px;
+    gap: 35px;
 }
 
 #book-heading {
     display: flex;
-    gap: 100px;
-    align-items: center;
+    justify-content: space-between;
+    align-items: start;
+    gap: 60px;
+}
+
+#book-details {
+    flex: 1 1 auto;
+    max-width: 80%;
 }
 
 #book-details h1, 
@@ -198,47 +189,50 @@ h1 {
 }
 
 #book-details h1 {
-    font-size: 50px;
+    word-wrap: normal;
+    font-size: 44px;
 }
 
 #book-details h3 {
-    line-height: 25px;
+    line-height: 23px;
 }
 
-#book-interactions {
-    font-size: 18px;
+#rating-statistics {
+    font-size: 22px;
     opacity: 70%;
     font-family: 'League Spartan', sans-serif;
     display: flex;
-    align-items: center;
+    align-items: end;
+    justify-content: end;
     gap: 25px;
+    padding-top: 5px;
+    line-height: 24px;
+}
+
+#rating-statistics span {
+    display: block;
+    text-align: center;
 }
 
 #book-rating {
     color: #ff764c;
     opacity: 100%;
-    font-weight: 900;
-    font-size: 25px;
-}
-
-#book-total-reviews,
-#book-total-ratings {
-    text-align: center;
-}
-
-#book-description {
-    margin: 25px 0;
 }
 
 #book-cover {
-    width: 60%;
-    height: auto;
+    flex: 1 1 auto; 
+    max-width: 20%; 
 }
 
-#book-cover img {
+#book-thumbnail {
     width: 100%;
     height: auto;
     border-radius: 8px;
+    max-width: 100%;
+}
+
+#book-description {
+    margin: 30px 0;
 }
 
 #add-to-books-list {
@@ -249,7 +243,6 @@ h1 {
     font-family: 'League Spartan', sans-serif;
     font-size: 20px;
     text-align: center;
-    margin-bottom: 15px;
 }
 
 #add-to-books-list i {
@@ -287,11 +280,12 @@ h1 {
     font-family: 'League Spartan', sans-serif;
     text-align: center;
     font-size: 35px;
+    margin-bottom: 25px;
 }
 
 #book-additional-info {
     display: flex;
-    gap: 100px;
+    gap: 75px;
 }
 
 .book-info-label {
@@ -307,10 +301,88 @@ h1 {
 
 #rating-section {
     width: 100%;
+    background-color: rgb(240, 240, 240);
+    border-radius: 8px;
+    padding: 2.5px 20px 10px;
+    text-align: center;
+    font-family: 'League Spartan', sans-serif;
+    margin: 15px 0;
+}
+
+#rating-section span {
+    margin: 0;
+    font-size: 20px;
+    display: block;
+}
+
+#rating-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .rating-stars {
     font-size: 28px;
+}
+
+#book-interactions {
+    width: 100%;
+}
+
+#review-container {
+    margin: auto;
+    display: flex;
+    gap: 75px;
+    padding: 30px 10vw;
+}
+
+.user-pfp-preview {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+#user-preview {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 15px;
+    height: fit-content;
+    max-width: 30%;
+}
+
+#user-pfp-container {
+    max-width: 30%;
+    height: 100%;
+}
+
+#user-name-container {
+    align-items: center;
+    height: 100%;
+}
+
+#user-preview h5 {
+    font-family: 'League Spartan', sans-serif;
+    font-size: 23px;
+    margin: 0;
+}
+
+#user-preview span {
+    font-family: 'League Spartan', sans-serif;
+    display: block;
+    font-size: 14px;
+    opacity: 75%;
+}
+
+
+
+#review-content {
+    flex: 0 1 auto;
+    max-width: 70%;
+}
+
+#review-date-rating {
+    display: flex;
+    gap: 20px;
+}
+
+#review-date-rating p {
+    opacity: 75%;
 }
