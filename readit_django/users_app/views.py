@@ -56,13 +56,9 @@ def logout_user(request):
     return redirect('/home')
 
 
-
 def display_user_profile(request, user_id):
-    response = requests.get('http://127.0.0.1:3000/get_user', data = {
-        'id': user_id
-    })
+    response = requests.get(f'http://127.0.0.1:3000/user/{user_id}')
 
     if response.status_code == 200:
         response_data = response.json()
-        user_data = response_data['data']['user_data']
-    return render(request, 'users/user_profile.html', context={'user_data': user_data})
+        return render(request, 'users/user_profile.html', context = {'user_data': response_data})
