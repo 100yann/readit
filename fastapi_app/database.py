@@ -257,7 +257,10 @@ def get_data(table, columns, **conditions):
         cursor.execute(db_query)
     
     results = cursor.fetchall()
-    return results
+    colnames = [desc[0] for desc in cursor.description]
+    combined_data = [dict(zip(colnames, row)) for row in results]
+
+    return combined_data
     
 
 if __name__ == '__main__':
