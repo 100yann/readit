@@ -14,6 +14,7 @@ def get_all_reviews(isbn: str | None = None,
     
     if page == 'home':
         reviews = get_reviews(order='created_on desc', limit=5)
+
     else:
         reviews = get_reviews(isbn)
 
@@ -33,8 +34,8 @@ def get_all_reviews(isbn: str | None = None,
 
         if user_id and isbn:
             book_id = get_book_id_by_isbn(isbn)[0]
-            rating = get_data('ratings', 'rating', **{'user_id': user_id, 'book_id': book_id})
-            bookshelf = get_data('bookshelves', 'shelf', **{'user_id': user_id, 'book_id': book_id})
+            rating = get_data('ratings', columns = ['rating'], **{'user_id': user_id, 'book_id': book_id})
+            bookshelf = get_data('bookshelves', columns = ['shelf'], **{'user_id': user_id, 'book_id': book_id})
             
             return {'reviews': reviews, 'rating': rating, 'bookshelf': bookshelf}
         
@@ -234,7 +235,7 @@ def save_book(save_request: SaveRequest):
     else:
         shelved_book_id = get_data(
             'bookshelves', 
-            'shelved_book_id',
+            columns= ['shelved_book_id'],
             **{'user_id': save_request.user_id, 'book_id': book_id},
         )[0][0]
 
@@ -246,3 +247,27 @@ def save_book(save_request: SaveRequest):
         
         message = 'Book removed successfully'
     return {'status': 'success', 'message': message}
+
+
+@app.get('/user/{profile_id}')
+def get_user_profile(profile_id):
+    columns = ['users.email', 'users.first_name', 'users.last_name', 'reviews.*', 'books.*']
+    
+    join_clauses = [{'type': 'LEFT', 'table': 'reviews', 'col1': 'users.id', 'col2': 'reviews.user_id'},
+                    {'type': 'LEFT', 'table': 'books', 'col1': 'reviews.book_reviewed', 'col2': 'books.book_id'}]
+   
+    conditions = {'join_clauses': join_clauses, 
+                  'users.id': profile_id
+                  }
+    
+    user_data = get_data(
+        table = 'users',
+        columns = columns,
+        **conditions
+    )
+    
+    return user_data
+
+
+if __name__ == '__main__':
+    ...
