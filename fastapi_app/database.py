@@ -231,30 +231,34 @@ def save_like_to_db(user_id, review_id, liked=False):
     return response
 
 
-def get_data(table, *args, **kwargs):
+def get_data(table, columns, **conditions):
     connection = establish_connection()
     cursor = connection.cursor()
 
-    columns = ', '.join(args) if args else '*'
-    db_query = f'SELECT {columns} FROM {table}'
+    selected_columns = ', '.join(columns) if columns else '*'
+    db_query = f'SELECT {selected_columns} FROM {table}'
 
-    if kwargs:
-        conditions = []
+    if 'join_clauses' in conditions:
+        join_clauses = conditions.pop('join_clauses')
+        for clause in join_clauses:
+            db_query += f' {clause["type"]} JOIN {clause["table"]} ON {clause["col1"]} = {clause["col2"]}'
+
+    if conditions:
+        db_conditions = []
         values = []
-        for key, value in kwargs.items():
-            conditions.append(f'{key} = %s')
+        for key, value in conditions.items():
+            db_conditions.append(f'{key} = %s')
             values.append(value)
         
-        if conditions:
-            db_query += ' WHERE ' + ' AND '.join(conditions)
-            
-        cursor.execute(db_query, (values))
+        if db_conditions:
+            db_query += ' WHERE ' + ' AND '.join(db_conditions)
+        cursor.execute(db_query, values)
     else: 
-        cursor.execute()
+        cursor.execute(db_query)
     
     results = cursor.fetchall()
     return results
     
 
 if __name__ == '__main__':
-    print(get_data('ratings', **{'user_id': 1, 'book_id':2}))
+    ...
