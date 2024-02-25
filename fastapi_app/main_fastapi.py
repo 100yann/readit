@@ -113,10 +113,30 @@ def save_review(data: ReviewData):
         insert_into_db(columns, values, 'books')
 
     book_id = get_book_id_by_isbn(book_isbn)[0]
+
     # save review
     columns = ['review', 'date_read', 'book_reviewed', 'user_id']
     values = [data.review, data.date_read, book_id, data.reviewed_by]
     insert_into_db(columns, values, 'reviews')
+
+    # check if a book has already been saved in the 'read' bookshelf
+    conditions = {
+        'user_id': data.reviewed_by,
+        'book_id': book_id,
+        'shelf': 'read'
+    }
+
+    is_book_read = get_data(
+        table='bookshelves',
+        columns=['shelf_id'],
+        **conditions
+    )
+
+    # save the book to the 'read' bookshelf
+    if not is_book_read:
+        columns = ['user_id', 'book_id', 'shelf']
+        values = [data.reviewed_by, book_id, 'read']
+        insert_into_db(columns, values, 'bookshelves')
 
     return {'status': 'success', 'message': 'Review saved successfully'}
 
@@ -235,13 +255,13 @@ def save_book(save_request: SaveRequest):
     else:
         shelved_book_id = get_data(
             'bookshelves', 
-            columns= ['shelved_book_id'],
+            columns= ['shelf_id'],
             **{'user_id': save_request.user_id, 'book_id': book_id},
         )[0][0]
 
         delete_row(
             table = 'bookshelves',
-            column = 'shelved_book_id',
+            column = 'shelf_id',
             value = shelved_book_id
         )
         
