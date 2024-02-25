@@ -231,7 +231,7 @@ def save_like_to_db(user_id, review_id, liked=False):
     return response
 
 
-def get_data(table, columns, **conditions):
+def get_data(table, columns=None, **conditions):
     connection = establish_connection()
     cursor = connection.cursor()
 

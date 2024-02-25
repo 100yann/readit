@@ -251,22 +251,33 @@ def save_book(save_request: SaveRequest):
 
 @app.get('/user/{profile_id}')
 def get_user_profile(profile_id):
-    columns = ['users.email', 'users.first_name', 'users.last_name', 'reviews.*', 'books.*']
-    
-    join_clauses = [{'type': 'LEFT', 'table': 'reviews', 'col1': 'users.id', 'col2': 'reviews.user_id'},
-                    {'type': 'LEFT', 'table': 'books', 'col1': 'reviews.book_reviewed', 'col2': 'books.book_id'}]
-   
-    conditions = {'join_clauses': join_clauses, 
-                  'users.id': profile_id
-                  }
-    
+    # get user's data
     user_data = get_data(
         table = 'users',
+        columns = ['id', 'email', 'first_name', 'last_name'],
+        **{'id': profile_id}
+    )
+
+    # get all the books the user has reviewed
+    columns = ['reviews.*', 'books.*']
+    join_clauses = [{
+        'type': 'LEFT', 
+        'table': 'books', 
+        'col1': 'reviews.book_reviewed', 
+        'col2': 'books.book_id'
+        },
+        ]
+   
+    conditions = {'join_clauses': join_clauses, 
+                  'reviews.user_id': profile_id
+                  }
+    
+    book_data = get_data(
+        table = 'reviews',
         columns = columns,
         **conditions
     )
-    
-    return user_data
+    return user_data, book_data
 
 
 if __name__ == '__main__':

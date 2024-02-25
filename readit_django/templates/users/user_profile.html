@@ -2,14 +2,14 @@
 {% block title %}User profile{% endblock %}
 
 {% block body %}
-    <h1>{{ user_data.0.first_name }} {{ user_data.0.last_name }}</h1>
+    <h1>{{ user.first_name }} {{ user.last_name }}</h1>
     <div>
         <h5 class="subheading">User's Reviews</h5>
-        {% for i in user_data %}
+        {% for book in reviews %}
         <div>
-            <img src="{{ i.thumbnail }}" alt="">
-            <a href="{% url 'display_book' isbn=i.isbn %}"><h3>{{ i.title }}</h3></a>
-            <p>{{ i.review }}</p>
+            <img src="{{ book.thumbnail }}" alt="">
+            <a href="{% url 'display_book' isbn=book.isbn %}"><h3>{{ book.title }}</h3></a>
+            <p>{{ book.review }}</p>
         </div>
         {% endfor %}
     </div>

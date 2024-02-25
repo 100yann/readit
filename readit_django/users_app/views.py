@@ -61,4 +61,12 @@ def display_user_profile(request, user_id):
 
     if response.status_code == 200:
         response_data = response.json()
-        return render(request, 'users/user_profile.html', context = {'user_data': response_data})
+        user = response_data[0][0]
+        reviews = response_data[1]
+        
+        print(user, reviews, sep='\n\n')
+        return render(request, 'users/user_profile.html', 
+                      context = {
+                          'user': user,
+                          'reviews': reviews
+                      })
