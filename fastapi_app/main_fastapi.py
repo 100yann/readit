@@ -278,6 +278,25 @@ def get_user_profile(profile_id):
         **{'id': profile_id}
     )
 
+    # get all the books the user has read
+    columns = ['bookshelves.*', 'books.*']
+    join_clauses = [{
+        'type': 'LEFT',
+        'table': 'books',
+        'col1': 'bookshelves.book_id',
+        'col2': 'books.book_id'
+    }]
+
+    conditions = {
+        'join_clauses': join_clauses, 
+        'bookshelves.user_id': profile_id
+    }
+    books_read = get_data(
+        table = 'bookshelves',
+        columns = columns,
+        **conditions
+    )
+
     # get all the books the user has reviewed
     columns = ['reviews.*', 'books.*']
     join_clauses = [{
@@ -292,12 +311,12 @@ def get_user_profile(profile_id):
                   'reviews.user_id': profile_id
                   }
     
-    book_data = get_data(
+    reviews = get_data(
         table = 'reviews',
         columns = columns,
         **conditions
     )
-    return user_data, book_data
+    return user_data, books_read, reviews
 
 
 if __name__ == '__main__':
