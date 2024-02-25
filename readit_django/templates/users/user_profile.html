@@ -4,11 +4,22 @@
 {% block body %}
     <h1>{{ user.first_name }} {{ user.last_name }}</h1>
     <div>
+        <h5 class="subheading">{{ user.first_name }}'s finished books</h5>
+        {% for book in books_read %}
+            <div>
+                <img src="{{ book.thumbnail }}" alt="">
+                <a href="{% url 'display_book' isbn=book.isbn %}"><h6>{{ book.title }}</h6></a>
+                <a href=""><h6>{{ book.author }}</h6></a>
+            </div>
+        {% endfor %}
+    </div>
+    <hr>
+    <div>
         <h5 class="subheading">User's Reviews</h5>
         {% for book in reviews %}
         <div>
             <img src="{{ book.thumbnail }}" alt="">
-            <a href="{% url 'display_book' isbn=book.isbn %}"><h3>{{ book.title }}</h3></a>
+            <a href="{% url 'display_book' isbn=book.isbn %}"><h6>{{ book.title }}</h6></a>
             <p>{{ book.review }}</p>
         </div>
         {% endfor %}
