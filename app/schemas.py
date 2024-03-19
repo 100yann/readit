@@ -18,6 +18,14 @@ class ReviewCreate(BaseModel):
         from_attributes = True
 
 
+class ReviewUpdate(BaseModel):
+    content: str
+    user_id: int
+
+    class Config:
+        from_attributes = True
+
+
 class BookData(BaseModel):
     isbn: str
     title: str

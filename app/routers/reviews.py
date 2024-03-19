@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, Response, HTTPException
+from fastapi import APIRouter, Depends, status, Response, HTTPException, Body
 from .. import schemas, models
 from ..database import get_db
 from sqlalchemy.orm import Session
@@ -57,7 +57,32 @@ def delete_review(id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 # Update a review
+@router.patch('/{id}')
+def update_review(id: int, 
+                  new_review: schemas.ReviewUpdate, 
+                  db: Session = Depends(get_db)
+                  ):
+    review = db.query(models.Reviews).filter(models.Reviews.id == id).first()
+
+    # check if review doesn't exist
+    if not review:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail = f'Review with ID{id} does not exist')
+    
+    # check if the creator of the review made the request
+    if int(review.reviewed_by) != new_review.user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail = 'Only the creator of a review can modify it')
+    
+    # update the review
+    review.content = new_review.content
+    db.commit()
+    db.refresh(review)
+
+    return review
 
 
 # Get post by ID 
