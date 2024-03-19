@@ -34,3 +34,11 @@ class Books(Base):
     title = Column(String, nullable=False)
     author = Column(String, nullable=False)
     thumbnail = Column(String, nullable=False)
+
+
+class Bookshelves(Base):
+    __tablename__ = 'bookshelves'
+    id = Column(Integer, primary_key=True, nullable=False)
+    book_id = Column(ForeignKey('books.id'), nullable=False)
+    user_shelved = Column(String, nullable=False)
+    bookshelf = Column(String, nullable=False)

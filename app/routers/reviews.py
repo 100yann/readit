@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, Response, HTTPException, Body
-from .. import schemas, models
+from .. import schemas, models, utils
 from ..database import get_db
 from sqlalchemy.orm import Session
 
@@ -48,7 +48,15 @@ def create_review(review: schemas.ReviewCreate,
     # Save review
     new_review = models.Reviews(**review.model_dump())
     new_review.book_reviewed = book_exists.id
-    
+
+    # Save book to bookshelf
+    utils.save_book_to_bookshelf(
+        user_id = new_review.reviewed_by, 
+        book_id = book_exists.id, 
+        bookshelf= 'bookshelf', 
+        db=db
+    )
+
     db.add(new_review)  
     db.commit() 
     db.refresh(new_review)
