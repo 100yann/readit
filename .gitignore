@@ -4,3 +4,5 @@
 /readit_django/readit_django/__pycache__
 /readit_django/users_app/__pycache__
 /readit_django/blog_app/__pycache__
+/app/__pycache__
+/app/routers/__pycache__
