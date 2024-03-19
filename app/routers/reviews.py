@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status, Response, HTTPException
 from .. import schemas, models
 from ..database import get_db
 from sqlalchemy.orm import Session
@@ -18,7 +18,7 @@ def get_reviews(db: Session = Depends(get_db)):
 
 
 # Create a review
-@router.post('/')
+@router.post('/', status_code=status.HTTP_201_CREATED)
 def create_review(review: schemas.ReviewCreate,
                   book: schemas.BookData,
                   db: Session = Depends(get_db)
@@ -45,8 +45,18 @@ def create_review(review: schemas.ReviewCreate,
 
 
 # Delete a review
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_review(id: int, db: Session = Depends(get_db)):
+    query = db.query(models.Reviews).filter(models.Reviews.id == id)
 
+    if query.first() == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'Review with ID{id} does not exist')
+    
+    query.delete(synchronize_session=False)
+    db.commit()
 
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 # Update a review
 
 
