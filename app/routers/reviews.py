@@ -17,6 +17,18 @@ def get_reviews(db: Session = Depends(get_db)):
     return reviews
 
 
+# Get review by ID 
+@router.get('/{id}')
+def get_review_by_id(id: str, db: Session = Depends(get_db)):
+    review = db.query(models.Reviews).filter(models.Reviews.id == id).first()
+
+    if not review:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
+                            detail = f'Review with ID {id} not found')
+
+    return review
+
+
 # Create a review
 @router.post('/', status_code=status.HTTP_201_CREATED)
 def create_review(review: schemas.ReviewCreate,
@@ -61,7 +73,7 @@ def delete_review(id: int, db: Session = Depends(get_db)):
 
 # Update a review
 @router.patch('/{id}')
-def update_review(id: int, 
+def update_review(id: str, 
                   new_review: schemas.ReviewUpdate, 
                   db: Session = Depends(get_db)
                   ):
@@ -73,7 +85,7 @@ def update_review(id: int,
                             detail = f'Review with ID{id} does not exist')
     
     # check if the creator of the review made the request
-    if int(review.reviewed_by) != new_review.user_id:
+    if review.reviewed_by != new_review.user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail = 'Only the creator of a review can modify it')
     
@@ -83,6 +95,3 @@ def update_review(id: int,
     db.refresh(review)
 
     return review
-
-
-# Get post by ID 
