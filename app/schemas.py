@@ -9,6 +9,14 @@ class UserCreate(BaseModel):
         from_attributes = True
 
 
+class UserDataOut(BaseModel):
+    email: EmailStr
+    id: int
+
+    class Config:
+        from_attributes = True
+
+        
 class ReviewCreate(BaseModel):
     content: str
     date_read: str
