@@ -34,3 +34,8 @@ class BookData(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class BookshelfData(BaseModel):
+    user_id: str
+    bookshelf: str
