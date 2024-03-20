@@ -42,3 +42,10 @@ class Bookshelves(Base):
     book_id = Column(ForeignKey('books.id'), nullable=False)
     user_shelved = Column(String, nullable=False)
     bookshelf = Column(String, nullable=False)
+
+
+class Likes(Base):
+    __tablename__ = 'likes'
+    id = Column(Integer, primary_key=True, nullable=False)
+    review_id = Column(ForeignKey('reviews.id'), nullable=False)
+    user_id = Column(ForeignKey('users.id'), nullable=False)

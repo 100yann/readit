@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status, Response, HTTPException, Body
 from .. import schemas, models, utils
 from ..database import get_db
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 
 router = APIRouter(
@@ -12,8 +13,9 @@ router = APIRouter(
 
 # Get all reviews
 @router.get('/')
-def get_reviews(db: Session = Depends(get_db)):
+def get_reviews(user_id: int | None = None, db: Session = Depends(get_db)):
     reviews = db.query(models.Reviews).all()
+
     return reviews
 
 
@@ -105,3 +107,36 @@ def update_review(id: str,
     return review
 
 
+# Like a review
+@router.post('/like/{review}')
+def like_review(review: int, 
+                user: int, 
+                db: Session = Depends(get_db)
+                ):
+    
+    has_liked = db.query(models.Likes).\
+        filter(models.Likes.review_id == review).\
+        filter(models.Likes.user_id == user)
+
+    # check if this review has already been liked by this user
+    if has_liked.first():
+        # if yes - unlike it
+        has_liked.delete(synchronize_session=False)
+        db.commit()
+
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    # like the review
+    like = models.Likes(review_id=review, user_id=user)
+    db.add(like)
+
+    try:
+        db.commit()
+    except IntegrityError as e:
+        # if a review or user with the specified id does not exist raise an exception
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail = 'User or review not found')
+    else:
+        db.refresh(like)
+
+    return like
