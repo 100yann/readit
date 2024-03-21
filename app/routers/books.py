@@ -42,10 +42,23 @@ def shelve_book(book_id: str,
 
 @router.get('/find/{title}')
 def find_book_by_title(title: str, db: Session = Depends(get_db)):
+    # gets all matches from the db
     matches = db.query(models.Books).filter(models.Books.title.ilike(f'%{title}%')).all()
 
-    if not matches:
+    # gets 5 matches from google apis
+    google_matches = utils.get_books_by_title(title)
+
+    if not matches and not google_matches:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
                             detail = 'Could not find any matching books')
     
+    if google_matches:
+        # check if book is already saved to db by comparing isbn to avoid duplicate results
+        db_isbns = {book.isbn for book in matches}
+        for book in google_matches:
+            if book['isbn'] not in db_isbns:
+                matches.append(book)
+
     return matches
+
+
