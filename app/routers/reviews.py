@@ -26,17 +26,17 @@ def get_recent_reviews(num_reviews: int = 5, db: Session = Depends(get_db)):
         order_by(models.Reviews.created_at.desc()).\
         limit(num_reviews).\
         all()
-    return reviews 
+    return reviews
 
 
-# Get review by ID 
+# Get review by ID
 @router.get('/{id}')
 def get_review_by_id(id: str, db: Session = Depends(get_db)):
     review = db.query(models.Reviews).filter(models.Reviews.id == id).first()
 
     if not review:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
-                            detail = f'Review with ID {id} not found')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'Review with ID {id} not found')
 
     return review
 
@@ -47,9 +47,11 @@ def create_review(review: schemas.ReviewCreate,
                   book: schemas.BookData,
                   db: Session = Depends(get_db)
                   ):
-    
+
     # Check if the book reviewed already exists in the db
-    book_exists = db.query(models.Books).filter(models.Books.isbn == book.isbn).first()
+    book_exists = db.query(
+        models.Books).filter(
+        models.Books.isbn == book.isbn).first()
     if not book_exists:
         # if not - save it
         book_exists = models.Books(**book.model_dump())
@@ -63,14 +65,14 @@ def create_review(review: schemas.ReviewCreate,
 
     # Save book to bookshelf
     utils.save_book_to_bookshelf(
-        user_id = new_review.reviewed_by, 
-        book_id = book_exists.id, 
-        bookshelf= 'bookshelf', 
+        user_id=new_review.reviewed_by,
+        book_id=book_exists.id,
+        bookshelf='bookshelf',
         db=db
     )
 
-    db.add(new_review)  
-    db.commit() 
+    db.add(new_review)
+    db.commit()
     db.refresh(new_review)
 
     return new_review
@@ -81,10 +83,10 @@ def create_review(review: schemas.ReviewCreate,
 def delete_review(id: int, db: Session = Depends(get_db)):
     query = db.query(models.Reviews).filter(models.Reviews.id == id)
 
-    if query.first() == None:
+    if query.first() is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'Review with ID{id} does not exist')
-    
+
     query.delete(synchronize_session=False)
     db.commit()
 
@@ -93,8 +95,8 @@ def delete_review(id: int, db: Session = Depends(get_db)):
 
 # Update a review
 @router.patch('/{id}')
-def update_review(id: str, 
-                  new_review: schemas.ReviewUpdate, 
+def update_review(id: str,
+                  new_review: schemas.ReviewUpdate,
                   db: Session = Depends(get_db)
                   ):
     review = db.query(models.Reviews).filter(models.Reviews.id == id).first()
@@ -102,13 +104,14 @@ def update_review(id: str,
     # check if review doesn't exist
     if not review:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail = f'Review with ID{id} does not exist')
-    
+                            detail=f'Review with ID{id} does not exist')
+
     # check if the creator of the review made the request
     if review.reviewed_by != new_review.user_id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                            detail = 'Only the creator of a review can modify it')
-    
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail='Only the creator of a review can modify it')
+
     # update the review
     review.content = new_review.content
     db.commit()
@@ -119,11 +122,11 @@ def update_review(id: str,
 
 # Like a review
 @router.post('/like/{review}')
-def like_review(review: int, 
-                user: int, 
+def like_review(review: int,
+                user: int,
                 db: Session = Depends(get_db)
                 ):
-    
+
     has_liked = db.query(models.Likes).\
         filter(models.Likes.review_id == review).\
         filter(models.Likes.user_id == user)
@@ -143,9 +146,10 @@ def like_review(review: int,
     try:
         db.commit()
     except IntegrityError as e:
-        # if a review or user with the specified id does not exist raise an exception
+        # if a review or user with the specified id does not exist raise an
+        # exception
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail = 'User or review not found')
+                            detail='User or review not found')
     else:
         db.refresh(like)
 

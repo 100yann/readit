@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 
 def save_book_to_bookshelf(user_id, book_id, bookshelf, db: Session):
-    bookshelf_entry = models.Bookshelves(book_id=book_id, 
-                                         user_shelved=int(user_id), 
+    bookshelf_entry = models.Bookshelves(book_id=book_id,
+                                         user_shelved=int(user_id),
                                          bookshelf=bookshelf
                                          )
     db.add(bookshelf_entry)
@@ -19,7 +19,7 @@ def get_books_by_title(title):
     base_url = "https://www.googleapis.com/books/v1/volumes"
     params = {
         'q': title,
-        'maxResults': 5 
+        'maxResults': 5
     }
     response = requests.get(base_url, params=params)
 
@@ -33,7 +33,15 @@ def get_books_by_title(title):
 
 def format_results(results):
     formatted_results = []
-    fields = ['title', 'authors', 'thumbnail', 'publisher', 'description', 'pageCount', 'categories', 'isbn']
+    fields = [
+        'title',
+        'authors',
+        'thumbnail',
+        'publisher',
+        'description',
+        'pageCount',
+        'categories',
+        'isbn']
     for result in results:
         if 'volumeInfo' in result and 'imageLinks' in result['volumeInfo']:
             curr = {}
@@ -50,4 +58,3 @@ def format_results(results):
 
             formatted_results.append(curr)
     return formatted_results
-

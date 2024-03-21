@@ -13,7 +13,7 @@ class Users(Base):
                         nullable=False,
                         server_default=text('now()')
                         )
-    
+
 
 class Reviews(Base):
     __tablename__ = 'reviews'
@@ -24,7 +24,7 @@ class Reviews(Base):
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False,
                         server_default=text('now()'))
-    book_reviewed = Column(ForeignKey("books.id"), nullable=False)    
+    book_reviewed = Column(ForeignKey("books.id"), nullable=False)
 
 
 class Books(Base):
