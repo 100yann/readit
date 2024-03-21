@@ -19,6 +19,16 @@ def get_reviews(user_id: int | None = None, db: Session = Depends(get_db)):
     return reviews
 
 
+# Get most recent reviews
+@router.get('/recent')
+def get_recent_reviews(num_reviews: int = 5, db: Session = Depends(get_db)):
+    reviews = db.query(models.Reviews).\
+        order_by(models.Reviews.created_at.desc()).\
+        limit(num_reviews).\
+        all()
+    return reviews 
+
+
 # Get review by ID 
 @router.get('/{id}')
 def get_review_by_id(id: str, db: Session = Depends(get_db)):

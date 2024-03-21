@@ -28,7 +28,7 @@ def get_books_by_title(title):
         results = format_results(data.get("items", []))
         return results
     else:
-        return {'error': 'Failed to fetch books'}
+        return None
 
 
 def format_results(results):
