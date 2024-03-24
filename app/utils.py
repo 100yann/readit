@@ -2,6 +2,17 @@ import requests
 from .database import get_db
 from . import models
 from sqlalchemy.orm import Session
+import bcrypt
+
+
+def hash_password(password):
+    password_bytes = password.encode('utf-8')
+    hashed_password = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    return hashed_password
+
+
+def verify_password(plain_password, hashed_password):
+    return bcrypt.verify(plain_password.encode('utf-8'), hashed_password)
 
 
 def save_book_to_bookshelf(user_id, book_id, bookshelf, db: Session):
