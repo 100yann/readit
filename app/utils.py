@@ -12,7 +12,7 @@ def hash_password(password):
 
 
 def verify_password(plain_password, hashed_password):
-    return bcrypt.verify(plain_password.encode('utf-8'), hashed_password)
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password)
 
 
 def save_book_to_bookshelf(user_id, book_id, bookshelf, db: Session):
