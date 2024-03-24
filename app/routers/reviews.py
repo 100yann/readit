@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, Response, HTTPException, Body
-from .. import schemas, models, utils
+from .. import schemas, models, utils, oauth2
 from ..database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
@@ -45,13 +45,15 @@ def get_review_by_id(id: str, db: Session = Depends(get_db)):
 @router.post('/', status_code=status.HTTP_201_CREATED)
 def create_review(review: schemas.ReviewCreate,
                   book: schemas.BookData,
-                  db: Session = Depends(get_db)
+                  current_user: int = Depends(oauth2.get_current_user),
+                  db: Session = Depends(get_db),
                   ):
-
+    
     # Check if the book reviewed already exists in the db
     book_exists = db.query(
         models.Books).filter(
         models.Books.isbn == book.isbn).first()
+    
     if not book_exists:
         # if not - save it
         book_exists = models.Books(**book.model_dump())

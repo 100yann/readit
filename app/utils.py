@@ -1,6 +1,6 @@
 import requests
 from .database import get_db
-from . import models
+from . import models, utils
 from sqlalchemy.orm import Session
 import bcrypt
 
@@ -14,6 +14,17 @@ def hash_password(password):
 def verify_password(plain_password, hashed_password):
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password)
 
+
+def authenticate_user(db, user_credentials) -> bool:
+    user = db.query(models.Users).filter(models.Users.email == user_credentials.username).first()
+    if not user:
+        return False
+    
+    if not utils.verify_password(plain_password = user_credentials.password, 
+                                 hashed_password = user.password
+                                 ):
+        return False
+    return user
 
 def save_book_to_bookshelf(user_id, book_id, bookshelf, db: Session):
     bookshelf_entry = models.Bookshelves(book_id=book_id,

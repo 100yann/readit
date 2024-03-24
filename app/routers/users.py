@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, Response, HTTPException, Body
-from .. import schemas, models, utils
+from .. import schemas, models, utils, oauth2
 from ..database import get_db
 from sqlalchemy.orm import Session
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
@@ -51,15 +51,13 @@ def get_user_by_id(id: int, db: Session = Depends(get_db)):
 def login(user_crendetials: OAuth2PasswordRequestForm = Depends(),
           db: Session = Depends(get_db)):
     
-    user = db.query(models.Users).filter(models.Users.email == user_crendetials.username).first()
+    user = utils.authenticate_user(db, user_crendetials)
     if not user:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
-                            detail = 'Invalid email')
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password"
+        )
     
-    if not utils.verify_password(plain_password = user_crendetials.password, 
-                                 hashed_password = user.password
-                                 ):
-        raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED,
-                            detail = 'Invalid password')
-    
-    return {'message': 'successful login'}
+    access_token = oauth2.create_access_token(data= {'user_id': user.id})
+    return {'access_token': access_token, 'token_type': 'bearer'}
+

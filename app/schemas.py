@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
@@ -47,3 +48,12 @@ class BookData(BaseModel):
 class BookshelfData(BaseModel):
     user_id: str
     bookshelf: str
+
+
+class JwtToken(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    id: Optional[str] = None
