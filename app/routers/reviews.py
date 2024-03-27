@@ -123,7 +123,7 @@ def update_review(id: str,
     if review.reviewed_by != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail='Unauthorized to delete this post')
+            detail='Unauthorized to update this post')
 
     # update the review
     review.content = new_review.content
@@ -139,7 +139,6 @@ def like_review(review: int,
                 db: Session = Depends(get_db),
                 current_user: int = Depends(oauth2.get_current_user)
                 ):
-    print(current_user)
 
     has_liked = db.query(models.Likes).\
         filter(models.Likes.review_id == review).\
