@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, status, Response, HTTPException, Body
+from fastapi import APIRouter, Depends, status, Response, HTTPException
 from .. import schemas, models, utils, oauth2
 from ..database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from typing import Optional
 
 
 router = APIRouter(
@@ -13,8 +14,13 @@ router = APIRouter(
 
 # Get all reviews
 @router.get('/')
-def get_reviews(user_id: int | None = None, db: Session = Depends(get_db)):
-    reviews = db.query(models.Reviews).all()
+def get_reviews(user_id: int | None = None, 
+                db: Session = Depends(get_db)):
+    
+    if user_id:
+        reviews = db.query(models.Reviews).filter(models.Reviews.reviewed_by == user_id).all()
+    else:
+        reviews = db.query(models.Reviews).all()
 
     return reviews
 
