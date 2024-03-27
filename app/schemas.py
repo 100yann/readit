@@ -21,7 +21,6 @@ class UserDataOut(BaseModel):
 class ReviewCreate(BaseModel):
     content: str
     date_read: str
-    reviewed_by: int
 
     class Config:
         from_attributes = True

@@ -64,6 +64,7 @@ def create_review(review: schemas.ReviewCreate,
     # Save review
     new_review = models.Reviews(**review.model_dump())
     new_review.book_reviewed = book_exists.id
+    new_review.reviewed_by = current_user.id
 
     # Save book to bookshelf
     utils.save_book_to_bookshelf(
