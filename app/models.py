@@ -39,8 +39,8 @@ class Books(Base):
 class Bookshelves(Base):
     __tablename__ = 'bookshelves'
     id = Column(Integer, primary_key=True, nullable=False)
-    book_id = Column(ForeignKey('books.id'), nullable=False)
-    user_shelved = Column(String, nullable=False)
+    book_id = Column(Integer, ForeignKey('books.id'), nullable=False)
+    user_shelved = Column(Integer, ForeignKey('users.id'), nullable=False)
     bookshelf = Column(String, nullable=False)
 
 

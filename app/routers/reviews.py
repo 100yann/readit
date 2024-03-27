@@ -68,7 +68,7 @@ def create_review(review: schemas.ReviewCreate,
 
     # Save book to bookshelf
     utils.save_book_to_bookshelf(
-        user_id=new_review.reviewed_by,
+        user_id=current_user.id,
         book_id=book_exists.id,
         bookshelf='bookshelf',
         db=db
