@@ -28,7 +28,6 @@ class ReviewCreate(BaseModel):
 
 class ReviewUpdate(BaseModel):
     content: str
-    user_id: int
 
     class Config:
         from_attributes = True

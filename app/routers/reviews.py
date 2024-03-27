@@ -83,14 +83,22 @@ def create_review(review: schemas.ReviewCreate,
 
 # Delete a review
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_review(id: int, db: Session = Depends(get_db)):
-    query = db.query(models.Reviews).filter(models.Reviews.id == id)
-
-    if query.first() is None:
+def delete_review(id: int, 
+                  db: Session = Depends(get_db),
+                  current_user: int = Depends(oauth2.get_current_user)
+                  ):
+    
+    review_query = db.query(models.Reviews).filter(models.Reviews.id == id)
+    review = review_query.first()
+    if review is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'Review with ID{id} does not exist')
 
-    query.delete(synchronize_session=False)
+    if review.reviewed_by != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail='Unauthorized to delete this post')
+    
+    review_query.delete(synchronize_session=False)
     db.commit()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -100,8 +108,10 @@ def delete_review(id: int, db: Session = Depends(get_db)):
 @router.patch('/{id}')
 def update_review(id: str,
                   new_review: schemas.ReviewUpdate,
-                  db: Session = Depends(get_db)
+                  db: Session = Depends(get_db),
+                  current_user: int = Depends(oauth2.get_current_user)
                   ):
+    
     review = db.query(models.Reviews).filter(models.Reviews.id == id).first()
 
     # check if review doesn't exist
@@ -110,10 +120,10 @@ def update_review(id: str,
                             detail=f'Review with ID{id} does not exist')
 
     # check if the creator of the review made the request
-    if review.reviewed_by != new_review.user_id:
+    if review.reviewed_by != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail='Only the creator of a review can modify it')
+            detail='Unauthorized to delete this post')
 
     # update the review
     review.content = new_review.content
@@ -126,13 +136,14 @@ def update_review(id: str,
 # Like a review
 @router.post('/like/{review}')
 def like_review(review: int,
-                user: int,
-                db: Session = Depends(get_db)
+                db: Session = Depends(get_db),
+                current_user: int = Depends(oauth2.get_current_user)
                 ):
+    print(current_user)
 
     has_liked = db.query(models.Likes).\
         filter(models.Likes.review_id == review).\
-        filter(models.Likes.user_id == user)
+        filter(models.Likes.user_id == current_user.id)
 
     # check if this review has already been liked by this user
     if has_liked.first():
@@ -143,7 +154,7 @@ def like_review(review: int,
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     # like the review
-    like = models.Likes(review_id=review, user_id=user)
+    like = models.Likes(review_id=review, user_id=current_user.id)
     db.add(like)
 
     try:
