@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ValidationError
 
 
 class UserCreate(BaseModel):
@@ -32,6 +32,12 @@ class ReviewUpdate(BaseModel):
     class Config:
         from_attributes = True
 
+
+class ReviewOut(ReviewCreate):
+    owner: UserDataOut
+
+    class Config:
+        from_attributes = True
 
 class BookData(BaseModel):
     isbn: str

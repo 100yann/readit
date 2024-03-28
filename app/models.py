@@ -2,6 +2,7 @@ from .database import Base
 from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, LargeBinary
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.orm import relationship
 
 
 class Users(Base):
@@ -20,12 +21,13 @@ class Reviews(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     content = Column(String, nullable=False)
     date_read = Column(String, nullable=False)
-    reviewed_by = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False,
                         server_default=text('now()'))
     book_reviewed = Column(Integer, ForeignKey("books.id", ondelete='CASCADE'), nullable=False)
 
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
+    owner = relationship("Users")
 
 class Books(Base):
     __tablename__ = 'books'
