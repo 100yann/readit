@@ -15,18 +15,20 @@ router = APIRouter(
 # Get all reviews
 @router.get('/', response_model=List[schemas.ReviewWithLikes])
 def get_reviews(user_id: int | None = None,
-                book_id: int | None = None, 
+                book_id: int | None = None,
                 db: Session = Depends(get_db)):
-    
+
     query = db.query(
-                models.Reviews, 
-                func.count(models.Likes.review_id).label('total_likes')
-            ).\
-            join(models.Likes, models.Reviews.id == models.Likes.review_id, isouter=True).\
-            group_by(models.Reviews.id)
+        models.Reviews,
+        func.count(
+            models.Likes.review_id).label('total_likes')). join(
+        models.Likes,
+        models.Reviews.id == models.Likes.review_id,
+        isouter=True). group_by(
+                models.Reviews.id)
 
     if user_id:
-        reviews = query.filter(models.Reviews.owner_id == user_id).all()  
+        reviews = query.filter(models.Reviews.owner_id == user_id).all()
     elif book_id:
         reviews = query.filter(models.Reviews.book_reviewed == book_id).all()
     else:
@@ -41,14 +43,16 @@ def get_reviews(user_id: int | None = None,
 # Get most recent reviews
 @router.get('/recent', response_model=List[schemas.ReviewWithLikes])
 def get_recent_reviews(num_reviews: int = 5, db: Session = Depends(get_db)):
-    reviews = db.query(models.Reviews, 
-                       func.count(models.Likes.review_id).label('total_likes')).\
-            join(models.Likes, models.Reviews.id == models.Likes.review_id, isouter=True).\
-            group_by(models.Reviews.id).\
-            order_by(models.Reviews.created_at.desc()).\
-            limit(num_reviews).\
-            all()
-    
+    reviews = db.query(
+        models.Reviews,
+        func.count(
+            models.Likes.review_id).label('total_likes')). join(
+        models.Likes,
+        models.Reviews.id == models.Likes.review_id,
+        isouter=True). group_by(
+                models.Reviews.id). order_by(
+                    models.Reviews.created_at.desc()). limit(num_reviews). all()
+
     return reviews
 
 
@@ -56,13 +60,14 @@ def get_recent_reviews(num_reviews: int = 5, db: Session = Depends(get_db)):
 @router.get('/{id}', response_model=schemas.ReviewWithLikes)
 def get_review_by_id(id: str, db: Session = Depends(get_db)):
     review = db.query(
-            models.Reviews, 
-            func.count(models.Likes.review_id).label('total_likes')
-        ).\
-        join(models.Likes, models.Reviews.id == models.Likes.review_id, isouter=True).\
-        group_by(models.Reviews.id).\
-        first()
-    
+        models.Reviews,
+        func.count(
+            models.Likes.review_id).label('total_likes')). join(
+        models.Likes,
+        models.Reviews.id == models.Likes.review_id,
+        isouter=True). group_by(
+                models.Reviews.id). first()
+
     if not review:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'Review with ID {id} not found')
@@ -77,12 +82,12 @@ def create_review(review: schemas.ReviewCreate,
                   current_user: int = Depends(oauth2.get_current_user),
                   db: Session = Depends(get_db),
                   ):
-    
+
     # Check if the book reviewed already exists in the db
     book_exists = db.query(
         models.Books).filter(
         models.Books.isbn == book.isbn).first()
-    
+
     if not book_exists:
         # if not - save it
         book_exists = models.Books(**book.model_dump())
@@ -112,11 +117,11 @@ def create_review(review: schemas.ReviewCreate,
 
 # Delete a review
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_review(id: int, 
+def delete_review(id: int,
                   db: Session = Depends(get_db),
                   current_user: int = Depends(oauth2.get_current_user)
                   ):
-    
+
     review_query = db.query(models.Reviews).filter(models.Reviews.id == id)
     review = review_query.first()
     if review is None:
@@ -126,7 +131,7 @@ def delete_review(id: int,
     if review.reviewed_by != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail='Unauthorized to delete this post')
-    
+
     review_query.delete(synchronize_session=False)
     db.commit()
 
@@ -140,7 +145,7 @@ def update_review(id: str,
                   db: Session = Depends(get_db),
                   current_user: int = Depends(oauth2.get_current_user)
                   ):
-    
+
     review = db.query(models.Reviews).filter(models.Reviews.id == id).first()
 
     # check if review doesn't exist
@@ -163,7 +168,7 @@ def update_review(id: str,
 
 
 # Like a review
-@router.post('/like/{review}', status_code=status.HTTP_201_CREATED  )
+@router.post('/like/{review}', status_code=status.HTTP_201_CREATED)
 def like_review(review: int,
                 db: Session = Depends(get_db),
                 current_user: int = Depends(oauth2.get_current_user)
@@ -187,7 +192,7 @@ def like_review(review: int,
         try:
             db.commit()
         except IntegrityError:
-            # if a review or user with the specified id does not exist 
+            # if a review or user with the specified id does not exist
             # raise an exception
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                                 detail='User or review not found')
