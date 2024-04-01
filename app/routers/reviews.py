@@ -14,20 +14,27 @@ router = APIRouter(
 
 # Get all reviews
 @router.get('/', response_model=List[schemas.ReviewWithLikes])
-def get_reviews(user_id: int | None = None, 
+def get_reviews(user_id: int | None = None,
+                book_id: int | None = None, 
                 db: Session = Depends(get_db)):
     
-    if user_id:
-        reviews = db.query(models.Reviews).filter(models.Reviews.reviewed_by == user_id).all()
-    else:
-        reviews = db.query(
+    query = db.query(
                 models.Reviews, 
                 func.count(models.Likes.review_id).label('total_likes')
             ).\
             join(models.Likes, models.Reviews.id == models.Likes.review_id, isouter=True).\
-            group_by(models.Reviews.id).\
-            all()
-    print(reviews)
+            group_by(models.Reviews.id)
+
+    if user_id:
+        reviews = query.filter(models.Reviews.owner_id == user_id).all()  
+    elif book_id:
+        reviews = query.filter(models.Reviews.book_reviewed == book_id).all()
+    else:
+        reviews = query.all()
+
+    if not reviews:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='No reviews found')
     return reviews
 
 
