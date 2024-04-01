@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr, ValidationError
+from pydantic import BaseModel, EmailStr, ValidationError, Field
 from datetime import datetime
 
 
@@ -75,3 +75,7 @@ class JwtToken(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+
+class ValidBookRating(BaseModel):
+    rating: int = Field(..., ge=1, le=5)

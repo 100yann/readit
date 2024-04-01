@@ -52,3 +52,11 @@ class Likes(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     review_id = Column(ForeignKey('reviews.id'), nullable=False)
     user_id = Column(ForeignKey('users.id'), nullable=False)
+
+
+class BookRatings(Base):
+    __tablename__ = 'book_ratings'
+    id = Column(Integer, primary_key=True, nullable=False)
+    book_id = Column(ForeignKey('books.id'), nullable=False)
+    user_id = Column(ForeignKey('users.id'), nullable=False)
+    rating = Column(Integer, nullable=False)

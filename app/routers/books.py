@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, Response, HTTPException, Body
 from .. import schemas, models, utils, oauth2
 from ..database import get_db
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
 
 
 router = APIRouter(
@@ -66,3 +66,31 @@ def find_book_by_title(title: str, db: Session = Depends(get_db)):
 
     return matches
 
+
+@router.post('/rate/{book_id}')
+def rate_book(book_id: int,
+              book_rating: schemas.ValidBookRating,
+              db: Session = Depends(get_db),
+              current_user: int = Depends(oauth2.get_current_user)
+              ):
+    query = db.query(models.BookRatings).\
+        filter(models.BookRatings.book_id == book_id,
+               models.BookRatings.user_id == current_user.id).\
+        first()
+
+    if query:
+        query.rating = book_rating.rating
+    else:
+        new_rating = models.BookRatings(book_id=book_id,
+                                        user_id=current_user.id,
+                                        rating=book_rating.rating
+                                        )
+        db.add(new_rating)
+
+    try:
+        db.commit()
+    except IntegrityError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail='Book not found')
+
+    return Response(status_code=status.HTTP_201_CREATED)
