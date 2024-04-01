@@ -29,6 +29,7 @@ class Reviews(Base):
     owner_id = Column(Integer, ForeignKey("users.id", ondelete='CASCADE'), nullable=False)
     owner = relationship("Users")
 
+
 class Books(Base):
     __tablename__ = 'books'
     id = Column(Integer, primary_key=True, nullable=False)

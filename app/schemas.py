@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel, EmailStr, ValidationError
+from datetime import datetime
 
 
 class UserCreate(BaseModel):
@@ -33,11 +34,24 @@ class ReviewUpdate(BaseModel):
         from_attributes = True
 
 
-class ReviewOut(ReviewCreate):
-    owner: UserDataOut
+class ReviewData(BaseModel):
+    id: int
+    content: str
+    date_read: str
+    created_at: datetime
+    owner:  UserDataOut
 
     class Config:
         from_attributes = True
+
+
+class ReviewWithLikes(BaseModel):
+    Reviews: ReviewData
+    total_likes: int
+
+    class Config:
+        from_attributes = True
+
 
 class BookData(BaseModel):
     isbn: str

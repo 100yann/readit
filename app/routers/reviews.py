@@ -4,7 +4,7 @@ from ..database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from typing import List, Optional
-
+from sqlalchemy.sql.functions import func
 
 router = APIRouter(
     prefix='/reviews',
@@ -13,33 +13,49 @@ router = APIRouter(
 
 
 # Get all reviews
-@router.get('/', response_model=List[schemas.ReviewOut])
+@router.get('/', response_model=List[schemas.ReviewWithLikes])
 def get_reviews(user_id: int | None = None, 
                 db: Session = Depends(get_db)):
     
     if user_id:
         reviews = db.query(models.Reviews).filter(models.Reviews.reviewed_by == user_id).all()
     else:
-        reviews = db.query(models.Reviews).all()
-
+        reviews = db.query(
+                models.Reviews, 
+                func.count(models.Likes.review_id).label('total_likes')
+            ).\
+            join(models.Likes, models.Reviews.id == models.Likes.review_id, isouter=True).\
+            group_by(models.Reviews.id).\
+            all()
+    print(reviews)
     return reviews
 
 
 # Get most recent reviews
-@router.get('/recent', response_model=List[schemas.ReviewOut])
+@router.get('/recent', response_model=List[schemas.ReviewWithLikes])
 def get_recent_reviews(num_reviews: int = 5, db: Session = Depends(get_db)):
-    reviews = db.query(models.Reviews).\
-        order_by(models.Reviews.created_at.desc()).\
-        limit(num_reviews).\
-        all()
+    reviews = db.query(models.Reviews, 
+                       func.count(models.Likes.review_id).label('total_likes')).\
+            join(models.Likes, models.Reviews.id == models.Likes.review_id, isouter=True).\
+            group_by(models.Reviews.id).\
+            order_by(models.Reviews.created_at.desc()).\
+            limit(num_reviews).\
+            all()
+    
     return reviews
 
 
 # Get review by ID
-@router.get('/{id}', response_model=schemas.ReviewOut)
+@router.get('/{id}', response_model=schemas.ReviewWithLikes)
 def get_review_by_id(id: str, db: Session = Depends(get_db)):
-    review = db.query(models.Reviews).filter(models.Reviews.id == id).first()
-
+    review = db.query(
+            models.Reviews, 
+            func.count(models.Likes.review_id).label('total_likes')
+        ).\
+        join(models.Likes, models.Reviews.id == models.Likes.review_id, isouter=True).\
+        group_by(models.Reviews.id).\
+        first()
+    
     if not review:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'Review with ID {id} not found')
