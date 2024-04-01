@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status, Response, HTTPException, Body
-from .. import schemas, models, utils
+from .. import schemas, models, utils, oauth2
 from ..database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -15,7 +15,8 @@ router = APIRouter(
 @router.post('/shelve/{book_id}')
 def shelve_book(book_id: str,
                 data: schemas.BookshelfData,
-                db: Session = Depends(get_db)):
+                db: Session = Depends(get_db),
+                current_user: int = Depends(oauth2.get_current_user)):
 
     is_saved = db.query(
         models.Bookshelves).filter(
@@ -38,7 +39,7 @@ def shelve_book(book_id: str,
         db=db
     )
 
-    return {'details': 'success'}
+    return Response(status_code=status.HTTP_201_CREATED)
 
 
 @router.get('/find/{title}')
@@ -64,3 +65,4 @@ def find_book_by_title(title: str, db: Session = Depends(get_db)):
                 matches.append(book)
 
     return matches
+
