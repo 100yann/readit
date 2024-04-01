@@ -156,7 +156,7 @@ def update_review(id: str,
 
 
 # Like a review
-@router.post('/like/{review}')
+@router.post('/like/{review}', status_code=status.HTTP_201_CREATED  )
 def like_review(review: int,
                 db: Session = Depends(get_db),
                 current_user: int = Depends(oauth2.get_current_user)
@@ -168,24 +168,24 @@ def like_review(review: int,
 
     # check if this review has already been liked by this user
     if has_liked.first():
-        # if yes - unlike it
+        # unlike the review
         has_liked.delete(synchronize_session=False)
         db.commit()
-
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
+        message = 'Unliked'
 
     # like the review
-    like = models.Likes(review_id=review, user_id=current_user.id)
-    db.add(like)
-
-    try:
-        db.commit()
-    except IntegrityError as e:
-        # if a review or user with the specified id does not exist raise an
-        # exception
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='User or review not found')
     else:
-        db.refresh(like)
+        like = models.Likes(review_id=review, user_id=current_user.id)
+        db.add(like)
+        try:
+            db.commit()
+        except IntegrityError:
+            # if a review or user with the specified id does not exist 
+            # raise an exception
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                detail='User or review not found')
+        else:
+            db.refresh(like)
+            message = 'Liked'
 
-    return like
+    return {'status': message}
