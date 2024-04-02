@@ -386,3 +386,7 @@ h1 {
 #review-date-rating p {
     opacity: 75%;
 }
+
+.error-message{
+    color: red;
+}

@@ -14,15 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
             body: formFields
         }).then((response) => {
             if (!response.ok){
-                console.log(response.status)
                 return response.text()
             } else {
                 window.location.href = '/home'
             }
         }).then((data) => {
             let errorField = document.createElement('span')
+            errorField.className = 'error-message'
             errorField.textContent = data
-            form.append(errorField)
+            const emailField = document.getElementById('email-field')
+            emailField.append(errorField)
+            const emailInput = document.getElementById('email-input')
+            emailInput.style.borderColor = 'red'
         })
     }
 })
