@@ -1,5 +1,5 @@
 from .database import Base
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, LargeBinary
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, LargeBinary, DateTime
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.orm import relationship
@@ -14,6 +14,15 @@ class Users(Base):
                         nullable=False,
                         server_default=text('now()')
                         )
+    
+
+class UserDetails(Base):
+    __tablename__ = 'user_details'
+    id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True, nullable=False)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    birthday = Column(DateTime, nullable=True)
+    country = Column(String, nullable=True)
 
 
 class Reviews(Base):
