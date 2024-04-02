@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 import requests
+from django.conf import settings
 
 
 def register_user(request, method=['GET', 'POST']):
@@ -9,22 +10,20 @@ def register_user(request, method=['GET', 'POST']):
         first_name = request.POST.get('first-name')
         last_name = request.POST.get('last-name')
 
-        response = requests.post('http://127.0.0.1:3000/save_user', data = {
+        response = requests.post(f'{settings.FASTAPI_URL}/users/create', json = {
             'email': user_email,
             'password': user_password,
             'first_name': first_name,
-            'last_name': last_name
+            'last_name': last_name 
         })
 
-        if response.status_code == 200:
+        if response.status_code == 201:
             response_data = response.json()
-            user_id = response_data['data']['user_id']
-
-            request.session['user'] = user_id
-            request.session['user_email'] = user_email
-
             return redirect('/home')
-        
+        else:
+            response_data = response.json()
+            return HttpResponse(status=response.status_code, content=response_data['detail'])
+
     return render(request, "users/register.html")
 
 

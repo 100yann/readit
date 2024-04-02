@@ -13,16 +13,16 @@ FASTAPI_URL = 'http://127.0.0.1:3000'
 def home_page(request):
     params = {'page': 'home'}
 
-    try:
-        response = requests.get(f'{FASTAPI_URL}/get_reviews', params=params)
-    except ConnectionError:
-        return render(request, 'error.html')
+    # try:
+    #     response = requests.get(f'{FASTAPI_URL}/get_reviews', params=params)
+    # except ConnectionError:
+    #     return render(request, 'error.html')
     
-    data = response.json()
-    reviews = data.get('reviews', [])
+    # data = response.json()
+    # reviews = data.get('reviews', [])
 
     return render(request, 'index.html', context={
-        'reviews': reviews
+        # 'reviews': reviews
     })
 
 
