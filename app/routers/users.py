@@ -11,27 +11,36 @@ router = APIRouter(
 
 
 # Create a user
-@router.post('/', 
-             status_code=status.HTTP_201_CREATED, 
+@router.post('/create',
+             status_code=status.HTTP_201_CREATED,
              response_model=schemas.UserDataOut)
-def create_user(user: schemas.UserCreate, 
+def create_user(user: schemas.UserCreate,
                 db: Session = Depends(get_db)
                 ):
-    new_user = db.query(models.Users).filter(models.Users.email == user.email).first()
+
+    new_user = db.query(models.Users).filter(
+        models.Users.email == user.email).first()
     if new_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                            details = 'User with this email already exists')
-    
+                            detail='User with this email already exists')
+
     hashed_pw = utils.hash_password(user.password)
-    user_dict = user.model_dump()
-    user_dict['password'] = hashed_pw
 
-    new_user = models.Users(**user_dict)
+    new_user = models.Users(email=user.email,
+                            password=hashed_pw,
+                            )
 
-    db.add(new_user)  
-    db.commit() 
+    db.add(new_user)
+    db.commit()
     db.refresh(new_user)
 
+    user_details = models.UserDetails(id=new_user.id,
+                                      first_name=user.first_name,
+                                      last_name=user.last_name
+                                      )
+
+    db.add(user_details)
+    db.commit()
     return new_user
 
 
@@ -39,25 +48,24 @@ def create_user(user: schemas.UserCreate,
 @router.get('/{id}', response_model=schemas.UserDataOut)
 def get_user_by_id(id: int, db: Session = Depends(get_db)):
     user = db.query(models.Users).filter(models.Users.id == id).first()
-    
+
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'User with ID {id} not found')
-    
+
     return user
 
 
 @router.post('/login')
 def login(user_crendetials: OAuth2PasswordRequestForm = Depends(),
           db: Session = Depends(get_db)):
-    
+
     user = utils.authenticate_user(db, user_crendetials)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password"
         )
-    
-    access_token = oauth2.create_access_token(data= {'user_id': user.id})
-    return {'access_token': access_token, 'token_type': 'bearer'}
 
+    access_token = oauth2.create_access_token(data={'user_id': user.id})
+    return {'access_token': access_token, 'token_type': 'bearer'}
