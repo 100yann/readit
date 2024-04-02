@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
+from django.http import JsonResponse
 import requests
 from django.conf import settings
 
@@ -16,13 +17,9 @@ def register_user(request, method=['GET', 'POST']):
             'first_name': first_name,
             'last_name': last_name 
         })
-
-        if response.status_code == 201:
-            response_data = response.json()
-            return redirect('/home')
-        else:
-            response_data = response.json()
-            return HttpResponse(status=response.status_code, content=response_data['detail'])
+ 
+        response_data = response.json()
+        return JsonResponse(response_data, status=response.status_code)
 
     return render(request, "users/register.html")
 
@@ -32,19 +29,16 @@ def login_user(request, method=['GET', 'POST']):
         user_email = request.POST.get('email')
         user_password = request.POST.get('password')  
 
-        response = requests.post('http://127.0.0.1:3000/authenticate_user/', data = {
-            'email': user_email,
-            'password': user_password
-        })
-        if response.status_code == 200:
-            response_data = response.json()
+        data = {
+            'username': user_email,
+            'password': user_password,
+        }
 
-            user_id = response_data['data'][3]
-
-            request.session['user'] = user_id
-            request.session['user_name'] = response_data['data'][0]
-
-            return redirect('/home')
+        response = requests.post(f'{settings.FASTAPI_URL}/users/login', 
+                                 data=data
+                                 )
+        response_data = response.json()
+        return JsonResponse(response_data, status=response.status_code)
 
     return render(request, 'users/login.html')
 
