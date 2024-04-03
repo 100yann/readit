@@ -27,13 +27,15 @@ def home_page(request):
 
 
 def new_review(request, method=['GET', 'POST']):
-    if not request.session['user']:
+    if not request.session['id']:
         return redirect('login')
     
     if request.method == 'POST':
         data = json.loads(request.body)
-        data['reviewed_by'] = int(request.session['user'])
-        response = requests.post(f'{FASTAPI_URL}/save_review', json=data)
+        print(data)
+        jwt_token = request.COOKIES.get('access_token')
+        print(jwt_token)
+        # response = requests.post(f'{FASTAPI_URL}/save_review', json=data)
         return HttpResponse()
     else:
         return render(request, 'new_review.html')

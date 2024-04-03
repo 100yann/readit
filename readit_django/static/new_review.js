@@ -60,11 +60,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const date = document.getElementById("date-field").value;
       const review = document.getElementById("review-field").value;
       if (date && review) {
-        var data = getBookInfo();
-        data.review = review;
-        data.date_read = date;
+        var bookData = getBookInfo();
+        var reviewData = {
+          content: review,
+          date_read: date
+        }
 
-        saveReview(data);
+        saveReview(bookData, reviewData);
       }
     };
   };
@@ -109,24 +111,29 @@ function createEntry(element) {
 function getBookInfo() {
   const selectedBook = document.getElementById("picked");
   bookData = {
-    bookTitle: selectedBook.querySelector("#book-title").textContent,
-    bookAuthor: selectedBook.querySelector("#author-link").textContent,
-    bookIsbn: selectedBook.querySelector("#book-title").dataset.isbn,
-    bookThumbnail: selectedBook.querySelector("#book-thumbnail").src,
+    title: selectedBook.querySelector("#book-title").textContent,
+    author: selectedBook.querySelector("#author-link").textContent,
+    isbn: selectedBook.querySelector("#book-title").dataset.isbn,
+    thumbnail: selectedBook.querySelector("#book-thumbnail").src,
   };
 
   return bookData;
 };
 
-function saveReview(data) {
+function saveReview(bookData, reviewData) {
   const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+  const requestBody = {
+    review: reviewData,
+    book: bookData
+  };
+
   fetch(`/new`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(requestBody),
   })  
   .then(response => {
     if (response.ok) {
