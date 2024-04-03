@@ -38,15 +38,27 @@ def login_user(request, method=['GET', 'POST']):
                                  data=data
                                  )
         response_data = response.json()
-        return JsonResponse(response_data, status=response.status_code)
 
+        user_name = response_data['name']
+        user_id = response_data['id']
+
+        request.session['name'] = user_name
+        request.session['id'] = user_id
+                
+        response = JsonResponse({'message': 'Login successful'})
+        response.set_cookie(key='access_token', value=response_data['access_token'], httponly=True)
+        return response
+    
     return render(request, 'users/login.html')
 
 
 def logout_user(request):
-    request.session['user'] = ''
-    request.session['user_email'] = ''
-    return redirect('/home')
+    response = redirect('/home')
+    response.delete_cookie('access_token')
+
+    request.session['name'] = ''
+    request.session['id'] = ''
+    return response
 
 
 def display_user_profile(request, user_id):
