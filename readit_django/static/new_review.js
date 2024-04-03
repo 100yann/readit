@@ -137,8 +137,14 @@ function saveReview(bookData, reviewData) {
   })  
   .then(response => {
     if (response.ok) {
-      window.location.href = '/home';
+      // window.location.href = '/home';
+      console.log('ok')
+    } else {
+      window.location.href = '/user/logout'
+      console.log('not ok')
     }
+  }).then((data) => {
+    console.log(data)
   })
 };
 

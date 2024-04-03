@@ -32,11 +32,12 @@ def new_review(request, method=['GET', 'POST']):
     
     if request.method == 'POST':
         data = json.loads(request.body)
-        print(data)
         jwt_token = request.COOKIES.get('access_token')
-        print(jwt_token)
-        # response = requests.post(f'{FASTAPI_URL}/save_review', json=data)
-        return HttpResponse()
+        headers = {'Authorization': f'Bearer {jwt_token}'}
+        response = requests.post(f'{FASTAPI_URL}/reviews/', json={'review': data['review'], 'book': data['book']}, headers=headers)
+        
+        response_data = response.json()
+        return JsonResponse(data = response_data, status = response.status_code)
     else:
         return render(request, 'new_review.html')
 

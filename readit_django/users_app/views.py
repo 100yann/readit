@@ -53,7 +53,7 @@ def login_user(request, method=['GET', 'POST']):
 
 
 def logout_user(request):
-    response = redirect('/home')
+    response = redirect('/user/login')
     response.delete_cookie('access_token')
 
     request.session['name'] = ''
