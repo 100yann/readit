@@ -68,4 +68,12 @@ def login(user_crendetials: OAuth2PasswordRequestForm = Depends(),
         )
 
     access_token = oauth2.create_access_token(data={'user_id': user.id})
-    return {'access_token': access_token, 'token_type': 'bearer'}
+    name_query = db.query(
+        models.UserDetails.first_name, models.UserDetails.last_name
+        ).\
+        filter(models.UserDetails.id == user.id).\
+        first()
+    
+    name = f'{name_query[0]} {name_query[1]}'
+    print(name)
+    return {'access_token': access_token, 'token_type': 'bearer', 'name': name, 'id': user.id}
