@@ -1,0 +1,16 @@
+{% extends 'template.html' %}
+
+{% block title %}Search Results{%endblock%}
+
+{% block body %}
+    <h1>Results</h1>
+    {% for book in books %}
+        <img src="{{ book.thumbnail }}" alt="book-cover">
+        <h3>{{ book.title }}</h3>
+        {% if book.author %}
+            <h5>by {{ book.author }}</h5>
+        {% else %}
+            <h5>by {{ book.authors|join:", " }}</h5>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

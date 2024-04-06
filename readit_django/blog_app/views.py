@@ -18,9 +18,7 @@ def home_page(request):
     except ConnectionError:
         return render(request, 'error.html')
     
-    
     reviews = response.json()
-    print(reviews)
 
     return render(request, 'index.html', context={
         'reviews': reviews
@@ -119,3 +117,14 @@ def display_book(request, isbn):
 
 
     return HttpResponse()
+
+
+def search_for_book(request, method=['GET']):
+    book_search = request.GET.get('book')
+
+    response = requests.get(f'{settings.FASTAPI_URL}/book/find/{book_search}')
+    results = response.json()
+    
+    return render(request, 'search_results.html', context = {
+        'books': results
+    })
