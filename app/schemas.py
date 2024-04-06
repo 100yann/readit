@@ -65,6 +65,15 @@ class BookData(BaseModel):
         from_attributes = True
 
 
+class ReviewWithBookData(BaseModel):
+    id: int
+    Users: UserDataOut
+    Books: BookData
+
+    class Config:
+        from_attributes = True
+
+
 class BookshelfData(BaseModel):
     user_id: str
     bookshelf: str

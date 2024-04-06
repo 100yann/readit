@@ -41,17 +41,21 @@ def get_reviews(user_id: int | None = None,
 
 
 # Get most recent reviews
-@router.get('/recent', response_model=List[schemas.ReviewWithLikes])
+@router.get('/recent', response_model=List[schemas.ReviewWithBookData])
 def get_recent_reviews(num_reviews: int = 5, db: Session = Depends(get_db)):
     reviews = db.query(
-        models.Reviews,
-        func.count(
-            models.Likes.review_id).label('total_likes')). join(
-        models.Likes,
-        models.Reviews.id == models.Likes.review_id,
-        isouter=True). group_by(
-                models.Reviews.id). order_by(
-                    models.Reviews.created_at.desc()). limit(num_reviews). all()
+        models.Reviews.id,
+        models.Users,
+        models.Books
+    ).join(
+        models.Books, models.Reviews.book_reviewed == models.Books.id
+    ).join(
+        models.Users, models.Reviews.owner_id == models.Users.id
+    ).order_by(
+        models.Reviews.created_at.desc()
+    ).limit(
+        num_reviews
+    ).all()
 
     return reviews
 
