@@ -3,17 +3,17 @@
 {% block title %}Home{% endblock%}
 
 {% block body %}
-<div id="header">
-    <div class="container header-container">
-        <div id="logo-container">
-            <img src="{% static 'readit_logo_freepik.jpg' %}" alt="readit-logo">
-        </div>
-        <div>
-            <h1 id="header-title">ReadIt</h1>
-            <p id="header-description">Discover, review, and share your new favorite books</p>
+    <div id="header">
+        <div class="container header-container">
+            <div id="logo-container">
+                <img src="{% static 'readit_logo_freepik.jpg' %}" alt="readit-logo">
+            </div>
+            <div>
+                <h1 id="header-title">ReadIt</h1>
+                <p id="header-description">Discover, review, and share your new favorite books</p>
+            </div>
         </div>
     </div>
-</div>
     <div id="recent-reviews">
     {% csrf_token %}
         <h3 id="section-title">Recent Reviews</h3>
@@ -21,66 +21,21 @@
             {% for review in reviews %}
             <div class="review-preview">
                 <div id="book-cover">
-                    <img src='{{ review.thumbnail }}' alt="">
+                    <img src='{{ review.Books.thumbnail }}' alt="">
                 </div>
                 <div>
                     <div id="review-heading">
-                        <a href="{% url 'user_profile' user_id=review.user_id %}" id="userlink">{{ review.first_name }} {{ review.last_name }}</a><span> reviewed</span>
-                        <a href="{% url 'display_book' isbn=review.isbn %}" id="reviewlink">{{ review.title }}</a>
+                        <a href="{% url 'user_profile' user_id=review.Users.id %}" id="userlink">{{ review.first_name }} {{ review.last_name }}</a><span> reviewed</span>
+                        <a href="{% url 'display_book' isbn=review.Books.isbn %}" id="reviewlink">{{ review.Books.title }}</a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
-    <!-- <div id="display-posts">
-    {% csrf_token %}
-        <h1>Home</h1>
-        {% for review in reviews %}
-        <div id="review" data-review-id='{{ review.review_id }}'>
-            <div id="review-container">
-                <div id="book-cover">
-                    <a href="">
-                        <img src='{{ review.thumbnail }}' alt="">
-                    </a>
-                </div>
-                <div id="review-contents">
-                    <div id="review-heading-container">
-                        <div id="review-heading">
-                            <span><a href="{% url 'user_profile' user_id=review.user_id %}">{{ review.first_name }} {{ review.last_name }}</a></span> reviewed <span><a href="{% url 'display_book' isbn=review.isbn %}">{{ review.title }}</a></span>
-                        </div>
-                        <span id="review-date">{{ review.created_on }}</span>
-                    </div>
-                    <p id="review-text">{{ review.review }}</p>
-                    <textarea name="" id="edit-review-area" hidden></textarea>
-                </div>
-            </div>
-            <div class="review-interactions">
-                {% if request.session.user == review.user_id %}
-                <div>
-                    <button id="edit-button">Edit</button>
-                    <button id="save-button" hidden>Save</button>
-                    <button id="delete-button">Delete</button>
-                </div>
-                {% endif %}
-                <div>
-                    <span id="review-likes">{{ review.total_likes }}</span>
-                    {% if request.session.user %}
-                        {% if review.has_liked %}
-                            <button id="like-button">Liked</button>
-                        {% else %}
-                            <button id="like-button">Like</button>
-                        {% endif %}
-                        <button id="comment-button">Comment</button>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div> -->
-<div id="footer">
-    Image by <a href="https://www.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_24307396.htm#query=book&position=2&from_view=search&track=sph&uuid=016f054d-b2d7-4f0b-b956-3842119e72b5">Freepik</a>
-</div>
+    <div id="footer">
+        Image by <a href="https://www.freepik.com/free-vector/hand-drawn-flat-design-stack-books-illustration_24307396.htm#query=book&position=2&from_view=search&track=sph&uuid=016f054d-b2d7-4f0b-b956-3842119e72b5">Freepik</a>
+    </div>
 {% endblock %}
 
 {% block scripts %}
