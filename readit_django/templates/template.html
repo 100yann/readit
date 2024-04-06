@@ -27,6 +27,9 @@
               <a class="nav-item nav-link" href="{% url 'login' %}">Log In</a>
               <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
             {% endif %}
+            <form class="form-inline my-2 my-lg-0" id="book-search" action="{% url 'search' %}" method="GET">
+              <input class="form-control mr-sm-2" name="book" type="search" placeholder="Search" aria-label="Search" required>
+            </form>
           </div>
         </div>
     </nav>
