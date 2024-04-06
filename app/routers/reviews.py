@@ -46,11 +46,15 @@ def get_recent_reviews(num_reviews: int = 5, db: Session = Depends(get_db)):
     reviews = db.query(
         models.Reviews.id,
         models.Users,
+        models.UserDetails.first_name,
+        models.UserDetails.last_name,
         models.Books
     ).join(
         models.Books, models.Reviews.book_reviewed == models.Books.id
     ).join(
         models.Users, models.Reviews.owner_id == models.Users.id
+    ).join(
+        models.UserDetails, models.Users.id == models.UserDetails.id
     ).order_by(
         models.Reviews.created_at.desc()
     ).limit(

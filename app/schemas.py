@@ -20,7 +20,7 @@ class UserDataOut(BaseModel):
     class Config:
         from_attributes = True
 
-        
+
 class ReviewCreate(BaseModel):
     content: str
     date_read: str
@@ -68,6 +68,8 @@ class BookData(BaseModel):
 class ReviewWithBookData(BaseModel):
     id: int
     Users: UserDataOut
+    first_name: str
+    last_name: str
     Books: BookData
 
     class Config:
