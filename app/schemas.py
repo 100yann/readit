@@ -1,7 +1,6 @@
-from typing import Optional
+from typing import Optional, List, Tuple
 from pydantic import BaseModel, EmailStr, ValidationError, Field
 from datetime import datetime
-
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -56,6 +55,7 @@ class ReviewWithLikes(BaseModel):
 
 
 class BookData(BaseModel):
+    id: int
     isbn: str
     title: str
     author: str
@@ -92,3 +92,28 @@ class TokenData(BaseModel):
 
 class ValidBookRating(BaseModel):
     rating: int = Field(..., ge=1, le=5)
+
+
+class UserDetails(BaseModel):
+    first_name: str
+    last_name: str
+    birthday: Optional[datetime] | None = None
+    country: Optional[str] | None = None
+
+
+class BookshelfData(BaseModel):
+    id: int
+    book_id: int
+    bookshelf: str
+    user_shelved: int
+
+
+class BooksAndShelvesData(BaseModel):
+    Bookshelves: BookshelfData
+    Books: BookData
+
+
+class UserProfileData(BaseModel):
+    user: UserDataOut
+    user_details: UserDetails
+    books: List[BooksAndShelvesData]

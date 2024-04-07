@@ -3,6 +3,7 @@ from .. import schemas, models, utils, oauth2
 from ..database import get_db
 from sqlalchemy.orm import Session
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
+from typing import List
 
 router = APIRouter(
     prefix='/users',
@@ -45,15 +46,24 @@ def create_user(user: schemas.UserCreate,
 
 
 # Get user by id
-@router.get('/{id}', response_model=schemas.UserDataOut)
+@router.get('/{id}', response_model=schemas.UserProfileData)
 def get_user_by_id(id: int, db: Session = Depends(get_db)):
     user = db.query(models.Users).filter(models.Users.id == id).first()
-
+    
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'User with ID {id} not found')
 
-    return user
+    user_details = db.query(models.UserDetails).filter(models.UserDetails.id == user.id).first()
+
+    books = db.query(
+        models.Bookshelves,
+        models.Books
+        ).join(models.Books, models.Books.id == models.Bookshelves.book_id
+        ).filter(models.Bookshelves.user_shelved == user.id
+        ).all()
+    
+    return {'user': user, 'user_details': user_details, 'books': books}
 
 
 @router.post('/login')
