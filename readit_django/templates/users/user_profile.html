@@ -2,14 +2,17 @@
 {% block title %}User profile{% endblock %}
 
 {% block body %}
-    <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+    {% if data == None %}
+        <h1>User not found</h1>
+    {% else %}
+    <h1>{{ data.user_details.first_name }} {{ data.user_details.last_name }}</h1>
     <div>
-        <h5 class="subheading">{{ user.first_name }}'s finished books</h5>
-        {% for book in books_read %}
+        <h5 class="subheading">{{ data.user_details.first_name }}'s finished books</h5>
+        {% for book in data.books %}
             <div>
-                <img src="{{ book.thumbnail }}" alt="">
-                <a href="{% url 'display_book' isbn=book.isbn %}"><h6>{{ book.title }}</h6></a>
-                <a href=""><h6>{{ book.author }}</h6></a>
+                <img src="{{ book.Books.thumbnail }}" alt="">
+                <a href="{% url 'display_book' isbn=book.Books.isbn %}"><h6>{{ book.Books.title }}</h6></a>
+                <a href=""><h6>{{ book.Books.author }}</h6></a>
             </div>
         {% endfor %}
     </div>
@@ -24,4 +27,5 @@
         </div>
         {% endfor %}
     </div>
+    {% endif %}
 {% endblock %}

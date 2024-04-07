@@ -62,17 +62,14 @@ def logout_user(request):
 
 
 def display_user_profile(request, user_id):
-    response = requests.get(f'http://127.0.0.1:3000/user/{user_id}')
+    response = requests.get(f'{settings.FASTAPI_URL}/users/{user_id}')
 
     if response.status_code == 200:
         response_data = response.json()
-        user = response_data[0][0]
-        books_read = response_data[1]
-        reviews = response_data[2]
-
-        return render(request, 'users/user_profile.html', 
-                      context = {
-                          'user': user,
-                          'books_read': books_read,
-                          'reviews': reviews
-                      })
+    else: 
+        response_data = None
+        
+    return render(request, 'users/user_profile.html', 
+                context = {
+                    'data': response_data
+                })
