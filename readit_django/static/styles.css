@@ -140,14 +140,7 @@ h1 {
     }
 }
 
-.displayEntry{
-    display: flex;
-}
 
-.displayEntry:hover {
-    background-color: #e5e5e5;
-    cursor: pointer;
-}
 
 #review-form, #display-results{
     display: none;
@@ -389,4 +382,52 @@ h1 {
 
 .error-message{
     color: red;
+}
+
+
+/* Add Review Page */
+#book-form{
+    padding: 0 20%;
+}
+
+#book-form-children{
+    display: flex;
+    gap: 5px;
+}
+
+.button-blue{
+    color: white;
+    padding: 5px 25px;
+    background-color: #405cf5;
+    border-radius: 6px;
+    border-width: 0;
+}
+
+#display-results {
+    padding: 75px 15% 0;
+}
+
+.book-result {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.book-result:hover {
+    background-color: #e5e5e5;
+    cursor: pointer;
+}
+
+#result-thumbnail {
+    width: 10rem;
+    height: auto;
+}
+
+#book-title {
+    font-family: 'League Spartan', sans-serif;
+}
+
+#author-link:any-link {
+    color: rgb(33, 37, 41);
+    text-decoration: none;
 }

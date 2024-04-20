@@ -5,18 +5,27 @@
 
 {% block body %}
     <div class="container">
+        <div>
+            <div class="header-container">
+                <div id="logo-container">
+                    <img src="{% static 'logos/review_book_page_img.jpg' %}" alt="woman-reading">
+                </div>
+                <div>
+                    <h1 id="header-title">Add a review</h1>
+                </div>
+            </div>
+        </div>
         <form action="" id="book-form">
             {% csrf_token %}
-            <h1>Add a Review</h1>
-            <div id="add-book">
-                <h4>Book</h4>
-                <input class="form-control" type="text" id="review-book-field">
-                <input type="submit" name="" id="review-book-button" value="Search">
+            <div id="book-form-children">
+                <input class="form-control" type="text" id="review-book-field" placeholder="Find your book">
+                <input type="submit" id="review-book-button" class="button-blue" value="Search">
             </div>
         </form>
+
         <div id="display-results">
         </div>   
-        <button id="next-button">Next</button>
+        <button id="next-button" class="button-blue">Next</button>
 
         <form id="review-form">
             <div id="add-review">

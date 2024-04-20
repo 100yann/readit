@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Display the results on the page
       const results = await displaySearchResults(searchValue);
 
-      const resultEntries = document.querySelectorAll(".displayEntry");
+      const resultEntries = document.querySelectorAll(".book-result");
       const resultArray = Array.from(resultEntries);
 
       resultEntries.forEach((element1) => {
@@ -35,13 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           // If currently only one entry is displayed and it's
           // clicked again - show all entries again
-          if (element1.style.display === "block") {
+          if (element1.id === "picked") {
             element1.id = "";
             resultArray.forEach((element2) => {
               element2.style.display = "flex";
             });
           } else {
-            element1.style.display = "block";
+            element1.style.display = "flex";
             element1.id = "picked";
           }
         };
@@ -93,17 +93,26 @@ async function displaySearchResults(searchValue) {
 
 function createEntry(element) {
   let div = document.createElement("div");
-  div.className = "displayEntry";
+  div.className = "book-result";
   div.innerHTML = `
-        <div id='entryThumbnail'>
-            <img id='book-thumbnail' src=${element.thumbnail}>
+        <div>
+            <img id='result-thumbnail' src=${element.thumbnail}>
         </div>
-        <div id='entryDetails'>
-            <h2 id='book-title' data-isbn='${element.isbn}'>${element.title}</h2>
-            <h4>by <a href='' id='author-link'>${element.authors}</a></h4>
-            <p id='book-description'>${element.description}</p>
-            <p>${element.pageCount}</p>
-        </div
+        <div id='result-details'>
+            <h3 id='book-title' data-isbn='${element.isbn}'>${element.title}</h3>
+            <h5>by <a href='' id='author-link'>${element.authors}</a></h5>
+            <p>Genres: ${ element.categories }</p>
+            <div id="book-additional-info">
+              <div>
+                  <p class="book-info-label">Publisher</p>
+                  <p class="book-info-value">${ element.publisher }</p>
+              </div>
+              <div>
+                  <p class="book-info-label">Pages</p>
+                  <p class="book-info-value">${ element.pageCount }</p>
+              </div>
+            </div>
+        </div>
         `;
   return div;
 }
