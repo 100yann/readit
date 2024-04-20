@@ -26,12 +26,12 @@ def home_page(request):
 
 
 def new_review(request, method=['GET', 'POST']):
-    if not request.session['id']:
+    jwt_token = request.COOKIES.get('access_token')
+    if not jwt_token:
         return redirect('login')
-    
+        
     if request.method == 'POST':
         data = json.loads(request.body)
-        jwt_token = request.COOKIES.get('access_token')
         headers = {'Authorization': f'Bearer {jwt_token}'}
         response = requests.post(f'{FASTAPI_URL}/reviews/', json={'review': data['review'], 'book': data['book']}, headers=headers)
         
