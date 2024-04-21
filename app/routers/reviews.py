@@ -15,10 +15,10 @@ router = APIRouter(
 # Get all reviews
 @router.get('/', response_model=List[schemas.ReviewWithLikes])
 def get_reviews(user_id: int | None = None,
-                book_id: int | None = None,
+                book_isbn: str | None = None,
                 db: Session = Depends(get_db)):
 
-    query = db.query(
+    review_query = db.query(
         models.Reviews,
         func.count(
             models.Likes.review_id).label('total_likes')). join(
@@ -26,13 +26,24 @@ def get_reviews(user_id: int | None = None,
         models.Reviews.id == models.Likes.review_id,
         isouter=True). group_by(
                 models.Reviews.id)
-
+    
+    # get reviews created by this user
     if user_id:
-        reviews = query.filter(models.Reviews.owner_id == user_id).all()
-    elif book_id:
-        reviews = query.filter(models.Reviews.book_reviewed == book_id).all()
+        reviews = review_query.filter(models.Reviews.owner_id == user_id).all()
+
+    # get reviews for book with provided isbn
+    elif book_isbn:
+        book_id = db.query(models.Books).filter(models.Books.isbn == book_isbn).first()
+        if not book_id:
+            # if book not found raise HTTP exception
+            raise HTTPException(status=status.HTTP_404_NOT_FOUND,
+                                detail='Book not found')
+        
+        reviews = review_query.filter(models.Reviews.book_reviewed == book_id.id).all()
+    
+    # else return all reviews
     else:
-        reviews = query.all()
+        reviews = review_query.all()
 
     if not reviews:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
