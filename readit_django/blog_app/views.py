@@ -63,38 +63,40 @@ def like_review(request, review_id, method=['PUT']):
     return JsonResponse({'status': review_status})
 
 
-def find_book(request, book_title):
+def find_book(book_title):
     results = get_books_by_title(title = book_title)
     formatted_results = format_results(results)
     return JsonResponse(formatted_results, safe=False)
 
 
-def display_book(request, isbn):
-    user_id = request.session['user']
-    
+def display_book(request, isbn):    
     if request.method == 'GET':
         # get more data for the opened book through Google API using ISBN as book identfier
         book_details = get_book_by_isbn(isbn)
 
         # get all reviews for this book
-        response = requests.get(f'{FASTAPI_URL}/get_reviews', params={
-            'isbn': isbn, 
-            'user_id': user_id,
+        response = requests.get(f'{FASTAPI_URL}/reviews', params={
+            'book_isbn': isbn, 
+            # 'user_id': user_id,
             })
         
-        data = response.json()
-        reviews = data.get('reviews', [])
-        rating = data.get('rating', '')[0][0] if data.get('rating') else ''
-        bookshelf = data.get('bookshelf', '')[0][0] if data.get('bookshelf') else ''
+        if response.status_code == 200:
+            data = response.json()
+            reviews = data
+            print(reviews)
+        else:
+            reviews = []
+
 
         return render(request, 'display_book.html', 
                     context={
                         'details': book_details, 
                         'reviews': reviews,
-                        'isbn': isbn,
-                        'user_rating': rating,
-                        'bookshelf': bookshelf
-                        })
+                        # 'isbn': isbn,
+                        # 'user_rating': rating,
+                        # 'bookshelf': bookshelf
+                        }
+                        )
 
     # else the request is POST
     data = json.loads(request.body)
