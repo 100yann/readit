@@ -62,29 +62,34 @@
     <hr>
     <div id="book-reviews">
         <h3 class="subheading">Reviews and Ratings</h3>
-
-        {% for review in reviews %}
-        <div id="review-container">
-            <div id="user-preview">
-                <div id="user-pfp-container">
-                    <img class="user-pfp-preview" src="https://wcchn.ca/wp-content/uploads/2022/09/Dr.-Michael-van-Manen.jpg" alt="">
+        {% if not reviews %}
+            <h5>This book hasn't been reviewed yet</h5>
+        {% else %}
+            {% for review in reviews %}
+            <div id="review-container">
+                <div id="user-preview">
+                    <div id="user-pfp-container">
+                        <img class="user-pfp-preview" src="https://wcchn.ca/wp-content/uploads/2022/09/Dr.-Michael-van-Manen.jpg" alt="">
+                    </div>
+                    <div id="user-name-container">
+                        <h5>{{ review.Reviews.owner.email }}</h5>
+                        <span>64 reviews</span>
+                        <span>50 followers</span>
+                    </div>
                 </div>
-                <div id="user-name-container">
-                    <h5>{{ review.Reviews.owner.email }}</h5>
-                    <span>64 reviews</span>
-                    <span>50 followers</span>
+                <div id="review-content">
+                    <div id="review-date-rating">
+                        <span>☆☆☆☆☆</span>
+                        <p>{{ review.Reviews.date_read }}</p>
+                    </div>
+                    <p>{{ review.Reviews.content }}</p>
                 </div>
             </div>
-            <div id="review-content">
-                <div id="review-date-rating">
-                    <span>☆☆☆☆☆</span>
-                    <p>{{ review.Reviews.date_read }}</p>
-                </div>
-                <p>{{ review.Reviews.content }}</p>
-            </div>
-        </div>
-        {% endfor %}
-        {% if request.session.user %}
+            {% endfor %}
+        {% endif %}
+        <!-- Check if user is logged in -->
+        {% if request.COOKIES.access_token %}
+            <!-- Allow user to write a review for the opened book -->
             <button id="write-new-review">Write a review</button>
             <div>
                 <form id="review-form">
@@ -100,6 +105,8 @@
                     <input type="submit" class="btn btn-dark" value="Post Review" id="">
                 </form> 
             </div>
+        {% else %}
+            <h5><a href="{% url 'login' %}">Login</a> to review books</h5>
         {% endif %}
     </div>
 </div>

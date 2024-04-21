@@ -83,10 +83,8 @@ def display_book(request, isbn):
         if response.status_code == 200:
             data = response.json()
             reviews = data
-            print(reviews)
         else:
             reviews = []
-
 
         return render(request, 'display_book.html', 
                     context={
