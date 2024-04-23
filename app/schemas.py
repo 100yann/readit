@@ -121,5 +121,5 @@ class UserProfileData(BaseModel):
 
 class DisplayBookData(BaseModel):
     reviews: List[ReviewData]
-    shelf: Optional[str] | None = None
+    shelf: Tuple | None = None
     rating: Optional[str] | None = None

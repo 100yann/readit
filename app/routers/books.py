@@ -13,17 +13,22 @@ router = APIRouter(
 
 
 # Save book to bookshelf
-@router.post('/shelve/{book_id}')
-def shelve_book(book_id: str,
-                data: schemas.BookshelfData,
+@router.post('/shelve/{book_isbn}')
+def shelve_book(book_isbn: str,
+                bookshelf: str,
                 db: Session = Depends(get_db),
-                current_user: int = Depends(oauth2.get_current_user)):
-
+                current_user: int = Depends(oauth2.get_current_user)
+                ):
+    book = db.query(models.Books).filter(models.Books.isbn == book_isbn).first()
+    if not book:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='Book not found')
+    
     is_saved = db.query(
         models.Bookshelves).filter(
-        models.Bookshelves.book_id == book_id,
-        models.Bookshelves.user_shelved == data.user_id,
-        models.Bookshelves.bookshelf == data.bookshelf)
+        models.Bookshelves.book_id == book.id,
+        models.Bookshelves.user_shelved == current_user.id,
+        models.Bookshelves.bookshelf == bookshelf)
 
     # if book is already shelved unshelve it
     if is_saved.first():
@@ -34,9 +39,9 @@ def shelve_book(book_id: str,
 
     # else save it to db
     utils.save_book_to_bookshelf(
-        user_id=data.user_id,
-        book_id=book_id,
-        bookshelf=data.bookshelf,
+        user_id=current_user.id,
+        book_id=book.id,
+        bookshelf=bookshelf,
         db=db
     )
 
@@ -111,12 +116,12 @@ def get_book_data(book_isbn: str,
 
     if user_id:
         bookshelf = db.query(
-                models.Bookshelves
+                models.Bookshelves.bookshelf
             ).filter(
                 models.Bookshelves.book_id == book.id, 
                 models.Bookshelves.user_shelved == user_id
             ).first()
-        
+                
         rating = db.query(
                 models.BookRatings
             ).filter(
@@ -126,8 +131,9 @@ def get_book_data(book_isbn: str,
     
         return {
             'reviews': reviews_query,
-            'shelf': bookshelf.bookshelf,
+            'shelf': bookshelf,
             'rating': rating 
         }
     
     return {'reviews': reviews_query}
+
