@@ -117,3 +117,9 @@ class UserProfileData(BaseModel):
     user: UserDataOut
     user_details: UserDetails
     books: List[BooksAndShelvesData]
+
+
+class DisplayBookData(BaseModel):
+    reviews: List[ReviewData]
+    shelf: Optional[str] | None = None
+    rating: Optional[str] | None = None
