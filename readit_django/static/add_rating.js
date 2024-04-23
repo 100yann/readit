@@ -123,14 +123,16 @@ function getBookInfo() {
   
 
 function saveReview(data) {
+    const bookIsbn = getBookInfo().bookIsbn
+    const bookshelf = 'Read'
     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-    fetch(``, {
+    fetch(`http://127.0.0.1:8000/book/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-CSRFToken": csrfToken,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({'isbn': bookIsbn, 'bookshelf': bookshelf}),
     })  
 };
 
