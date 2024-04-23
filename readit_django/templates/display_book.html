@@ -7,7 +7,7 @@
     <div class="book-view">
         <div id="book-cover">
             <img id='book-thumbnail' src="{{ details.thumbnail }}" alt="book-cover">
-            {% if request.session.user %}
+            {% if request.COOKIES.access_token %}
             <div id="book-interactions">
                 <div id="rating-section" data-rating="{{ user_rating }}">
                     <span>Your rating</span>
@@ -72,7 +72,7 @@
                         <img class="user-pfp-preview" src="https://wcchn.ca/wp-content/uploads/2022/09/Dr.-Michael-van-Manen.jpg" alt="">
                     </div>
                     <div id="user-name-container">
-                        <h5>{{ review.Reviews.owner.email }}</h5>
+                        <h5>{{ review.owner.email }}</h5>
                         <span>64 reviews</span>
                         <span>50 followers</span>
                     </div>
@@ -80,9 +80,9 @@
                 <div id="review-content">
                     <div id="review-date-rating">
                         <span>☆☆☆☆☆</span>
-                        <p>{{ review.Reviews.date_read }}</p>
+                        <p>{{ review.date_read }}</p>
                     </div>
-                    <p>{{ review.Reviews.content }}</p>
+                    <p>{{ review.content }}</p>
                 </div>
             </div>
             {% endfor %}

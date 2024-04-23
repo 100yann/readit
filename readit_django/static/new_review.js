@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   buttonNext.style.display = "none";
 
   bookForm.onsubmit = async (event) => {
+    
     event.preventDefault();
     const searchValue = bookSearchField.value;
     // Check if there is any search input

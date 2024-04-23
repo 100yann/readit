@@ -63,60 +63,39 @@ def like_review(request, review_id, method=['PUT']):
     return JsonResponse({'status': review_status})
 
 
-def find_book(book_title):
+def find_book(request, book_title):
     results = get_books_by_title(title = book_title)
     formatted_results = format_results(results)
     return JsonResponse(formatted_results, safe=False)
 
 
-def display_book(request, isbn):    
+def display_book(request, isbn): 
+    user_id = request.session['id']
+
     if request.method == 'GET':
         # get more data for the opened book through Google API using ISBN as book identfier
         book_details = get_book_by_isbn(isbn)
 
         # get all reviews for this book
-        response = requests.get(f'{FASTAPI_URL}/reviews', params={
-            'book_isbn': isbn, 
-            # 'user_id': user_id,
+        response = requests.get(f'{FASTAPI_URL}/book/get/{isbn}', params={
+            'user_id': user_id,
             })
         
         if response.status_code == 200:
             data = response.json()
-            reviews = data
         else:
             reviews = []
 
         return render(request, 'display_book.html', 
                     context={
                         'details': book_details, 
-                        'reviews': reviews,
-                        # 'isbn': isbn,
-                        # 'user_rating': rating,
-                        # 'bookshelf': bookshelf
+                        'reviews': data['reviews'],
+                        'user_rating': data['rating'],
+                        'bookshelf': data['shelf']
                         }
                         )
 
-    # else the request is POST
-    data = json.loads(request.body)
-    action = data['action']
 
-    response_json = {
-        'user_id': user_id,
-        'isbn': isbn,
-        'action': action
-    }
-    
-    if action in ['save_book', 'remove_book']:
-        response = requests.post(f'{FASTAPI_URL}/save', json=response_json)
-
-    elif action == 'rate':
-        response_json['rating'] = data['rating']
-
-        response = requests.post(f'{FASTAPI_URL}/rate', json=response_json)
-        return HttpResponse()
-
-
-    return HttpResponse()
 
 
 def search_for_book(request, method=['GET']):
