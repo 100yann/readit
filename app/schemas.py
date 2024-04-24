@@ -123,3 +123,7 @@ class DisplayBookData(BaseModel):
     reviews: List[ReviewData]
     shelf: Tuple | None = None
     rating: Optional[str] | None = None
+
+
+class Bookshelf(BaseModel):
+    shelf: str

@@ -104,9 +104,9 @@ def save_book_to_bookshelf(request, method=['POST']):
     
     print(book_isbn, bookshelf)
     headers = {'Authorization': f'Bearer {jwt_token}'}
-    payload = {'bookshelf': bookshelf}
+    payload = {'shelf': bookshelf}
     response = requests.post(f'{settings.FASTAPI_URL}/book/shelve/{book_isbn}', 
-                            params=payload,
+                            json=payload,
                             headers=headers
                             )
     print(response)

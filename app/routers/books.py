@@ -15,7 +15,7 @@ router = APIRouter(
 # Save book to bookshelf
 @router.post('/shelve/{book_isbn}')
 def shelve_book(book_isbn: str,
-                bookshelf: str,
+                bookshelf: schemas.Bookshelf,
                 db: Session = Depends(get_db),
                 current_user: int = Depends(oauth2.get_current_user)
                 ):
@@ -28,7 +28,7 @@ def shelve_book(book_isbn: str,
         models.Bookshelves).filter(
         models.Bookshelves.book_id == book.id,
         models.Bookshelves.user_shelved == current_user.id,
-        models.Bookshelves.bookshelf == bookshelf)
+        models.Bookshelves.bookshelf == bookshelf.shelf)
 
     # if book is already shelved unshelve it
     if is_saved.first():
@@ -41,7 +41,7 @@ def shelve_book(book_isbn: str,
     utils.save_book_to_bookshelf(
         user_id=current_user.id,
         book_id=book.id,
-        bookshelf=bookshelf,
+        bookshelf=bookshelf.shelf,
         db=db
     )
 
