@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
           })
       }
     }
-    
+
     // Add book to bookshelf
     const bookStatus = document.getElementById('add-to-bookshelf')
 
@@ -136,10 +136,4 @@ function saveRating(rating) {
     },
     body: JSON.stringify({'rating': rating, 'action': 'rate'})
   })
-}
-
-
-
-function animateElement(element, animationName, duration, direction){
-    element.style.animation = `${animationName} ${duration} ${direction}`
 }
