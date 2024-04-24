@@ -19,7 +19,11 @@
                         <i class="fa-solid fa-star rating-stars"></i>
                     </div>
                 </div>
-                <button id="add-to-books-list" data-status="{{ bookshelf }}"></button>
+                {% if bookshelf %}
+                    <button id="add-to-bookshelf" class="shelved" data-status="{{ bookshelf }}"><i id="bookmark-icon" class="fa-solid fa-bookmark fa-fw"></i>{{ bookshelf }}</button>
+                {% else %}
+                    <button id="add-to-bookshelf" data-status=""><i id="bookmark-icon" class="fa-regular fa-bookmark fa-fw"></i>Want to read</button>
+                {% endif %}
             </div>
             {% endif %}
         </div>

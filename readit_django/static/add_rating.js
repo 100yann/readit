@@ -19,43 +19,22 @@ document.addEventListener('DOMContentLoaded', () => {
           })
       }
     }
-    const bookStatus = document.getElementById('add-to-books-list')
+    
+    // Add book to bookshelf
+    const bookStatus = document.getElementById('add-to-bookshelf')
 
-    if (bookStatus.dataset['status'] == '') {
-        bookStatus.innerHTML = '<i id="not-bookmarked" class="fa-regular fa-bookmark fa-fw"></i>Want to read'
-    } else {
-        bookStatus.style.backgroundColor = '#BFEAAA'
-        bookStatus.innerHTML = `<i id="bookmarked" class="fa-solid fa-bookmark fa-fw"></i>${bookStatus.dataset['status']}`
+    bookStatus.onclick = async () => {
+        const shelveButton = await saveBookToBookshelf('Want to read')
+        const icon = bookStatus.querySelector('#bookmark-icon')
 
-    }
-
-    bookStatus.onclick = () => {
-        // if the book hasn't been saved by the user
-        if (bookStatus.dataset['status'] == '') {
-            // animate button from grey to green
-            animateElement(bookStatus, 'change-button-color', '0.2s', 'forwards')
-            bookStatus.dataset['status'] = 'Want to read';
-
-            // animate the regular bookmark 
-            animateElement(document.querySelector('#not-bookmarked'), 'pop-up', '0.1s', 'forwards')
-
-            // replace the regular bookmark with a solid bookmark and animate it into place
-            bookStatus.innerHTML = `<i id="bookmarked" class="fa-solid fa-bookmark fa-fw"></i>${bookStatus.dataset['status']}`;
-            animateElement(document.querySelector('#bookmarked'), 'pop-up', '0.1s', 'reverse')
-            saveReview({'action': 'save_book'})
+        if (shelveButton === 'active') {
+            bookStatus.classList.add('shelved')
+            icon.classList.remove('fa-regular')
+            icon.classList.add('fa-solid')
         } else {
-            // if user has the book saved
-            // change the button color from green to grey
-            animateElement(bookStatus, 'change-button-color', '0.2s', 'reverse')
-            bookStatus.style.backgroundColor = ''
-            bookStatus.dataset['status'] = '';
-
-            animateElement(document.querySelector('#bookmarked'), 'pop-up', '0.1s', 'forwards')
-
-            bookStatus.innerHTML = `<i id="not-bookmarked" class="fa-regular fa-bookmark fa-fw"></i>Want to read`;
-            
-            animateElement(document.querySelector('#not-bookmarked'), 'pop-up', '0.1s', 'reverse')
-            saveReview({'action': 'remove_book'})
+            bookStatus.classList.remove('shelved')
+            icon.classList.remove('fa-solid')
+            icon.classList.add('fa-regular')
         }
     }
 
@@ -122,18 +101,26 @@ function getBookInfo() {
 };
   
 
-function saveReview(data) {
+async function saveBookToBookshelf(bookshelf) {
     const bookIsbn = getBookInfo().bookIsbn
-    const bookshelf = 'Read'
     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-    fetch(`http://127.0.0.1:8000/book/save`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRFToken": csrfToken,
-      },
-      body: JSON.stringify({'isbn': bookIsbn, 'bookshelf': bookshelf}),
-    })  
+    response = await fetch(`http://127.0.0.1:8000/book/save`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
+            },
+            body: JSON.stringify({'isbn': bookIsbn, 'bookshelf': bookshelf}),
+            })
+
+    if (!response.ok) {
+        throw new Error('Failed to save book to bookshelf')
+    }
+
+    const data = await response.json()
+    const shelveButton = data.status
+
+    return shelveButton
 };
 
 

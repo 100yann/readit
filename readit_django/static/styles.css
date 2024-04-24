@@ -228,7 +228,7 @@ h1 {
     margin: 30px 0;
 }
 
-#add-to-books-list {
+#add-to-bookshelf {
     width: 100%;
     padding: 10px 20px;
     border-radius: 8px;
@@ -236,12 +236,18 @@ h1 {
     font-family: 'League Spartan', sans-serif;
     font-size: 20px;
     text-align: center;
+    background-color: #e5e5e5;
 }
 
-#add-to-books-list i {
+#add-to-bookshelf i {
     font-size: 18px;
     margin-right: 5px;
 }
+
+#add-to-bookshelf.shelved {
+    background-color: #BFEAAA;
+}
+
 
 @keyframes pop-up {
     0% {

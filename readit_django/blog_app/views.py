@@ -102,15 +102,33 @@ def save_book_to_bookshelf(request, method=['POST']):
     book_isbn = data['isbn']
     bookshelf = data['bookshelf']
     
-    print(book_isbn, bookshelf)
     headers = {'Authorization': f'Bearer {jwt_token}'}
     payload = {'shelf': bookshelf}
     response = requests.post(f'{settings.FASTAPI_URL}/book/shelve/{book_isbn}', 
                             json=payload,
                             headers=headers
                             )
-    print(response)
+    if response.status_code == 204:
+        shelf_status = 'inactive'
+    elif response.status_code == 201:
+        shelf_status = 'active'
+        
+    return JsonResponse({'status': shelf_status})
+
+
+def rate_book(request, method=['POST']):
+    jwt_token = request.COOKIES.get('access_token')
+    if not jwt_token:
+        return redirect('login')
+    print(jwt_token)
+
+    data = json.loads(request.body)
+    rating = data['rating']
+
+    headers = {'Authorization': f'Bearer {jwt_token}'}
+    response = (f'{settings.FASTAPI_URL}/book/rate/')
     return HttpResponse()
+
 
 def search_for_book(request, method=['GET']):
     book_search = request.GET.get('book')
