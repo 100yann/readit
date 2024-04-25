@@ -37,6 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
             icon.classList.add('fa-regular')
         }
     }
+    // Custom shelves dropdown
+    const dropdownButton = document.getElementById('custom-shelves')
+    dropdownButton.onclick = () => {
+        displayDropdownMenu()
+    }
+
 
     var stars = document.querySelectorAll('.fa-star');
     var userRating = document.querySelector('#rating-section').dataset['rating']
@@ -123,6 +129,31 @@ async function saveBookToBookshelf(bookshelf) {
     return shelveButton
 };
 
+
+async function displayDropdownMenu() {
+    const userBookshelves = ['Read', 'Favorites', 'Gibberish']
+    const dropdownMenu = document.getElementById('dropdown-menu')
+    dropdownMenu.classList.toggle('hidden')
+    if (dropdownMenu.classList.contains('hidden')){
+        dropdownMenu.innerHTML = ""
+        dropdownMenu.style.display = 'none'
+        return
+    }
+    userBookshelves.forEach((shelf) => {
+        const shelfButton = document.createElement('button')
+        shelfButton.textContent = shelf
+        dropdownMenu.append(shelfButton)
+    })
+    dropdownMenu.style.display = 'block'
+    positionDropdown(dropdownMenu)
+}
+
+function positionDropdown(dropdownMenu) {
+    var customShelvesButton = document.getElementById('custom-shelves')
+    var buttonRect = customShelvesButton.getBoundingClientRect()
+    dropdownMenu.style.left = buttonRect.left + 30 + "px"
+    dropdownMenu.style.top = buttonRect.bottom + "px"
+}
 
 function saveRating(rating) {
   const bookIsbn = document.querySelector("#book-title").dataset.isbn

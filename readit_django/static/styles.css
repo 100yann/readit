@@ -7,6 +7,9 @@ h1 {
     margin: 0;
 }
 
+.hidden {
+    display: none;
+}
 /* Home Page */
 
 #header {
@@ -268,6 +271,19 @@ h1 {
     margin-right: 5px;
 }
 
+#dropdown-menu {
+    position: absolute;
+    background-color: white;
+    z-index: 9999;
+    display: none;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 1px 1px 5px 2px black;
+}
+
+#dropdown-menu button {
+    display: block;
+}
 
 
 @keyframes pop-up {
