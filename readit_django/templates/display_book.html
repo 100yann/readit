@@ -9,6 +9,17 @@
             <img id='book-thumbnail' src="{{ details.thumbnail }}" alt="book-cover">
             {% if request.COOKIES.access_token %}
             <div id="book-interactions">
+                {% if bookshelf %}
+                    <div id="shelve-button-container" class="shelved">
+                        <button id="add-to-bookshelf" data-status="{{ bookshelf }}"><i id="bookmark-icon" class="fa-solid fa-bookmark fa-fw"></i>{{ bookshelf }}</button>
+                        <button id="custom-shelves"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                {% else %}
+                    <div id="shelve-button-container">
+                        <button id="add-to-bookshelf" data-status=""><i id="bookmark-icon" class="fa-regular fa-bookmark fa-fw"></i>Want to read</button>
+                        <button id="custom-shelves"><i class="fa-solid fa-chevron-down"></i></button>
+                    </div>
+                {% endif %}
                 <div id="rating-section" data-rating="{{ user_rating }}">
                     <span>Your rating</span>
                     <div id="rating-container">
@@ -19,11 +30,6 @@
                         <i class="fa-solid fa-star rating-stars"></i>
                     </div>
                 </div>
-                {% if bookshelf %}
-                    <button id="add-to-bookshelf" class="shelved" data-status="{{ bookshelf }}"><i id="bookmark-icon" class="fa-solid fa-bookmark fa-fw"></i>{{ bookshelf }}</button>
-                {% else %}
-                    <button id="add-to-bookshelf" data-status=""><i id="bookmark-icon" class="fa-regular fa-bookmark fa-fw"></i>Want to read</button>
-                {% endif %}
             </div>
             {% endif %}
         </div>

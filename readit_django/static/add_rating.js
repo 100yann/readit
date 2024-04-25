@@ -26,13 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
     bookStatus.onclick = async () => {
         const shelveButton = await saveBookToBookshelf('Want to read')
         const icon = bookStatus.querySelector('#bookmark-icon')
-
+        const buttonParent = document.getElementById('shelve-button-container')
         if (shelveButton === 'active') {
-            bookStatus.classList.add('shelved')
+            buttonParent.classList.add('shelved')
             icon.classList.remove('fa-regular')
             icon.classList.add('fa-solid')
         } else {
-            bookStatus.classList.remove('shelved')
+            buttonParent.classList.remove('shelved')
             icon.classList.remove('fa-solid')
             icon.classList.add('fa-regular')
         }
