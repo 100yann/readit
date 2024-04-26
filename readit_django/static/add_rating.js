@@ -1,3 +1,10 @@
+var icons = {
+    'Favorites': '<i class="fa-solid fa-star" id="#bookmark-icon"></i>',
+    'Read': '<i class="fa-solid fa-book id="#bookmark-icon""></i>',
+}
+var defaultIcon = '<i id="bookmark-icon" class="fa-solid fa-bookmark fa-fw"></i>'
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const writeReview = document.getElementById('write-new-review')
 
@@ -23,6 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add book to bookshelf
     const bookStatus = document.getElementById('add-to-bookshelf')
 
+    if (icons.hasOwnProperty(bookStatus.textContent)) {
+        bookStatus.innerHTML = `${icons[bookStatus.textContent]}${bookStatus.textContent}`
+    } else {
+        bookStatus.innerHTML = `${defaultIcon}${bookStatus.textContent}`
+    }
+    
     bookStatus.onclick = async () => {
         const status = await saveBookToBookshelf(bookStatus.textContent)
         updateShelfButtonText(bookStatus.textContent, status)
@@ -148,16 +161,9 @@ async function displayDropdownMenu() {
         newCustomShelf.innerHTML = '<input type="text" placeholder="New shelf"></input><input type="submit" text="Save"></input'
         dropdownMenu.append(newCustomShelf)
     }
-
     dropdownMenu.style.display = 'block'
-    // positionDropdown(dropdownMenu)
 }
 
-// function positionDropdown(dropdownMenu) {
-//     var customShelvesButton = document.getElementById('custom-shelves')
-//     var buttonRect = customShelvesButton.getBoundingClientRect()
-
-// }
 
 function saveRating(rating) {
   const bookIsbn = document.querySelector("#book-title").dataset.isbn
@@ -178,16 +184,21 @@ function updateShelfButtonText(shelf, status) {
     const icon = document.querySelector('#bookmark-icon')
     const buttonParent = document.getElementById('shelve-button-container')
     const buttonText = document.getElementById('add-to-bookshelf')
-    buttonText.textContent = shelf
+
+    if (icons.hasOwnProperty(shelf)) {
+        buttonText.innerHTML = `${icons[shelf]}${shelf}`
+    } else {
+        buttonText.innerHTML = `${defaultIcon}${shelf}`
+    }
 
     if (status == 204) {
         buttonParent.classList.remove('shelved')
-        icon.classList.remove('fa-solid')
-        icon.classList.add('fa-regular')
+        // icon.classList.remove('fa-solid')
+        // icon.classList.add('fa-regular')
     } else {
         buttonParent.classList.add('shelved')
-        icon.classList.remove('fa-regular')
-        icon.classList.add('fa-solid')
+        // icon.classList.remove('fa-regular')
+        // icon.classList.add('fa-solid')
     }
 
 }
