@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from .utils import *
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseServerError
 import json
 import requests
 from requests.exceptions import ConnectionError
@@ -111,13 +111,11 @@ def save_book_to_bookshelf(request, method=['POST']):
                             json=payload,
                             headers=headers
                             )
-    if response.status_code == 204:
-        shelf_status = 'inactive'
-    elif response.status_code == 201:
-        shelf_status = 'active'
-        
-    return JsonResponse({'status': shelf_status})
 
+    if response.status_code != 201 and response.status_code != 204:
+        return HttpResponseServerError()
+    
+    return HttpResponse(status=response.status_code)
 
 def rate_book(request, method=['POST']):
     jwt_token = request.COOKIES.get('access_token')

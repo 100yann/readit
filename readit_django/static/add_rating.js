@@ -24,19 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const bookStatus = document.getElementById('add-to-bookshelf')
 
     bookStatus.onclick = async () => {
-        const shelveButton = await saveBookToBookshelf('Want to read')
-        const icon = bookStatus.querySelector('#bookmark-icon')
-        const buttonParent = document.getElementById('shelve-button-container')
-        if (shelveButton === 'active') {
-            buttonParent.classList.add('shelved')
-            icon.classList.remove('fa-regular')
-            icon.classList.add('fa-solid')
-        } else {
-            buttonParent.classList.remove('shelved')
-            icon.classList.remove('fa-solid')
-            icon.classList.add('fa-regular')
-        }
+        const status = await saveBookToBookshelf(bookStatus.textContent)
+        updateShelfButtonText(bookStatus.textContent, status)
     }
+
     // Custom shelves dropdown
     const dropdownButton = document.getElementById('custom-shelves')
     dropdownButton.onclick = () => {
@@ -44,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+    // Rating
     var stars = document.querySelectorAll('.fa-star');
     var userRating = document.querySelector('#rating-section').dataset['rating']
     stars.forEach((element, index) => {
@@ -123,10 +115,7 @@ async function saveBookToBookshelf(bookshelf) {
         throw new Error('Failed to save book to bookshelf')
     }
 
-    const data = await response.json()
-    const shelveButton = data.status
-
-    return shelveButton
+    return response.status
 };
 
 
@@ -142,18 +131,33 @@ async function displayDropdownMenu() {
     userBookshelves.forEach((shelf) => {
         const shelfButton = document.createElement('button')
         shelfButton.textContent = shelf
+        shelfButton.onclick = async () => {
+            var status = await saveBookToBookshelf(shelf)
+            updateShelfButtonText(shelf, status)
+        }
         dropdownMenu.append(shelfButton)
     })
+
+    const newShelfButton = document.createElement('button')
+    newShelfButton.id = 'new-custom-shelf'
+    newShelfButton.textContent = '+'
+    dropdownMenu.append(newShelfButton)
+
+    newShelfButton.onclick = () => {
+        const newCustomShelf = document.createElement('form')
+        newCustomShelf.innerHTML = '<input type="text" placeholder="New shelf"></input><input type="submit" text="Save"></input'
+        dropdownMenu.append(newCustomShelf)
+    }
+
     dropdownMenu.style.display = 'block'
-    positionDropdown(dropdownMenu)
+    // positionDropdown(dropdownMenu)
 }
 
-function positionDropdown(dropdownMenu) {
-    var customShelvesButton = document.getElementById('custom-shelves')
-    var buttonRect = customShelvesButton.getBoundingClientRect()
-    dropdownMenu.style.left = buttonRect.left + 30 + "px"
-    dropdownMenu.style.top = buttonRect.bottom + "px"
-}
+// function positionDropdown(dropdownMenu) {
+//     var customShelvesButton = document.getElementById('custom-shelves')
+//     var buttonRect = customShelvesButton.getBoundingClientRect()
+
+// }
 
 function saveRating(rating) {
   const bookIsbn = document.querySelector("#book-title").dataset.isbn
@@ -167,4 +171,23 @@ function saveRating(rating) {
     },
     body: JSON.stringify({'rating': rating, 'action': 'rate'})
   })
+}
+
+
+function updateShelfButtonText(shelf, status) {
+    const icon = document.querySelector('#bookmark-icon')
+    const buttonParent = document.getElementById('shelve-button-container')
+    const buttonText = document.getElementById('add-to-bookshelf')
+    buttonText.textContent = shelf
+
+    if (status == 204) {
+        buttonParent.classList.remove('shelved')
+        icon.classList.remove('fa-solid')
+        icon.classList.add('fa-regular')
+    } else {
+        buttonParent.classList.add('shelved')
+        icon.classList.remove('fa-regular')
+        icon.classList.add('fa-solid')
+    }
+
 }

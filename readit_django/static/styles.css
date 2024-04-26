@@ -272,7 +272,7 @@ h1 {
 }
 
 #dropdown-menu {
-    position: absolute;
+    position: relative;
     background-color: white;
     z-index: 9999;
     display: none;

@@ -11,20 +11,17 @@
             <div id="book-interactions">
                 {% if bookshelf %}
                     <div id="shelve-button-container" class="shelved">
-                        <button id="add-to-bookshelf" data-status="{{ bookshelf }}"><i id="bookmark-icon" class="fa-solid fa-bookmark fa-fw"></i>{{ bookshelf }}</button>
+                        <button id="add-to-bookshelf"><i id="bookmark-icon" class="fa-solid fa-bookmark fa-fw"></i>{{ bookshelf }}</button>
                         <button id="custom-shelves"><i class="fa-solid fa-chevron-down"></i></button>
-                        <div id="dropdown-menu" class="hidden">
-                        </div>
                     </div>
                 {% else %}
                     <div id="shelve-button-container">
                         <button id="add-to-bookshelf" data-status=""><i id="bookmark-icon" class="fa-regular fa-bookmark fa-fw"></i>Want to read</button>
                         <button id="custom-shelves"><i class="fa-solid fa-chevron-down"></i></button>
-                        <div id="dropdown-menu" class="hidden">
-                        </div>
                     </div>
                 {% endif %}
-
+                <div id="dropdown-menu" class="hidden">
+                </div>
                 <div id="rating-section" data-rating="{{ user_rating }}">
                     <span>Your rating</span>
                     <div id="rating-container">
