@@ -93,7 +93,8 @@ def display_book(request, isbn):
                     'user_rating': data['rating'],
                     'bookshelf': bookshelf,
                     'isbn': isbn,
-                    'book_id': data['book_id']
+                    'book_id': data['book_id'],
+                    'book_stats': data['book_stats'],
                     })
 
 

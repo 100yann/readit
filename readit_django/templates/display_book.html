@@ -42,13 +42,13 @@
                 </div>
                 <div id="rating-statistics">
                     <div>
-                        <span id="book-rating">4.0</span><span>Stars</span>
+                        <span id="book-rating">{{ book_stats.avg_book_rating }}</span><span>Stars</span>
                     </div>
                     <div>
-                        <span class="book-total-reviews">100</span><span>Reviews</span>
+                        <span class="book-total-ratings">{{ book_stats.num_ratings }}</span><span>Ratings</span>
                     </div>
                     <div>
-                        <span class="book-total-ratings">50</span><span>Ratings</span>
+                        <span class="book-total-reviews">{{ book_stats.num_reviews }}</span><span>Reviews</span>
                     </div>
                 </div>
             </div>
