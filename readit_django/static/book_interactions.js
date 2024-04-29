@@ -53,52 +53,46 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // If a user has rated the book - fill the appropriate number of stars
     var userRating = document.querySelector('#rating-section').dataset['rating']
-    stars.forEach((element, index) => {
-        if (index <= userRating-1) {
-            element.style.color = '#ff764c'
+    stars.forEach((star, index) => {
+        if (userRating && index <= userRating-1) {
+            star.style.color = '#ff764c'
+        }
+        // On hover, highlight all stars up until and including the one hovered
+        star.onmouseover = () => {
+            stars.forEach((s, i) => {
+                if (i <= index){
+                    s.style.color = '#ff764c'
+                } else {
+                    s.style.color = ''
+                }
+            })
+        }
+        // On click, highlight all stars up until and including the one clicked
+        star.onclick = () => {
+            userRating = index + 1
+            // Save the rating
+            rateBook(userRating)
+            stars.forEach((star2, index2) => {
+                if (index2 <= index) {
+                    star2.style.color = '#ff764c'
+                } else {
+                    star2.style.color = ''
+                }
+            })
         }
     })
 
-    var rated = false;
-    var rating = 0;
-
-    stars.forEach((element, index) => {
-        element.addEventListener('mouseover', () => {
-                stars.forEach((element2, index2) => {
-                    if (index2 <= index) {
-                        element2.style.color = '#ff764c'
-                    } else {
-                        element2.style.color = ''
-                    }
-                })
-            }
-        )
-
-        element.addEventListener('click', () => {
-            rated = true
-            rating = index + 1;
-            rateBook(rating)
-            stars.forEach((element2, index2) => {
-                if (index2 <= index) {
-                    element2.style.color = '#ff764c'
-                } else {
-                    element2.style.color = ''
-                }
-            })
-        })
-
-        element.addEventListener('mouseleave', () => {
-            if (!rated) {
-                stars.forEach((element2, index3) => {
-                    if (!userRating || index3 > userRating - 1) {
-                        element2.style.color = ''
-                    } else {
-                        element2.style.color = '#ff764c'
-                    }
-                })
+    const ratingContainer = document.getElementById('rating-container')
+    // On mouse leave highlight the amount of stars equal to the user's rating
+    ratingContainer.onmouseleave = () => {
+        stars.forEach((star, index) => {
+            if (userRating && index <= userRating-1){
+                star.style.color = '#ff764c'
+            } else {
+                star.style.color = ''
             }
         })
-    })
+    }
 });
 
 
