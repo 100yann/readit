@@ -3,7 +3,7 @@ from .. import schemas, models, utils, oauth2
 from ..database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from typing import List, Optional
+from sqlalchemy.sql.functions import func
 
 
 router = APIRouter(
@@ -83,8 +83,38 @@ def get_book_data(book_isbn: str,
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail='Book not found')
     
-    reviews_query = db.query(models.Reviews).filter(models.Reviews.book_reviewed == book.id).all()
+    reviews_query = db.query(
+        models.Reviews
+        ).filter(
+            models.Reviews.book_reviewed == book.id
+        ).all()
+    
+    avg_book_rating = db.query(
+        func.avg(models.BookRatings.rating
+                ).label('average_rating'),
+        func.count(models.BookRatings.rating
+                ).label('num_ratings')
+        ).filter(models.BookRatings.book_id == book.id
+        ).first()
+    
+    num_of_reviews = db.query(
+        func.count(models.Reviews.id
+                   ).label('num_reviews')
+        ).filter(models.Reviews.book_reviewed == book.id
+        ).all()
+    
+    book_stats = {
+        'avg_book_rating': round(float(avg_book_rating.average_rating), 1),
+        'num_ratings': avg_book_rating.num_ratings,
+        'num_reviews': num_of_reviews[0].num_reviews
+    }
 
+    output = {
+        'reviews': reviews_query, 
+        'book_id': book.id,
+        'book_stats': book_stats
+        }
+    
     if user_id:
         bookshelf = db.query(
                 models.Bookshelves.bookshelf
@@ -99,15 +129,12 @@ def get_book_data(book_isbn: str,
                 models.BookRatings.book_id == book.id,
                 models.BookRatings.user_id == user_id
             ).first()
+
+        output['shelf'] = bookshelf
+        output['rating'] = rating.rating
     
-        return {
-            'reviews': reviews_query,
-            'shelf': bookshelf,
-            'rating': rating.rating,
-            'book_id': book.id
-        }
-    
-    return {'reviews': reviews_query, 'book_id': book.id}
+    return output
+
 
 
 @router.post('/rate/{id}')

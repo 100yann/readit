@@ -1,4 +1,4 @@
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict
 from pydantic import BaseModel, EmailStr, ValidationError, Field
 from datetime import datetime
 
@@ -124,6 +124,7 @@ class DisplayBookData(BaseModel):
     shelf: Tuple | None = None
     rating: Optional[int] | None = None
     book_id: int
+    book_stats: Dict
 
 
 class Bookshelf(BaseModel):
