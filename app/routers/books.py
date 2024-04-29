@@ -73,6 +73,43 @@ def find_book_by_title(title: str, db: Session = Depends(get_db)):
     return matches
 
 
+@router.get('/get/{book_isbn}', response_model=schemas.DisplayBookData)
+def get_book_data(book_isbn: str,
+                  user_id: str | None = None,
+                  db: Session = Depends(get_db)
+                  ):
+    book = db.query(models.Books).filter(models.Books.isbn == book_isbn).first()
+    if not book:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='Book not found')
+    
+    reviews_query = db.query(models.Reviews).filter(models.Reviews.book_reviewed == book.id).all()
+
+    if user_id:
+        bookshelf = db.query(
+                models.Bookshelves.bookshelf
+            ).filter(
+                models.Bookshelves.book_id == book.id, 
+                models.Bookshelves.user_shelved == user_id
+            ).first()
+                
+        rating = db.query(
+                models.BookRatings
+            ).filter(
+                models.BookRatings.book_id == book.id,
+                models.BookRatings.user_id == user_id
+            ).first()
+    
+        return {
+            'reviews': reviews_query,
+            'shelf': bookshelf,
+            'rating': rating,
+            'book_id': book.id
+        }
+    
+    return {'reviews': reviews_query, 'book_id': book.id}
+
+
 @router.post('/rate/{book_id}')
 def rate_book(book_id: int,
               book_rating: schemas.ValidBookRating,
@@ -100,40 +137,3 @@ def rate_book(book_id: int,
                             detail='Book not found')
 
     return Response(status_code=status.HTTP_201_CREATED)
-
-
-@router.get('/get/{book_isbn}', response_model=schemas.DisplayBookData)
-def get_book_data(book_isbn: str,
-                  user_id: str | None = None,
-                  db: Session = Depends(get_db)
-                  ):
-    book = db.query(models.Books).filter(models.Books.isbn == book_isbn).first()
-    if not book:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail='Book nott found')
-    
-    reviews_query = db.query(models.Reviews).filter(models.Reviews.book_reviewed == book.id).all()
-
-    if user_id:
-        bookshelf = db.query(
-                models.Bookshelves.bookshelf
-            ).filter(
-                models.Bookshelves.book_id == book.id, 
-                models.Bookshelves.user_shelved == user_id
-            ).first()
-                
-        rating = db.query(
-                models.BookRatings
-            ).filter(
-                models.BookRatings.book_id == book.id,
-                models.BookRatings.user_id == user_id
-            ).first()
-    
-        return {
-            'reviews': reviews_query,
-            'shelf': bookshelf,
-            'rating': rating 
-        }
-    
-    return {'reviews': reviews_query}
-
