@@ -90,7 +90,7 @@ class TokenData(BaseModel):
     id: Optional[str] = None
 
 
-class ValidBookRating(BaseModel):
+class RateBook(BaseModel):
     rating: int = Field(..., ge=1, le=5)
 
 
@@ -122,7 +122,7 @@ class UserProfileData(BaseModel):
 class DisplayBookData(BaseModel):
     reviews: List[ReviewData]
     shelf: Tuple | None = None
-    rating: Optional[str] | None = None
+    rating: Optional[int] | None = None
     book_id: int
 
 

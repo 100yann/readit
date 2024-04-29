@@ -49,7 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Rating
-    var stars = document.querySelectorAll('.fa-star');
+    var stars = document.querySelectorAll('.rating-stars');
+    
+    // If a user has rated the book - fill the appropriate number of stars
     var userRating = document.querySelector('#rating-section').dataset['rating']
     stars.forEach((element, index) => {
         if (index <= userRating-1) {
@@ -75,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         element.addEventListener('click', () => {
             rated = true
             rating = index + 1;
-            saveRating(rating)
+            rateBook(rating)
             stars.forEach((element2, index2) => {
                 if (index2 <= index) {
                     element2.style.color = '#ff764c'
@@ -103,8 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function getBookInfo() {
     bookData = {
       bookTitle: document.querySelector("#book-title").textContent,
-      bookAuthor: document.querySelector("#author").textContent,
       bookIsbn: document.querySelector("#book-title").dataset.isbn,
+      bookId: document.querySelector('#book-title').dataset.id,
+      bookAuthor: document.querySelector("#author").textContent,
       bookThumbnail: document.querySelector("#book-thumbnail").src,
     };
   
@@ -165,17 +168,17 @@ async function displayDropdownMenu() {
 }
 
 
-function saveRating(rating) {
-  const bookIsbn = document.querySelector("#book-title").dataset.isbn
+function rateBook(rating) {
+  const bookId = getBookInfo().bookId
   const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
-  respone = fetch(``, {
+  respone = fetch(`http://127.0.0.1:8000/book/rate`, {
     method: 'POST',
     headers: {
       "Content-Type": "application/json",
       "X-CSRFToken": csrfToken,
     },
-    body: JSON.stringify({'rating': rating, 'action': 'rate'})
+    body: JSON.stringify({'rating': rating, 'book_id': bookId})
   })
 }
 

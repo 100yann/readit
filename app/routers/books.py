@@ -103,30 +103,30 @@ def get_book_data(book_isbn: str,
         return {
             'reviews': reviews_query,
             'shelf': bookshelf,
-            'rating': rating,
+            'rating': rating.rating,
             'book_id': book.id
         }
     
     return {'reviews': reviews_query, 'book_id': book.id}
 
 
-@router.post('/rate/{book_id}')
-def rate_book(book_id: int,
-              book_rating: schemas.ValidBookRating,
+@router.post('/rate/{id}')
+def rate_book(id: int,
+              body: schemas.RateBook,
               db: Session = Depends(get_db),
               current_user: int = Depends(oauth2.get_current_user)
               ):
     query = db.query(models.BookRatings).\
-        filter(models.BookRatings.book_id == book_id,
+        filter(models.BookRatings.book_id == id,
                models.BookRatings.user_id == current_user.id).\
         first()
 
     if query:
-        query.rating = book_rating.rating
+        query.rating = body.rating
     else:
-        new_rating = models.BookRatings(book_id=book_id,
+        new_rating = models.BookRatings(book_id=id,
                                         user_id=current_user.id,
-                                        rating=book_rating.rating
+                                        rating=body.rating
                                         )
         db.add(new_rating)
 

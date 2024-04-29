@@ -85,14 +85,15 @@ def display_book(request, isbn):
             bookshelf = data['shelf'][0]
         else:
             bookshelf = ''
-            
+
     return render(request, 'display_book.html', 
                 context={
                     'details': book_details, 
                     'reviews': data['reviews'],
                     'user_rating': data['rating'],
                     'bookshelf': bookshelf,
-                    'isbn': isbn
+                    'isbn': isbn,
+                    'book_id': data['book_id']
                     })
 
 
@@ -117,17 +118,21 @@ def save_book_to_bookshelf(request, method=['POST']):
     
     return HttpResponse(status=response.status_code)
 
+
 def rate_book(request, method=['POST']):
     jwt_token = request.COOKIES.get('access_token')
     if not jwt_token:
         return redirect('login')
-    print(jwt_token)
 
     data = json.loads(request.body)
+    book_id = data['book_id']
     rating = data['rating']
 
     headers = {'Authorization': f'Bearer {jwt_token}'}
-    response = (f'{settings.FASTAPI_URL}/book/rate/')
+    response = requests.post(f'{settings.FASTAPI_URL}/book/rate/{book_id}', 
+                             json={'rating': rating}, 
+                             headers=headers
+                             )
     return HttpResponse()
 
 
