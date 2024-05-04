@@ -1,11 +1,15 @@
+
+const FASTAPI_URL = 'http://127.0.0.1:8000'
 var icons = {
     'Favorites': '<i class="fa-solid fa-star" id="#bookmark-icon"></i>',
     'Read': '<i class="fa-solid fa-book id="#bookmark-icon""></i>',
 }
 var defaultIcon = '<i id="bookmark-icon" class="fa-solid fa-bookmark fa-fw"></i>'
-
+var page = 1
 
 document.addEventListener('DOMContentLoaded', () => {
+    getReviews()
+
     const writeReview = document.getElementById('write-new-review')
 
     if (writeReview){
@@ -112,7 +116,7 @@ function getBookInfo() {
 async function saveBookToBookshelf(bookshelf) {
     const bookIsbn = getBookInfo().bookIsbn
     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-    response = await fetch(`http://127.0.0.1:8000/book/save`, {
+    response = await fetch(`${FASTAPI_URL}/book/save`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -166,7 +170,7 @@ function rateBook(rating) {
   const bookId = getBookInfo().bookId
   const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
-  respone = fetch(`http://127.0.0.1:8000/book/rate`, {
+  respone = fetch(`${FASTAPI_URL}/book/rate`, {
     method: 'POST',
     headers: {
       "Content-Type": "application/json",
@@ -197,5 +201,97 @@ function updateShelfButtonText(shelf, status) {
         // icon.classList.remove('fa-regular')
         // icon.classList.add('fa-solid')
     }
+}
 
+
+async function getReviews() {
+    const bookId = getBookInfo().bookId
+    const response = await fetch(`${FASTAPI_URL}/book/reviews/${bookId}?page=${page}`)
+    if (!response.ok){
+        return
+    }
+    const data = await response.json()
+    const reviews = data.reviews
+    displayReviews(reviews)
+}
+
+
+function displayReviews(reviews) {
+    const bookReviewsContainer = document.getElementById('book-reviews');
+    
+    // Clear existing reviews before displaying new ones
+    bookReviewsContainer.innerHTML = '';
+
+    reviews.forEach((review) => {
+        // Create review container
+        const reviewContainer = document.createElement('div');
+        reviewContainer.id = 'review-container';
+
+        // Create user preview container
+        const userPreviewContainer = document.createElement('div');
+        userPreviewContainer.id = 'user-preview';
+
+        // Create user profile picture container
+        const userProfilePicContainer = document.createElement('div');
+        userProfilePicContainer.id = 'user-pfp-container';
+        const userProfilePic = document.createElement('img');
+        userProfilePic.className = 'user-pfp-preview';
+        userProfilePic.src = ''; // Update with the actual URL
+        userProfilePic.alt = 'User Profile Picture';
+        userProfilePicContainer.appendChild(userProfilePic);
+        userPreviewContainer.appendChild(userProfilePicContainer);
+
+        // Create user name container
+        const userNameContainer = document.createElement('div');
+        userNameContainer.id = 'user-name-container';
+        const userName = document.createElement('h5');
+        userName.textContent = review.owner.email;
+        const reviewCount = document.createElement('span');
+        reviewCount.textContent = `${review.owner.review_count} reviews`;
+        const followersCount = document.createElement('span');
+        followersCount.textContent = `${review.owner.followers_count} followers`;
+        userNameContainer.appendChild(userName);
+        userNameContainer.appendChild(reviewCount);
+        userNameContainer.appendChild(followersCount);
+        userPreviewContainer.appendChild(userNameContainer);
+
+        // Append user preview container to review container
+        reviewContainer.appendChild(userPreviewContainer);
+
+        // Create review content container
+        const reviewContentContainer = document.createElement('div');
+        reviewContentContainer.id = 'review-content';
+        const reviewDateRating = document.createElement('div');
+        reviewDateRating.id = 'review-date-rating';
+        const starRating = document.createElement('span');
+        // Logic to generate star rating based on review.rating
+        // Update this logic based on your rating representation
+        starRating.textContent = '☆☆☆☆☆'; // Placeholder for now
+        const reviewDate = document.createElement('p');
+        reviewDate.textContent = review.date_read;
+        reviewDateRating.appendChild(starRating);
+        reviewDateRating.appendChild(reviewDate);
+        reviewContentContainer.appendChild(reviewDateRating);
+        const reviewContent = document.createElement('p');
+        reviewContent.textContent = review.content;
+        reviewContentContainer.appendChild(reviewContent);
+
+        // Append review content container to review container
+        reviewContainer.appendChild(reviewContentContainer);
+
+        // Append review container to book reviews container
+        bookReviewsContainer.appendChild(reviewContainer);
+    });
+    
+    var totalReviews = document.querySelector('.book-total-reviews').textContent
+    const numPages = Math.ceil(totalReviews/5)
+    for (i=1; i<=numPages; i++){
+        const pageButton = document.createElement('button')
+        pageButton.textContent = i
+        bookReviewsContainer.appendChild(pageButton)
+        pageButton.onclick = function() {
+            page = pageButton.textContent
+            getReviews()
+        }
+    }
 }
