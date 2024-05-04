@@ -75,7 +75,6 @@ def find_book_by_title(title: str, db: Session = Depends(get_db)):
 
 @router.get('/get/{book_isbn}', response_model=schemas.DisplayBookData)
 def get_book_data(book_isbn: str,
-                  page: str | None = None,
                   user_id: str | None = None,
                   db: Session = Depends(get_db)
                   ):
@@ -115,8 +114,7 @@ def get_book_data(book_isbn: str,
             ).filter(
                 models.Bookshelves.book_id == book.id, 
                 models.Bookshelves.user_shelved == user_id
-            ).first()
-                
+            ).all()
         rating = db.query(
                 models.BookRatings
             ).filter(
@@ -124,7 +122,7 @@ def get_book_data(book_isbn: str,
                 models.BookRatings.user_id == user_id
             ).first()
 
-        output['shelf'] = bookshelf
+        output['shelf'] = [shelf[0] for shelf in bookshelf]
         output['rating'] = rating.rating
     
     return output

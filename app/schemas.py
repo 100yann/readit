@@ -120,7 +120,7 @@ class UserProfileData(BaseModel):
 
 
 class DisplayBookData(BaseModel):
-    shelf: Tuple | None = None
+    shelf: List[str]
     rating: Optional[int] | None = None
     book_id: int
     book_stats: Dict
