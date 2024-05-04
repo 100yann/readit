@@ -290,6 +290,9 @@ function displayReviews(reviews) {
         pageButton.textContent = i
         bookReviewsContainer.appendChild(pageButton)
         pageButton.onclick = function() {
+            if (page == pageButton.textContent) {
+                return
+            }
             page = pageButton.textContent
             getReviews()
         }
