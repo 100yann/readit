@@ -8,10 +8,11 @@
         <div id="book-cover">
             <img id='book-thumbnail' src="{{ details.thumbnail }}" alt="book-cover">
             {% if request.COOKIES.access_token %}
+            {% csrf_token %}
             <div id="book-interactions">
                 {% if bookshelf %}
                     <div id="shelve-button-container" class="shelved">
-                        <button id="add-to-bookshelf"><i id="bookmark-icon" class="fa-solid fa-bookmark fa-fw"></i>{{ bookshelf }}</button>
+                        <button id="add-to-bookshelf"><i id="bookmark-icon" class="fa-solid fa-bookmark fa-fw"></i>{{ bookshelf.0 }}</button>
                         <button id="custom-shelves"><i class="fa-solid fa-chevron-down"></i></button>
                     </div>
                 {% else %}
@@ -20,7 +21,7 @@
                         <button id="custom-shelves"><i class="fa-solid fa-chevron-down"></i></button>
                     </div>
                 {% endif %}
-                <div id="dropdown-menu" class="hidden">
+                <div id="dropdown-menu" class="hidden" data-shelves="{{ bookshelf }}">
                 </div>
                 <div id="rating-section" data-rating="{{ user_rating }}">
                     <span>Your rating</span>
@@ -105,7 +106,6 @@
             <button id="write-new-review">Write a review</button>
             <div>
                 <form id="review-form">
-                    {% csrf_token %}
                     <div id="add-review">
                         <h4>Review</h4>
                         <textarea name="" id="review-field" cols="30" rows="10" class="form-control"></textarea>                

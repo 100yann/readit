@@ -81,16 +81,12 @@ def display_book(request, isbn):
     
     if response.status_code == 200:
         data = response.json()
-        if data['shelf']:
-            bookshelf = data['shelf'][0]
-        else:
-            bookshelf = ''
-
+        
     return render(request, 'display_book.html', 
                 context={
                     'details': book_details, 
                     'user_rating': data['rating'],
-                    'bookshelf': bookshelf,
+                    'bookshelf': data.get('shelf', ''),
                     'isbn': isbn,
                     'book_id': data['book_id'],
                     'book_stats': data['book_stats'],

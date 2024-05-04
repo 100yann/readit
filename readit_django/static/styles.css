@@ -245,10 +245,9 @@ h1 {
     font-size: 20px;
 }
 
-#shelve-button-container.shelved {
+#shelve-button-container.shelved, .shelved {
     background-color: #BFEAAA;
 }
-
 
 #shelve-button-container button {
     border: 0;

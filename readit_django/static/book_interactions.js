@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Custom shelves dropdown
     const dropdownButton = document.getElementById('custom-shelves')
     dropdownButton.onclick = () => {
-        displayDropdownMenu()
+        displayDropdownMenu(bookStatus.textContent)
     }
 
 
@@ -133,21 +133,32 @@ async function saveBookToBookshelf(bookshelf) {
 };
 
 
-async function displayDropdownMenu() {
-    const userBookshelves = ['Read', 'Favorites', 'Gibberish']
+async function displayDropdownMenu(bookshelf) {
+    const defaultBookshelves = ['Read', 'Favorites']
     const dropdownMenu = document.getElementById('dropdown-menu')
+    var currentUserBookshelves = dropdownMenu.dataset.shelves
+    currentUserBookshelves = JSON.parse(currentUserBookshelves.replace(/'/g, '"'));
+
     dropdownMenu.classList.toggle('hidden')
     if (dropdownMenu.classList.contains('hidden')){
         dropdownMenu.innerHTML = ""
         dropdownMenu.style.display = 'none'
         return
     }
-    userBookshelves.forEach((shelf) => {
+    defaultBookshelves.forEach((shelf) => {
+        if (shelf == bookshelf) {
+            return
+        }
         const shelfButton = document.createElement('button')
         shelfButton.textContent = shelf
+        
+        if (currentUserBookshelves.includes(shelf)) {
+            shelfButton.classList += 'shelved'
+        } 
+    
         shelfButton.onclick = async () => {
             var status = await saveBookToBookshelf(shelf)
-            updateShelfButtonText(shelf, status)
+            shelfButton.classList.toggle('shelved')
         }
         dropdownMenu.append(shelfButton)
     })
