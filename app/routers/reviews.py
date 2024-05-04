@@ -220,3 +220,21 @@ def like_review(review: int,
             message = 'Liked'
 
     return {'status': message}
+
+@router.get('/book/{book_id}', response_model=List[schemas.ReviewData])
+def get_reviews_by_book(book_id: str,
+                        page: int | None = None,
+                        user_id: str | None = None, 
+                        db: Session = Depends(get_db)
+                        ):
+    reviews_query = db.query(
+    models.Reviews
+    ).filter(
+        models.Reviews.book_reviewed == book_id
+    ).limit(5)
+    
+
+    skip_num_reviews = (page - 1) * 5
+    reviews = reviews_query.offset(skip_num_reviews).all()
+
+    return reviews

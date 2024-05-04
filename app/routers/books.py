@@ -75,6 +75,7 @@ def find_book_by_title(title: str, db: Session = Depends(get_db)):
 
 @router.get('/get/{book_isbn}', response_model=schemas.DisplayBookData)
 def get_book_data(book_isbn: str,
+                  page: str | None = None,
                   user_id: str | None = None,
                   db: Session = Depends(get_db)
                   ):
@@ -82,12 +83,6 @@ def get_book_data(book_isbn: str,
     if not book:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail='Book not found')
-    
-    reviews_query = db.query(
-        models.Reviews
-        ).filter(
-            models.Reviews.book_reviewed == book.id
-        ).all()
     
     avg_book_rating = db.query(
         func.avg(models.BookRatings.rating
@@ -110,7 +105,6 @@ def get_book_data(book_isbn: str,
     }
 
     output = {
-        'reviews': reviews_query, 
         'book_id': book.id,
         'book_stats': book_stats
         }
