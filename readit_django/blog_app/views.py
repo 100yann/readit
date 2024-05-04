@@ -89,13 +89,23 @@ def display_book(request, isbn):
     return render(request, 'display_book.html', 
                 context={
                     'details': book_details, 
-                    'reviews': data['reviews'],
                     'user_rating': data['rating'],
                     'bookshelf': bookshelf,
                     'isbn': isbn,
                     'book_id': data['book_id'],
                     'book_stats': data['book_stats'],
                     })
+
+
+def get_reviews_by_book(request, book_id):
+    page = request.GET.get('page')
+    response = requests.get(f'{settings.FASTAPI_URL}/reviews/book/{book_id}', params={'page': page})
+    if response.status_code != 200:
+        return HttpResponseServerError()
+    
+    data = response.json()
+    return JsonResponse({'reviews': data})
+
 
 
 def save_book_to_bookshelf(request, method=['POST']):
