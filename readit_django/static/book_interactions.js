@@ -291,10 +291,14 @@ function displayReviews(reviews) {
         // Append review content container to review container
         reviewContainer.appendChild(reviewContentContainer);
         
-        const reviewLikes = document.createElement('span')
-        reviewLikes.textContent = review.total_likes
-
-        reviewContainer.appendChild(reviewLikes)
+        // Create a like button
+        const likeButton = document.createElement('button')
+        if (review.has_user_liked) {
+            likeButton.innerHTML = `<i class="fa-solid fa-heart"></i>${review.total_likes}`
+        } else {
+            likeButton.innerHTML = `<i class="fa-regular fa-heart"></i>${review.total_likes}`
+        }
+        reviewContainer.appendChild(likeButton)
         // Append review container to book reviews container
         bookReviewsContainer.appendChild(reviewContainer);
     });
