@@ -221,20 +221,24 @@ def like_review(review: int,
 
     return {'status': message}
 
-@router.get('/book/{book_id}', response_model=List[schemas.ReviewData])
+@router.get('/book/{book_id}', response_model=List[schemas.ReviewWithLikes])
 def get_reviews_by_book(book_id: str,
                         page: int | None = None,
                         user_id: str | None = None, 
                         db: Session = Depends(get_db)
                         ):
-    reviews_query = db.query(
-    models.Reviews
-    ).filter(
-        models.Reviews.book_reviewed == book_id
-    ).limit(5)
     
-
+    reviews_query = db.query(
+        models.Reviews,
+        func.count(models.Likes.id).label('total_likes')
+        ).join(
+            models.Likes, models.Likes.review_id == models.Reviews.id, isouter=True
+        ).group_by(
+            models.Reviews.id
+        ).filter(
+            models.Reviews.book_reviewed == book_id
+        ).limit(5)
+    
     skip_num_reviews = (page - 1) * 5
     reviews = reviews_query.offset(skip_num_reviews).all()
-
     return reviews
