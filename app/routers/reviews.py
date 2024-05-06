@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from typing import List, Optional
 from sqlalchemy.sql.functions import func
+from sqlalchemy import select, exists
+
 
 router = APIRouter(
     prefix='/reviews',
@@ -227,18 +229,38 @@ def get_reviews_by_book(book_id: str,
                         user_id: str | None = None, 
                         db: Session = Depends(get_db)
                         ):
-    
-    reviews_query = db.query(
-        models.Reviews,
-        func.count(models.Likes.id).label('total_likes')
-        ).join(
-            models.Likes, models.Likes.review_id == models.Reviews.id, isouter=True
-        ).group_by(
-            models.Reviews.id
-        ).filter(
-            models.Reviews.book_reviewed == book_id
-        ).limit(5)
-    
+    if not user_id:
+        reviews_query = db.query(
+            models.Reviews,
+            func.count(models.Likes.id).label('total_likes')
+            ).join(
+                models.Likes, models.Likes.review_id == models.Reviews.id, isouter=True
+            ).group_by(
+                models.Reviews.id
+            ).filter(
+                models.Reviews.book_reviewed == book_id
+            ).limit(5)
+    else:
+        # create a subquery that checks if the current user has liked a review
+        exists_criteria = (
+            select(models.Likes.review_id).
+            where(models.Likes.user_id == user_id).
+            where(models.Likes.review_id == models.Reviews.id).
+            exists()
+            ).correlate(models.Reviews)
+        
+        reviews_query = db.query(
+            models.Reviews,
+            func.count(models.Likes.id).label('total_likes'),
+            exists_criteria.label('has_user_liked')
+            ).join(
+                models.Likes, models.Likes.review_id == models.Reviews.id, isouter=True
+            ).group_by(
+                models.Reviews.id
+            ).filter(
+                models.Reviews.book_reviewed == book_id
+            ).limit(5)
+        
     skip_num_reviews = (page - 1) * 5
     reviews = reviews_query.offset(skip_num_reviews).all()
     return reviews

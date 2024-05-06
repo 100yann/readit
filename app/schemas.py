@@ -49,6 +49,7 @@ class ReviewData(BaseModel):
 class ReviewWithLikes(BaseModel):
     Reviews: ReviewData
     total_likes: int
+    has_user_liked: Optional[bool] | None = None
 
     class Config:
         from_attributes = True
@@ -120,7 +121,7 @@ class UserProfileData(BaseModel):
 
 
 class DisplayBookData(BaseModel):
-    shelf: List[str]
+    shelf: Optional[List[str]] | None = None
     rating: Optional[int] | None = None
     book_id: int
     book_stats: Dict
