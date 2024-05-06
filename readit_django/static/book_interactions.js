@@ -223,6 +223,7 @@ async function getReviews() {
     }
     const data = await response.json()
     const reviews = data.reviews
+    console.log(reviews)
     displayReviews(reviews)
 }
 
@@ -256,11 +257,11 @@ function displayReviews(reviews) {
         const userNameContainer = document.createElement('div');
         userNameContainer.id = 'user-name-container';
         const userName = document.createElement('h5');
-        userName.textContent = review.owner.email;
+        userName.textContent = review.Reviews.owner.email;
         const reviewCount = document.createElement('span');
-        reviewCount.textContent = `${review.owner.review_count} reviews`;
+        reviewCount.textContent = `Placeholder reviews`;
         const followersCount = document.createElement('span');
-        followersCount.textContent = `${review.owner.followers_count} followers`;
+        followersCount.textContent = `Placeholder followers`;
         userNameContainer.appendChild(userName);
         userNameContainer.appendChild(reviewCount);
         userNameContainer.appendChild(followersCount);
@@ -279,17 +280,21 @@ function displayReviews(reviews) {
         // Update this logic based on your rating representation
         starRating.textContent = '☆☆☆☆☆'; // Placeholder for now
         const reviewDate = document.createElement('p');
-        reviewDate.textContent = review.date_read;
+        reviewDate.textContent = review.Reviews.date_read;
         reviewDateRating.appendChild(starRating);
         reviewDateRating.appendChild(reviewDate);
         reviewContentContainer.appendChild(reviewDateRating);
         const reviewContent = document.createElement('p');
-        reviewContent.textContent = review.content;
+        reviewContent.textContent = review.Reviews.content;
         reviewContentContainer.appendChild(reviewContent);
 
         // Append review content container to review container
         reviewContainer.appendChild(reviewContentContainer);
+        
+        const reviewLikes = document.createElement('span')
+        reviewLikes.textContent = review.total_likes
 
+        reviewContainer.appendChild(reviewLikes)
         // Append review container to book reviews container
         bookReviewsContainer.appendChild(reviewContainer);
     });

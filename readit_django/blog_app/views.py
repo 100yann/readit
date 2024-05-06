@@ -100,6 +100,7 @@ def get_reviews_by_book(request, book_id):
         return HttpResponseServerError()
     
     data = response.json()
+    print(data)
     return JsonResponse({'reviews': data})
 
 
