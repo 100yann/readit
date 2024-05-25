@@ -20,8 +20,8 @@
           <div class="navbar-nav">
             <a class="nav-item nav-link" href="{% url 'home_page' %}">Home </a>
             <a class="nav-item nav-link" href="{% url 'new_review' %}">Add Review</a>
-            {% if request.COOKIES.access_token %}
-              <a class="nav-item nav-link" href="">{{ request.session.name }}</a>
+            {% if request.session.id %}
+              <a class="nav-item nav-link" href="{% url 'user_profile' user_id=request.session.id%}">{{ request.session.name }}</a>
               <a class="nav-item nav-link" href="{% url 'logout' %}" id="logout-button">Log Out</a>
             {% else %}
               <a class="nav-item nav-link" href="{% url 'login' %}">Log In</a>
