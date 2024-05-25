@@ -93,8 +93,6 @@ def display_book(request, isbn):
 
 
 def get_reviews_by_book(request, book_id):
-    user_id = request.session['id']
-
     page = request.GET.get('page')
     params = {
         'page': page,
@@ -105,7 +103,6 @@ def get_reviews_by_book(request, book_id):
         return HttpResponseServerError()
     
     data = response.json()
-    print(data)
     return JsonResponse({'reviews': data})
 
 
