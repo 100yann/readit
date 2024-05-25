@@ -137,19 +137,19 @@ def create_review(review: schemas.ReviewCreate,
 
 
 # Delete a review
-@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_review(id: int,
+@router.delete('/{review_id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_review(review_id: int,
                   db: Session = Depends(get_db),
                   current_user: int = Depends(oauth2.get_current_user)
                   ):
 
-    review_query = db.query(models.Reviews).filter(models.Reviews.id == id)
+    review_query = db.query(models.Reviews).filter(models.Reviews.id == review_id)
     review = review_query.first()
     if review is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'Review with ID{id} does not exist')
+                            detail=f'Review with ID{review_id} does not exist')
 
-    if review.reviewed_by != current_user.id:
+    if review.owner_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail='Unauthorized to delete this post')
 
