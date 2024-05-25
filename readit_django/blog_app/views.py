@@ -47,8 +47,14 @@ def edit_review(request, review_id, method=['PUT']):
 
 
 def delete_review(request, review_id, method=['DELETE']):
-    response = requests.delete(f'{settings.FASTAPI_URL}/delete_review', params={'review_id': review_id})
-    return HttpResponse()
+    jwt_token = request.COOKIES.get('access_token')
+    if not jwt_token:
+        return redirect('login')
+    
+    headers = {'Authorization': f'Bearer {jwt_token}'}
+    response = requests.delete(f'{settings.FASTAPI_URL}/reviews/{review_id}', headers=headers)
+    if response.status_code == 204:
+        return HttpResponse()
 
 
 def like_review(request, review_id, method=['POST']):
@@ -95,6 +101,7 @@ def display_book(request, isbn):
                     'isbn': isbn,
                     'book_id': data['book_id'],
                     'book_stats': data['book_stats'],
+                    'user_id': user_id
                     })
 
 

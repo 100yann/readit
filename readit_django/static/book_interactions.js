@@ -9,7 +9,6 @@ var page = 1
 
 document.addEventListener('DOMContentLoaded', () => {
     getReviews()
-
     const writeReview = document.getElementById('write-new-review')
 
     if (writeReview){
@@ -229,11 +228,13 @@ async function getReviews() {
 
 function displayReviews(reviews) {
     const bookReviewsContainer = document.getElementById('book-reviews');
-    
+    const userId = window.userId
+
     // Clear existing reviews before displaying new ones
     bookReviewsContainer.innerHTML = '';
 
     reviews.forEach((review) => {
+        console.log(review)
         // Create review container
         const reviewContainer = document.createElement('div');
         reviewContainer.id = 'review-container';
@@ -300,7 +301,8 @@ function displayReviews(reviews) {
         }
         reviewContainer.appendChild(likeButton)
         likeButton.onclick = () => {
-            likeReview(review.Reviews.id).then(likeStatus => {
+            likeReview(reviewId=review.Reviews.id)
+            .then(likeStatus => {
                 if (likeStatus === 'Liked') {
                     likesAmount++
                     likeButton.innerHTML = `<i class="fa-solid fa-heart"></i>${likesAmount}`
@@ -309,6 +311,16 @@ function displayReviews(reviews) {
                     likeButton.innerHTML = `<i class="fa-regular fa-heart"></i>${likesAmount}`
                 }
             })
+        }
+        if (userId == review.Reviews.owner.id) {
+            const deleteButton = document.createElement('div')
+            deleteButton.innerHTML = '<i class="fa-regular fa-trash-can"></i>'
+            reviewContainer.appendChild(deleteButton)
+            deleteButton.onclick = () => {
+                deleteReview(review.Reviews.id).then(
+                    bookReviewsContainer.removeChild(reviewContainer)
+                )
+            }
         }
         // Append review container to book reviews container
         bookReviewsContainer.appendChild(reviewContainer);
@@ -333,18 +345,38 @@ function displayReviews(reviews) {
 
 async function likeReview(reviewId) {
     const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value
-    const response = await fetch(`${FASTAPI_URL}/like/${reviewId}`, {
+
+    response = await fetch(`${FASTAPI_URL}/like/${reviewId}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken,
-        },
-        body: JSON.stringify({'review_id': reviewId})
+            "X-CSRFToken": csrfToken
+        }
     })
+
     if (!response.ok) {
-        throw new Error('Failed to like review')
+        throw new Error(`Failed to like review`)
     }
+
     const data = await response.json()
-    const like = data.status
-    return like
+    const status = data.status
+    return status
+}
+
+
+async function deleteReview(reviewId) {
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value
+
+    response = await fetch(`${FASTAPI_URL}/delete/${reviewId}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+        }
+    })    
+    if (!response.ok) {
+        throw new Error(`Failed to delete review`)
+    }
+    return response
+
 }

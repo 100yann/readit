@@ -101,7 +101,7 @@
             {% endfor %}
         {% endif %}
         <!-- Check if user is logged in -->
-        {% if request.COOKIES.access_token %}
+        {% if request.session.id %}
             <!-- Allow user to write a review for the opened book -->
             <button id="write-new-review">Write a review</button>
             <div>
@@ -123,6 +123,9 @@
     </div>
 </div>
 
+<script>
+    window.userId = "{{ user_id|escapejs }}"
+</script>
 <script src="{% static 'book_interactions.js' %}"></script>
 <script src="https://kit.fontawesome.com/b1fbfefaf0.js" crossorigin="anonymous"></script>
 {% endblock %}
