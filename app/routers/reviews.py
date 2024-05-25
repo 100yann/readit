@@ -194,7 +194,6 @@ def like_review(review: int,
                 db: Session = Depends(get_db),
                 current_user: int = Depends(oauth2.get_current_user)
                 ):
-
     has_liked = db.query(models.Likes).\
         filter(models.Likes.review_id == review).\
         filter(models.Likes.user_id == current_user.id)

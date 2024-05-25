@@ -51,12 +51,18 @@ def delete_review(request, review_id, method=['DELETE']):
     return HttpResponse()
 
 
-def like_review(request, review_id, method=['PUT']):
-    user_id = request.session['user']
-    response = requests.put(f'{settings.FASTAPI_URL}/like', params={'user_id': user_id, 
-                                                           'review_id': review_id})
-    review_status = response.json()['message']
-    return JsonResponse({'status': review_status})
+def like_review(request, review_id, method=['POST']):
+    jwt_token = request.COOKIES.get('access_token')
+    if not jwt_token:
+        return redirect('login')
+    
+    headers = {'Authorization': f'Bearer {jwt_token}'}
+    response = requests.post(f'{settings.FASTAPI_URL}/reviews/like/{review_id}', headers=headers)
+    if response.status_code == 201:
+        status = response.json()['status']
+    else: 
+        status = 'Failed to update like'
+    return JsonResponse({'status': status})
 
 
 def find_book(request, book_title):

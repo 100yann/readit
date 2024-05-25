@@ -223,7 +223,6 @@ async function getReviews() {
     }
     const data = await response.json()
     const reviews = data.reviews
-    console.log(reviews)
     displayReviews(reviews)
 }
 
@@ -292,13 +291,25 @@ function displayReviews(reviews) {
         reviewContainer.appendChild(reviewContentContainer);
         
         // Create a like button
-        const likeButton = document.createElement('button')
+        const likeButton = document.createElement('div')
+        var likesAmount = review.total_likes
         if (review.has_user_liked) {
-            likeButton.innerHTML = `<i class="fa-solid fa-heart"></i>${review.total_likes}`
+            likeButton.innerHTML = `<i class="fa-solid fa-heart"></i>${likesAmount}`
         } else {
-            likeButton.innerHTML = `<i class="fa-regular fa-heart"></i>${review.total_likes}`
+            likeButton.innerHTML = `<i class="fa-regular fa-heart"></i>${likesAmount}`
         }
         reviewContainer.appendChild(likeButton)
+        likeButton.onclick = () => {
+            likeReview(review.Reviews.id).then(likeStatus => {
+                if (likeStatus === 'Liked') {
+                    likesAmount++
+                    likeButton.innerHTML = `<i class="fa-solid fa-heart"></i>${likesAmount}`
+                } else {
+                    likesAmount--
+                    likeButton.innerHTML = `<i class="fa-regular fa-heart"></i>${likesAmount}`
+                }
+            })
+        }
         // Append review container to book reviews container
         bookReviewsContainer.appendChild(reviewContainer);
     });
@@ -317,4 +328,23 @@ function displayReviews(reviews) {
             getReviews()
         }
     }
+}
+
+
+async function likeReview(reviewId) {
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value
+    const response = await fetch(`${FASTAPI_URL}/like/${reviewId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({'review_id': reviewId})
+    })
+    if (!response.ok) {
+        throw new Error('Failed to like review')
+    }
+    const data = await response.json()
+    const like = data.status
+    return like
 }

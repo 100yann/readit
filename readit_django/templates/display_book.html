@@ -7,8 +7,8 @@
     <div class="book-view">
         <div id="book-cover">
             <img id='book-thumbnail' src="{{ details.thumbnail }}" alt="book-cover">
-            {% if request.COOKIES.access_token %}
             {% csrf_token %}
+            {% if request.COOKIES.access_token %}
             <div id="book-interactions">
                 {% if bookshelf %}
                     <div id="shelve-button-container" class="shelved">
